@@ -1,8 +1,4 @@
-"""
-┌────────────────────────┐
-│ Simple API for Panduza │
-└────────────────────────┘
-
+"""Simple API for Panduza
  Florian Dupeyron
  February 2022
 """

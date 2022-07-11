@@ -1,4 +1,4 @@
-# Panduza Python Clients
+# Panduza Python
 
 This repo provides some client for panduza interfaces
 
