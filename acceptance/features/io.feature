@@ -7,11 +7,12 @@ Feature: Io
 
         Two topics are defined for this purpose:
 
-        | Suffix             | QOS | Retain |
-        |:------------------:|:---:|:------:|
-        | atts/direction     | 0   | true   |
-        | cmds/direction/set | 0   | false  |
+        | Suffix                                | QOS | Retain |
+        |:-------------------------------------:|:---:|:------:|
+        | {INTERFACE_PREFIX}/atts/direction     | 0   | true   |
+        | {INTERFACE_PREFIX}/cmds/direction/set | 0   | false  |
 
+        The payload must be a json payload.
 
         | Key       | Type   | Description                       |
         |:-------- :|:------:|:---------------------------------:|
