@@ -1,9 +1,9 @@
 @action.platform_start.io_tree.json
-Feature: Io
+Feature: API Io
 
-    Panduza is able to control simple input/output signals
+    Panduza provides a way to control simple input/output signals
 
-    Rule: Io API must be able to drive io direction
+    Rule: API Io must be able to drive io direction
 
         Two topics are defined for this purpose:
 
@@ -12,7 +12,7 @@ Feature: Io
         | {INTERFACE_PREFIX}/atts/direction     | 0   | true   |
         | {INTERFACE_PREFIX}/cmds/direction/set | 0   | false  |
 
-        The payload must be a json payload.
+        The payload of those topics must be a json payload:
 
         | Key       | Type   | Description                       |
         |:-------- :|:------:|:---------------------------------:|
