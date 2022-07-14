@@ -2,7 +2,7 @@ name: Action to test the Python client
 on: [push]
 
 env:
-  PLATFORM_PY_BRANCH: subprocess_test_platform
+  PLATFORM_PY_BRANCH: main
 
 jobs:
   Tests:

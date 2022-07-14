@@ -5,7 +5,7 @@ Feature: API File
 
     Rule: API File must be able to transfert the file content
 
-        Two topics are defined to this purpose:
+        2 topics are defined to this purpose:
 
         | Suffix                                | QOS | Retain |
         |:--------------------------------------|:---:|:------:|
@@ -14,15 +14,34 @@ Feature: API File
 
         The payload of those topics must be a json payload:
 
-        | Key       | Type   | Description                       |
-        |:-------- :|:------:|:---------------------------------:|
-        | content   | string |    |
+        | Key       | Type          | Description                            |
+        |:-------- :|:-------------:|:--------------------------------------:|
+        | content   | base64 string | Content of the file encoding in base64 |
 
         ```json
             {
-                "content": ""
+                "content": "SKGKFGD ... JGBEIGDFGPD"
             }
         ```
 
+    Rule: API File must be able to read file data
 
+        1 topic are defined to this purpose:
+
+        | Suffix                                | QOS | Retain |
+        |:--------------------------------------|:---:|:------:|
+        | {INTERFACE_PREFIX}/atts/data          | 0   | true   |
+
+        The payload of this topic must be a json payload:
+
+        | Key       | Type          | Description                                   |
+        |:-------- :|:-------------:|:---------------------------------------------:|
+        | size      | number        | size of the file content in bytes             |
+        | crc       | string        | crc32 of the file content in string format    |
+
+        ```json
+            {
+                "size": 12345, "crc": "0xFFFF50"
+            }
+        ```
 
