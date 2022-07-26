@@ -63,7 +63,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: acceptance/report
+          name: acceptance-report
           path: panduza-py-platform/acceptance/report
 
 
