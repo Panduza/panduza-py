@@ -1,3 +1,4 @@
+import os
 import time
 import shutil
 import logging
@@ -42,6 +43,12 @@ def before_tag(context, tag):
 ###############################################################################
 
 def before_all(context):
+    """Function executed before anything else
+    """
+    # Make sure that the directory of the acceptance report exists
+    os.makedirs('acceptance/report', exist_ok=True)
+    
+    
     logging.basicConfig(level=logging.DEBUG)
 
 ###############################################################################

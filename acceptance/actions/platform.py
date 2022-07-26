@@ -17,7 +17,7 @@ def platform_start(context, treefile):
     global PLATFORM_LOGF
 
     # Prepare logging file
-    PLATFORM_LOGF = open('test_reports/platform_log.txt', 'a')
+    PLATFORM_LOGF = open('acceptance/report/platform_log.txt', 'a')
 
     # Start the subprocess with the platform
     platform_run_script = PathToRsc('test-py-platform-run.py')

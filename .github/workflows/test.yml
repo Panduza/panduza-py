@@ -48,7 +48,7 @@ jobs:
 
 
       - name: Execute tests to html
-        run: coverage run --source='../panduza' -m behave -f html -o test_reports/test.html
+        run: coverage run --source='../panduza' -m behave -f html -o acceptance/report/test.html
         working-directory: panduza-py-platform
         env:
           PYTHONPATH: ".."
@@ -56,15 +56,15 @@ jobs:
 
 
       - name: Coverage Report to html
-        run: coverage html -d test_reports/coverage
+        run: coverage html -d acceptance/report/coverage
         working-directory: panduza-py-platform
 
 
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: test_reports
-          path: panduza-py-platform/test_reports
+          name: acceptance/report
+          path: panduza-py-platform/acceptance/report
 
 
       - run: echo "🎉 Test finished !"

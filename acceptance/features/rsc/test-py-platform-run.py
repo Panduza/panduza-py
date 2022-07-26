@@ -7,15 +7,16 @@ print("REQUEST TO START PLATFORM IN TEST MODE WITH TREE (", sys.argv[1], ")")
 
 # Covergae
 # os.environ["COVERAGE_PROCESS_START"] = os.getcwd() + '/.coveragerc'
-print("COVERAGE_PROCESS_START > ", os.environ["COVERAGE_PROCESS_START"])
 
 
-if os.environ["COVERAGE_PROCESS_START"] != "NO":
-    cov = coverage.process_startup()
-    if not cov:
-        print("COVERAGE FAIL !")
-    else:
-        print("COVERAGE READY !")
+if "COVERAGE_PROCESS_START" in os.environ:
+    print("COVERAGE_PROCESS_START > ", os.environ["COVERAGE_PROCESS_START"])
+    if os.environ["COVERAGE_PROCESS_START"] != "NO":
+        cov = coverage.process_startup()
+        if not cov:
+            print("COVERAGE FAIL !")
+        else:
+            print("COVERAGE READY !")
 
 
 # Start the platform
