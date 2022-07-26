@@ -33,7 +33,6 @@ jobs:
 
       - name: Execute tests
         run: coverage run --source='../panduza' -m behave
-        working-directory: panduza-py-platform
         env:
           PYTHONPATH: ".."
           COVERAGE_PROCESS_START: "NO"
@@ -44,21 +43,16 @@ jobs:
 
       - name: Covergae Report
         run: coverage report
-        working-directory: panduza-py-platform
 
 
       - name: Execute tests to html
         run: coverage run --source='../panduza' -m behave -f html -o acceptance/report/test.html
-        working-directory: panduza-py-platform
         env:
           PYTHONPATH: ".."
           COVERAGE_PROCESS_START: "NO"
 
-
       - name: Coverage Report to html
         run: coverage html -d acceptance/report/coverage
-        working-directory: panduza-py-platform
-
 
       - uses: actions/upload-artifact@v3
         if: always()
