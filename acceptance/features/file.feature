@@ -1,4 +1,4 @@
-@action.platform_start.io_tree.json
+@action.platform_start.file_tree.json
 Feature: API File
 
     Panduza provides a way to transfert small files
@@ -24,13 +24,20 @@ Feature: API File
             }
         ```
 
-    Rule: API File must be able to read file data
+        @fixture.interface.file.test
+        Scenario: Transfert simple file
+            Given core aliases loaded with file "file_alias.json"
+            And   file interface "test" initialized with alias "file_test"
+            # When  the file 
+            
 
-        1 topic are defined to this purpose:
+    Rule: API File must be able to read file properties
+
+        1 topic is defined to this purpose:
 
         | Suffix                                | QOS | Retain |
         |:--------------------------------------|:---:|:------:|
-        | {INTERFACE_PREFIX}/atts/data          | 0   | true   |
+        | {INTERFACE_PREFIX}/atts/properties    | 0   | true   |
 
         The payload of this topic must be a json payload:
 
@@ -44,4 +51,6 @@ Feature: API File
                 "size": 12345, "crc": "0xFFFF50"
             }
         ```
+
+# @action.platform_close
 
