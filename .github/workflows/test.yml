@@ -22,7 +22,6 @@ jobs:
       - run: pip install PyHamcrest coverage loguru
       - run: pip install behave-html-formatter
 
-      - run: git clone --branch  $PLATFORM_PY_BRANCH  https://github.com/Panduza/panduza-py-platform
       - run: pip install git+https://github.com/Panduza/panduza-py-platform@$PLATFORM_PY_BRANCH
 
       - run: mosquitto -d
@@ -32,9 +31,9 @@ jobs:
 
 
       - name: Execute tests
-        run: coverage run --source='../panduza' -m behave
+        run: coverage run --source='panduza' -m behave
         env:
-          PYTHONPATH: ".."
+          PYTHONPATH: "."
           COVERAGE_PROCESS_START: "NO"
 
 
@@ -46,7 +45,7 @@ jobs:
 
 
       - name: Execute tests to html
-        run: coverage run --source='../panduza' -m behave -f html -o acceptance/report/test.html
+        run: coverage run --source='panduza' -m behave -f html -o acceptance/report/test.html
         env:
           PYTHONPATH: ".."
           COVERAGE_PROCESS_START: "NO"

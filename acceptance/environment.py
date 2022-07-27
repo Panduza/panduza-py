@@ -47,8 +47,9 @@ def before_all(context):
     """
     # Make sure that the directory of the acceptance report exists
     os.makedirs('acceptance/report', exist_ok=True)
-    
-    
+    print("BEFORE ALL: directory **acceptance/report** created !\r\n")
+
+    #
     logging.basicConfig(level=logging.DEBUG)
 
 ###############################################################################
