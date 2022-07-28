@@ -57,7 +57,7 @@ jobs:
         if: always()
         with:
           name: acceptance-report
-          path: panduza-py-platform/acceptance/report
+          path: acceptance/report
 
 
       - run: echo "🎉 Test finished !"
