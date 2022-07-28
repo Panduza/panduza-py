@@ -18,11 +18,13 @@ Feature: API File
 
         | Key       | Type          | Description                            |
         |:-------- :|:-------------:|:--------------------------------------:|
-        | content   | base64 string | Content of the file encoding in base64 |
+        | content   | string        | Content of the file encoding in base64 |
+        | mime      | string        | A mime type https://mimetype.io/all-types/ |
 
         ```json
             {
                 "content": "SKGKFGD ... JGBEIGDFGPD"
+                "mime": "text/plain"
             }
         ```
 
@@ -34,8 +36,8 @@ Feature: API File
             Then  atts/content of file interface "test" is filled with file "<rsc_file>" content encoded in base64
 
         Examples:
-            | rsc_file          |
-            | file/2bytes.txt   |
+            | rsc_file          | mime          |
+            | file/2bytes.txt   | text/plain    |
         
 
     ###############################################################################################

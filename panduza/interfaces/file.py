@@ -1,23 +1,32 @@
 import json
+import base64
 import logging
-from ..core import Interface
+
+from dataclasses import dataclass, field
+
+from ..core import Interface, Attribute
 
 
 
-class FileContentAttribute():
+@dataclass
+class FileContentAttribute(Attribute):
     """
     """
     
     def __init__(self, client):
         """Constructor
         """
+        self.name = 'content'
         self.client = client
-        
-        
-    def set_from_file(self, filepath):
+    
+
+    def set_from_file(self, filepath, mimetype="text/plain"):
         """Set the attribute with the content of the file
         """
-        pass
+        
+        # base64.b64encode(open(filepath, "rb").read()).decode('ascii')
+        
+
 
 class File(Interface):
     """
@@ -40,21 +49,3 @@ class File(Interface):
     
         self.content = FileContentAttribute(self.client)
     
-        # self.value     = Attribute_JSON(
-        #     client          = self.client,
-        #     base_topic      = self.base_topic,
-        #     name            = "value",
-
-        #     payload_factory = lambda v: json.dumps({"value": int(v)}).encode("utf-8"),
-        #     payload_parser  = lambda v: bool(json.loads(v.decode("utf-8"))["value"])
-        # )
-
-        # self.direction = Attribute_JSON(
-        #     client          = self.client,
-        #     base_topic      = self.base_topic,
-        #     name            = "direction",
-
-        #     payload_factory = lambda v: json.dumps({"direction": v}).encode("utf-8"),
-        #     payload_parser  = lambda v: json.loads(v.decode("utf-8"))["direction"]
-        # )
-
