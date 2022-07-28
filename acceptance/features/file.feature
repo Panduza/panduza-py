@@ -3,6 +3,8 @@ Feature: API File
 
     Panduza provides a way to transfert small files
 
+    ###############################################################################################
+    ###############################################################################################
     Rule: API File must be able to transfert the file content
 
         2 topics are defined to this purpose:
@@ -25,12 +27,19 @@ Feature: API File
         ```
 
         @fixture.interface.file.test
-        Scenario: Transfert simple file
+        Scenario Outline: Transfert simple file
             Given core aliases loaded with file "file_alias.json"
             And   file interface "test" initialized with alias "file_test"
-            # When  the file 
-            
+            When  file interface "test" is set with content from file "<rsc_file>"
+            Then  atts/content of file interface "test" is filled with file "<rsc_file>" content encoded in base64
 
+        Examples:
+            | rsc_file          |
+            | file/2bytes.txt   |
+        
+
+    ###############################################################################################
+    ###############################################################################################
     Rule: API File must be able to read file properties
 
         1 topic is defined to this purpose:
@@ -44,13 +53,6 @@ Feature: API File
         | Key       | Type          | Description                                   |
         |:-------- :|:-------------:|:---------------------------------------------:|
         | size      | number        | size of the file content in bytes             |
-        | crc       | string        | crc32 of the file content in string format    |
-
-        ```json
-            {
-                "size": 12345, "crc": "0xFFFF50"
-            }
+        | crc       | string        | crc32 ofhttps://github.com/ngisedsysle
         ```
-
-# @action.platform_close
 

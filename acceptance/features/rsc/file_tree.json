@@ -1,0 +1,15 @@
+{
+    "machine": "test",
+    "brokers": {
+        "test_broker": {
+            "addr": "localhost",
+            "port": 1883,
+            "interfaces": [
+                {
+                    "name": "io_test",
+                    "driver": "io_fake"
+                }
+            ]
+        }
+    }
+}

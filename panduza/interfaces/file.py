@@ -2,8 +2,27 @@ import json
 import logging
 from ..core import Interface
 
-class File(Interface):
 
+
+class FileContentAttribute():
+    """
+    """
+    
+    def __init__(self, client):
+        """Constructor
+        """
+        self.client = client
+        
+        
+    def set_from_file(self, filepath):
+        """Set the attribute with the content of the file
+        """
+        pass
+
+class File(Interface):
+    """
+    """
+    
     ###########################################################################
     ###########################################################################
     
@@ -18,9 +37,8 @@ class File(Interface):
     def _post_initialization(self):
         """Initialize attributes
         """
-        pass
     
-        # file.content.set_from_file()
+        self.content = FileContentAttribute(self.client)
     
         # self.value     = Attribute_JSON(
         #     client          = self.client,

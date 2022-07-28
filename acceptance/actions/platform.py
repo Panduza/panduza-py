@@ -15,6 +15,9 @@ def platform_start(context, treefile):
     """
     global PLATFORM_PROC
     global PLATFORM_LOGF
+    
+    # Stop previous run
+    platform_stop(context)
 
     # Prepare logging file
     PLATFORM_LOGF = open('acceptance/report/platform_log.txt', 'a')
@@ -25,7 +28,7 @@ def platform_start(context, treefile):
     treefilepath = PathToRsc(treefile)
     PLATFORM_PROC = subprocess.Popen(["python3", platform_run_script, treefilepath], stdout=PLATFORM_LOGF, stderr=PLATFORM_LOGF)
 
-
+    # Wait for the platform to be up
     time.sleep(3)
 
 ###############################################################################

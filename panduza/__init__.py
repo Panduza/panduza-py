@@ -2,6 +2,7 @@ from .core import Core
 from .core import Client
 
 from .interfaces import Io
+from .interfaces import File
 from .interfaces import PowerSupply
 # from .interfaces.serial import Serial
 # from .interfaces.spi_master import SpiMaster
