@@ -3,7 +3,7 @@
         "url": "localhost",
         "port": 1883,
         "interfaces": {
-            "file_test": "pza/test_io/io_fake/io_test"
+            "file_test": "pza/test/file_fake/file_test"
         }
     }
 }

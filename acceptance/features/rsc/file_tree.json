@@ -6,8 +6,8 @@
             "port": 1883,
             "interfaces": [
                 {
-                    "name": "io_test",
-                    "driver": "io_fake"
+                    "name": "file_test",
+                    "driver": "file_fake"
                 }
             ]
         }

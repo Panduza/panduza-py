@@ -2,6 +2,8 @@ import os
 import logging
 from behave import *
 
+from steps.xdocz_helpers import AttachTextLog
+
 from fixtures.client import client
 from fixtures.interface import interface_io, interface_file
 
@@ -43,7 +45,7 @@ def before_all(context):
     """
     # Make sure that the directory of the acceptance report exists
     os.makedirs('acceptance/report', exist_ok=True)
-    logging.debug("BEFORE ALL: directory **acceptance/report** created !")
+    AttachTextLog(context, "BEFORE ALL: directory **acceptance/report** created !")
     
     # Enable logging
     logging.basicConfig(level=logging.DEBUG)
