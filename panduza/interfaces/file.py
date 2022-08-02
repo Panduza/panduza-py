@@ -24,7 +24,13 @@ class FileContentAttribute(Attribute):
         """Set the attribute with the content of the file
         """
         
-        # base64.b64encode(open(filepath, "rb").read()).decode('ascii')
+        encoded = base64.b64encode(open(filepath, "rb").read()).decode('ascii')
+        
+        v = {
+            'content': encoded, 'mime': mimetype
+        }
+        
+        self.client.publish(self._topic_cmds_set, self.payload_factory(v))
         
 
 
@@ -48,4 +54,5 @@ class File(Interface):
         """
     
         self.content = FileContentAttribute(self.client)
-    
+
+

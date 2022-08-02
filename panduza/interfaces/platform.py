@@ -2,7 +2,7 @@ import json
 import base64
 import logging
 # from ..core.core import Core
-# from ..core.interface import Interface
+from .. import Interface
 
 
 class Platform(Interface):
