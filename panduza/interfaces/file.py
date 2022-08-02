@@ -1,4 +1,5 @@
 import json
+import magic
 import base64
 import logging
 
@@ -13,17 +14,20 @@ class FileContentAttribute(Attribute):
     """
     """
     
-    def __init__(self, client):
+    def __init__(self, b_topic, pza_client):
         """Constructor
         """
-        self.name = 'content'
-        self.client = client
-    
+        super().__init__(client=pza_client, base_topic=b_topic, name='content')
 
-    def set_from_file(self, filepath, mimetype="text/plain"):
+        
+    def set_from_file(self, filepath, mimetype=None):
         """Set the attribute with the content of the file
         """
-        
+        # Find the mimettype from the file extension if not overided by the user
+        if mimetype == None:
+            mimetype = magic.from_file(filepath, mime=True)
+
+        # 
         encoded = base64.b64encode(open(filepath, "rb").read()).decode('ascii')
         
         v = {
@@ -53,6 +57,6 @@ class File(Interface):
         """Initialize attributes
         """
     
-        self.content = FileContentAttribute(self.client)
+        self.content = FileContentAttribute(self.base_topic, self.client)
 
 

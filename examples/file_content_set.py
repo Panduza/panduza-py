@@ -1,5 +1,3 @@
-
-
 # Simple Standalone Test
 import sys
 import argparse
@@ -12,8 +10,6 @@ parser.add_argument('file', nargs='?', default=None)
 parser.add_argument('mime', nargs='?', default=None)
 args = parser.parse_args()
 
-print(args)
-
 # Load Aliases
 Core.LoadAliases({
     "local_test": {
@@ -25,9 +21,9 @@ Core.LoadAliases({
     }
 })
 
-# 
+# Create file interface
 ff = File(alias="file_test")
 
-#
-# ff.content.set_from_file(sys.argv[1])
+# Update content from a file
+ff.content.set_from_file(sys.argv[1])
 
