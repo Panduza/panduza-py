@@ -31,14 +31,18 @@ def step(context, interface_name, rsc_name):
 ###############################################################################
 ###############################################################################
 
-@Step(u'atts/content of file interface "{interface_name}" is filled with file "{rsc_name}" content encoded in base64')
+@Step(u'atts/content data of the file interface "{interface_name}" is filled with file "{rsc_name}" content encoded in base64')
 def step(context, interface_name, rsc_name):
-    # filepath=PathToRsc(rsc_name)
+    data = context.interfaces["file"][interface_name].content.get_data()
+    mime = context.interfaces["file"][interface_name].content.get_mime()
+
+
+    filepath=PathToRsc(rsc_name)
+
+###############################################################################
+###############################################################################
+
+@Step(u'atts/content mime of the file interface "{interface_name}" is filled "{mime_str}"')
+def step(context, interface_name, mime_str):
     pass
-    # logging.debug(filepath)
-    # context.interfaces["file"][interface_name].content.set_from_file(filepath)
-
-###############################################################################
-###############################################################################
-
 

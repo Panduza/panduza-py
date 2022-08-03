@@ -43,11 +43,26 @@ class MetaDataAttribute(Attribute):
 class FileContentAttribute(Attribute):
     """
     """
+    __data: any = None
+    __mime: any = None
+
     
     def __init__(self, b_topic, pza_client):
         """Constructor
         """
         super().__init__(client=pza_client, base_topic=b_topic, name='content')
+
+
+    def get_data(self):
+        """Simple getter for data
+        """
+        return self.__data
+
+
+    def get_mime(self):
+        """Simple getter for mime
+        """
+        return self.__mime
 
         
     def set_from_file(self, filepath, mimetype=None):

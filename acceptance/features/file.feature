@@ -16,14 +16,14 @@ Feature: API File
 
         The payload of those topics must be a json payload:
 
-        | Key       | Type          | Description                            |
-        |:-------- :|:-------------:|:--------------------------------------:|
-        | content   | string        | Content of the file encoding in base64 |
-        | mime      | string        | A mime type https://mimetype.io/all-types/ |
+        | Key       | Type          | Description                                   |
+        |:-------- :|:-------------:|:---------------------------------------------:|
+        | data      | string        | Content of the file encoding in base64        |
+        | mime      | string        | A mime type https://mimetype.io/all-types/    |
 
         ```json
             {
-                "content": "SKGKFGD ... JGBEIGDFGPD"
+                "data": "SKGKFGD ... JGBEIGDFGPD"
                 "mime": "text/plain"
             }
         ```
@@ -33,7 +33,8 @@ Feature: API File
             Given core aliases loaded with file "file_alias.json"
             And   file interface "test" initialized with alias "file_test"
             When  file interface "test" is set with content from file "<rsc_file>"
-            Then  atts/content of file interface "test" is filled with file "<rsc_file>" content encoded in base64
+            Then  atts/content data of the file interface "test" is filled with file "<rsc_file>" content encoded in base64
+            And   atts/content mime of the file interface "test" is filled "<mime>"
 
         Examples:
             | rsc_file          | mime          |
