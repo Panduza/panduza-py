@@ -10,6 +10,36 @@ from ..core import Interface, Attribute
 
 
 @dataclass
+class MetaDataAttribute(Attribute):
+    """
+    """
+    
+    def __init__(self, b_topic, pza_client):
+        """Constructor
+        """
+        super().__init__(client=pza_client, base_topic=b_topic, name='metadata')
+
+
+    def __post_init__(self):
+        """
+        """
+        super().__post_init__()
+
+        # Subscribe to topic
+        self.client.subscribe(self._topic_atts_get, callback=self.__update)
+
+
+    def __update(self, topic, payload):
+        self.__log.debug("Received new value")
+
+        if payload is None:
+            self.__data = None
+        else:
+            self.__data = self.payload_parser(payload)
+
+
+
+@dataclass
 class FileContentAttribute(Attribute):
     """
     """
@@ -39,7 +69,7 @@ class FileContentAttribute(Attribute):
 
 
 class File(Interface):
-    """
+    """Client to manage an File interface
     """
     
     ###########################################################################
@@ -58,5 +88,6 @@ class File(Interface):
         """
     
         self.content = FileContentAttribute(self.base_topic, self.client)
+        self.metadata = MetaDataAttribute(self.base_topic, self.client)
 
 

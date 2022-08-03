@@ -41,19 +41,19 @@ Feature: API File
 
     ###############################################################################################
     ###############################################################################################
-    Rule: API File must be able to read file properties
+    Rule: API File must be able to read file metadata
 
         1 topic is defined to this purpose:
 
         | Suffix                                | QOS | Retain |
         |:--------------------------------------|:---:|:------:|
-        | {INTERFACE_PREFIX}/atts/properties    | 0   | true   |
+        | {INTERFACE_PREFIX}/atts/metadata      | 0   | true   |
 
         The payload of this topic must be a json payload:
 
         | Key       | Type          | Description                                   |
         |:-------- :|:-------------:|:---------------------------------------------:|
         | size      | number        | size of the file content in bytes             |
-        | crc       | string        | crc32 ofhttps://github.com/ngisedsysle
+        | crc       | string        | crc32 of                                      |
         ```
 
