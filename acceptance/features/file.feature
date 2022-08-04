@@ -41,6 +41,21 @@ Feature: API File
             | rsc_file          | mime          |
             | file/2bytes.txt   | text/plain    |
 
+
+    # -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
+    Rule: API File must provide a way to manage errors
+
+        It is the client responsability to timeout if the interface does not respond.
+
+        @fixture.interface.file.test
+        Scenario: Test that the client tiemout is the interface does not exist
+            Given core aliases loaded with file "file_alias.json"
+            And   file interface "test" initialized with alias "not_exist"
+            When  file interface "test" is set with content from file "file/2bytes.txt"
+
+
     # -----------------------------------------------------------------------------
     # -----------------------------------------------------------------------------
     # -----------------------------------------------------------------------------
