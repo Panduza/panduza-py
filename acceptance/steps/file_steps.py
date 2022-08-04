@@ -1,6 +1,7 @@
 import logging
 import os
 import time
+import base64
 from behave import *
 from hamcrest import assert_that, equal_to
 from xdocz_helpers import AttachTextLog, PathToRsc
@@ -26,7 +27,7 @@ def step(context, interface_name, interface_alias):
 def step(context, interface_name, rsc_name):
     filepath=PathToRsc(rsc_name)
     AttachTextLog(context, f'Loaded filepath "{filepath}"')
-    context.interfaces["file"][interface_name].content.set_from_file(filepath)
+    context.interfaces["file"][interface_name].content.set_from_file(filepath, ensure=True)
 
 ###############################################################################
 ###############################################################################
@@ -34,15 +35,16 @@ def step(context, interface_name, rsc_name):
 @Step(u'atts/content data of the file interface "{interface_name}" is filled with file "{rsc_name}" content encoded in base64')
 def step(context, interface_name, rsc_name):
     data = context.interfaces["file"][interface_name].content.get_data()
-    mime = context.interfaces["file"][interface_name].content.get_mime()
-
-
     filepath=PathToRsc(rsc_name)
+    encoded = base64.b64encode(open(filepath, "rb").read()).decode('ascii')
+    assert_that(data, equal_to(encoded))
 
 ###############################################################################
 ###############################################################################
 
 @Step(u'atts/content mime of the file interface "{interface_name}" is filled "{mime_str}"')
 def step(context, interface_name, mime_str):
-    pass
+    mime = context.interfaces["file"][interface_name].content.get_mime()
+    AttachTextLog(context, f'Mime type: "{mime}"')
+    assert_that(mime, equal_to(mime_str))
 

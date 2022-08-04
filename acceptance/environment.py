@@ -45,10 +45,9 @@ def before_all(context):
     """
     # Make sure that the directory of the acceptance report exists
     os.makedirs('acceptance/report', exist_ok=True)
-    AttachTextLog(context, "BEFORE ALL: directory **acceptance/report** created !")
-    
+
     # Enable logging
-    logging.basicConfig(level=logging.DEBUG)
+    # logging.basicConfig(level=logging.DEBUG)
 
 ###############################################################################
 ###############################################################################

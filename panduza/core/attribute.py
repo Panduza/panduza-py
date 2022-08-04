@@ -21,6 +21,7 @@ class Attribute:
     def __post_init__(self):
         self._topic_atts_get = os.path.join(self.base_topic, "atts", self.name       )
         self._topic_cmds_set = os.path.join(self.base_topic, "cmds", self.name, "set")
+        self._log            = logging.getLogger(f"PZA {self.name} attribute for {self.base_topic}")
 
 
     @abstractmethod
@@ -43,7 +44,6 @@ class Attribute_JSON(Attribute):
         super().__post_init__()
 
         self.__trigger = threading.Event()
-        self.__log     = logging.getLogger(f"PZA {self.name} attribute for {self.base_topic}")
 
         # Subscribe to topic
         self.client.subscribe(self._topic_atts_get, callback=self.__update)
@@ -58,7 +58,7 @@ class Attribute_JSON(Attribute):
     # └────────────────────────────────────────┘
 
     def __update(self, topic, payload):
-        self.__log.debug("Received new value")
+        self._log.debug("Received new value")
 
         if payload is None:
             self.__value = None

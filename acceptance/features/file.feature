@@ -3,8 +3,9 @@ Feature: API File
 
     Panduza provides a way to transfert small files
 
-    ###############################################################################################
-    ###############################################################################################
+    # -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
     Rule: API File must be able to transfert the file content
 
         2 topics are defined to this purpose:
@@ -40,21 +41,22 @@ Feature: API File
             | rsc_file          | mime          |
             | file/2bytes.txt   | text/plain    |
 
-    ###############################################################################################
-    ###############################################################################################
-    Rule: API File must be able to read file metadata
+    # -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
+    # Rule: API File must be able to read file metadata
 
-        1 topic is defined to this purpose:
+    #     1 topic is defined to this purpose:
 
-        | Suffix                                | QOS | Retain |
-        |:--------------------------------------|:---:|:------:|
-        | {INTERFACE_PREFIX}/atts/metadata      | 0   | true   |
+    #     | Suffix                                | QOS | Retain |
+    #     |:--------------------------------------|:---:|:------:|
+    #     | {INTERFACE_PREFIX}/atts/metadata      | 0   | true   |
 
-        The payload of this topic must be a json payload:
+    #     The payload of this topic must be a json payload:
 
-        | Key       | Type          | Description                                   |
-        |:-------- :|:-------------:|:---------------------------------------------:|
-        | size      | number        | size of the file content in bytes             |
-        | crc       | string        | crc32 of                                      |
-        ```
+    #     | Key       | Type          | Description                                   |
+    #     |:-------- :|:-------------:|:---------------------------------------------:|
+    #     | size      | number        | size of the file content in bytes             |
+    #     | crc       | string        | crc32 of                                      |
+    #     ```
 
