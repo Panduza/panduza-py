@@ -21,6 +21,7 @@ jobs:
       - run: pip install git+https://github.com/behave/behave
       - run: pip install PyHamcrest coverage loguru
       - run: pip install behave-html-formatter
+      - run: RUN pip install python-magic
 
       - run: pip install git+https://github.com/Panduza/panduza-py-platform@$PLATFORM_PY_BRANCH
 
