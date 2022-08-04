@@ -6,7 +6,7 @@ import threading
 
 from dataclasses import dataclass, field
 
-from ..core import Interface, Attribute
+from ..core import Interface, Attribute, EnsureError
 
 
 # -----------------------------------------------------------------------------
@@ -105,8 +105,11 @@ class FileContentAttribute(Attribute):
 
 
     def trigger_wait(self, timeout=5):
-        if not self.__trigger.wait(timeout=timeout):
-            raise RuntimeError(f"Error setting timeout {timeout}s trigger wait for attribute {self.name} on {self.base_topic}")
+        try:
+            self.__trigger.wait(timeout=timeout)
+        except:
+            pass
+            # raise RuntimeError(f"Error setting timeout {timeout}s trigger wait for attribute {self.name} on {self.base_topic}")
 
 
     # ---------------------------------
@@ -145,7 +148,7 @@ class FileContentAttribute(Attribute):
                     retry-=1
 
             if self.__data != encoded != v:
-                raise RuntimeError(f"Attribute {self.name} for {self.base_topic}: cannot set to '{encoded}', got '{self.__data}'")
+                raise EnsureError(f"Attribute {self.name} for {self.base_topic}: cannot set to '{encoded}', got '{self.__data}'")
 
 
 

@@ -5,7 +5,7 @@ import base64
 from behave import *
 from hamcrest import assert_that, equal_to
 from xdocz_helpers import AttachTextLog, PathToRsc
-from panduza import Core, Client
+from panduza import Core, Client, EnsureError
 
 ###############################################################################
 ###############################################################################
@@ -26,8 +26,11 @@ def step(context, interface_name, interface_alias):
 @Step(u'file interface "{interface_name}" is set with content from file "{rsc_name}"')
 def step(context, interface_name, rsc_name):
     filepath=PathToRsc(rsc_name)
-    AttachTextLog(context, f'Loaded filepath "{filepath}"')
-    context.interfaces["file"][interface_name].content.set_from_file(filepath, ensure=True)
+    try:
+        context.interfaces["file"][interface_name].content.set_from_file(filepath, ensure=True)
+        context.ensure_error_occured = False
+    except EnsureError as e:
+        context.ensure_error_occured = True
 
 ###############################################################################
 ###############################################################################
@@ -45,6 +48,12 @@ def step(context, interface_name, rsc_name):
 @Step(u'atts/content mime of the file interface "{interface_name}" is filled "{mime_str}"')
 def step(context, interface_name, mime_str):
     mime = context.interfaces["file"][interface_name].content.get_mime()
-    AttachTextLog(context, f'Mime type: "{mime}"')
     assert_that(mime, equal_to(mime_str))
+
+###############################################################################
+###############################################################################
+
+@Step(u'an ensure exception must have occured')
+def step(context):
+    assert_that(context.ensure_error_occured, equal_to(True))
 

@@ -54,7 +54,7 @@ Feature: API File
             Given core aliases loaded with file "file_alias.json"
             And   file interface "test" initialized with alias "not_exist"
             When  file interface "test" is set with content from file "file/2bytes.txt"
-
+            Then  an ensure exception must have occured
 
     # -----------------------------------------------------------------------------
     # -----------------------------------------------------------------------------

@@ -9,6 +9,24 @@ from dataclasses import dataclass, field
 
 from .client import Client
 
+
+# -----------------------------------------------------------------------------
+
+class EnsureError(Exception):
+    """Error raised when ensure tiemout is reached
+    """
+
+
+    def __init__(self, message):
+        self.message = message
+
+
+    def __str__(self):
+        return "[ERROR] %s\n" % str(self.message)
+
+
+# -----------------------------------------------------------------------------
+
 @dataclass
 class Attribute:
     client: Client
