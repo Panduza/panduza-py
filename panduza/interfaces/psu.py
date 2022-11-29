@@ -95,6 +95,14 @@ class PsuNumericAttribute(Attribute):
 
 # -----------------------------------------------------------------------------
 
+
+
+def state_string(bool_v):
+    if bool_v:
+        return "on"
+    else:
+        return "off"
+
 class Psu(Interface):
     """! Interface to manage power supplies
     """
@@ -103,6 +111,8 @@ class Psu(Interface):
         """! Constructor
         """
         super().__init__(alias, url, port, b_topic, pza_client)
+
+
 
     def _post_initialization(self):
         """! Declare attributes here
@@ -113,7 +123,7 @@ class Psu(Interface):
             base_topic      = self.base_topic,
             name            = "state",
 
-            payload_factory = lambda v: json.dumps({"state": bool(v)}).encode("utf-8"),
+            payload_factory = lambda v: json.dumps({"state": state_string(v)}).encode("utf-8"),
             payload_parser  = lambda v: bool(json.loads(v.decode("utf-8"))["state"])
         )
 
