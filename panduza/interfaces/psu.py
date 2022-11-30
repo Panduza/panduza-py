@@ -97,14 +97,24 @@ class PsuNumericAttribute(Attribute):
 
 
 
-def state_string(bool_v):
+def state_bool_to_string(bool_v):
     if bool_v:
         return "on"
     else:
         return "off"
 
+def state_string_to_bool(str_v):
+    if str_v == "on":
+        return True
+    else:
+        return False
+
+
+
 class Psu(Interface):
-    """! Interface to manage power supplies
+    """Interface to manage power supplies
+
+    
     """
 
     def __init__(self, alias=None, url=None, port=None, b_topic=None, pza_client=None):
@@ -123,8 +133,8 @@ class Psu(Interface):
             base_topic      = self.base_topic,
             name            = "state",
 
-            payload_factory = lambda v: json.dumps({"state": state_string(v)}).encode("utf-8"),
-            payload_parser  = lambda v: bool(json.loads(v.decode("utf-8"))["state"])
+            payload_factory = lambda v: json.dumps({"state": state_bool_to_string(v)}).encode("utf-8"),
+            payload_parser  = lambda v: state_string_to_bool(json.loads(v.decode("utf-8"))["state"])
         )
 
         self.volts = PsuNumericAttribute(

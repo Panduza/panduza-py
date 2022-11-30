@@ -27,7 +27,14 @@ Core.LoadAliases({
 psu = Psu(alias="Pikachu")
 
 # Set voltage
-# psu.volts.set(5)
+
+
+psu.volts.set(5)
+time.sleep(3)
+psu.volts.set(1)
+time.sleep(3)
+
+
 psu.state.set(True)
 time.sleep(3)
 psu.state.set(False)
