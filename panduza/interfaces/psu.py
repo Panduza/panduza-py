@@ -14,6 +14,10 @@ class PsuNumericAttribute(Attribute):
         """! Constructor
         """
         super().__init__(client=pza_client, base_topic=b_topic, name=name)
+
+        payload_factory = lambda v: json.dumps({name: int(v)}).encode("utf-8")
+        payload_parser  = lambda v: int(json.loads(v.decode("utf-8"))[name])
+
         self.__trigger = threading.Event()
         self.__value = None
         self.__min = None
@@ -137,14 +141,34 @@ class Psu(Interface):
             payload_parser  = lambda v: state_string_to_bool(json.loads(v.decode("utf-8"))["state"])
         )
 
-        self.volts = PsuNumericAttribute(
-            pza_client      = self.client,
-            b_topic         = self.base_topic,
-            name            = "volts"
+
+        self.volts = Attribute_JSON(
+            client          = self.client,
+            base_topic      = self.base_topic,
+            name            = "volts",
+
+            payload_factory = lambda v: json.dumps({"volts": float(v)}).encode("utf-8"),
+            payload_parser  = lambda v: json.loads(v.decode("utf-8"))["volts"]
         )
 
-        self.amps = PsuNumericAttribute(
-            pza_client      = self.client,
-            b_topic         = self.base_topic,
-            name            = "amps"
+        self.amps = Attribute_JSON(
+            client          = self.client,
+            base_topic      = self.base_topic,
+            name            = "amps",
+
+            payload_factory = lambda v: json.dumps({"amps": float(v)}).encode("utf-8"),
+            payload_parser  = lambda v: json.loads(v.decode("utf-8"))["amps"]
         )
+
+
+        # self.volts = PsuNumericAttribute(
+        #     pza_client      = self.client,
+        #     b_topic         = self.base_topic,
+        #     name            = "volts"
+        # )
+
+        # self.amps = PsuNumericAttribute(
+        #     pza_client      = self.client,
+        #     b_topic         = self.base_topic,
+        #     name            = "amps"
+        # )

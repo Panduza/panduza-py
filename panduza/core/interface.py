@@ -36,6 +36,7 @@ class Interface:
         #
         if pza_client != None:
             self.client = pza_client
+            self.base_topic = b_topic
 
         # Build a new client
         else:
