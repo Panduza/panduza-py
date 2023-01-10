@@ -26,25 +26,45 @@ class DriverSerial(MetaDriverSerial):
             ]
         })
 
-    # def __tgen(serial_short, name_suffix):
-    #     return {
-    #         "name": "QL355P:" + name_suffix,
-    #         "driver": "py.psu.aimtty.ql355p",
-    #         "settings": {
-    #             "serial_short": serial_short
-    #         }
-    #     }
 
-    # def _PZADRV_tree_template(self):
-    #     return DriverQL355P.__tgen("USB: Short Serial ID", "template")
+    def __tgen(vendor, model, serial_short, name_suffix):
+        return {
+            "name": "serial:" + name_suffix,
+            "driver": "py.serial",
+            "settings": {
+                "vendor": vendor,
+                "model": model,
+                "serial_short": serial_short
+            }
+        }
 
-    # def _PZADRV_hunt_instances(self):
-    #     instances = []
-    #     usb_pieces = HuntUsbDevs(vendor=QL355P_USBID_VENDOR, model=QL355P_USBID_MODEL, subsystem="tty")
-    #     for p in usb_pieces:
-    #         iss = p["ID_SERIAL_SHORT"]
-    #         instances.append(DriverQL355P.__tgen(iss, iss))
-    #     return instances
+    def _PZADRV_tree_template(self):
+        return DriverSerial.__tgen(
+            "USB: Vendor ID",
+            "USB: Model ID",
+            "USB: Short Serial ID",
+            "template")
+
+    def _PZADRV_hunt_instances(self):
+        instances = []
+
+        # 0403:6001 Future Technology Devices International, Ltd FT232 Serial (UART) IC
+        FTDI_UART_VENDOR="0403"
+        FTDI_UART_MODEL="6001"
+        usb_pieces = HuntUsbDevs(vendor=FTDI_UART_VENDOR, model=FTDI_UART_MODEL, subsystem="tty")
+        for p in usb_pieces:
+            iss = p["ID_SERIAL_SHORT"]
+            instances.append(DriverSerial.__tgen(FTDI_UART_VENDOR, FTDI_UART_MODEL, iss, iss))
+        
+        # 10c4:ea60 Silicon Labs CP210x UART Bridge
+        SILLABS_CP210X_UART_VENDOR="10c4"
+        SILLABS_CP210X_UART_MODEL="ea60"
+        usb_pieces = HuntUsbDevs(vendor=SILLABS_CP210X_UART_VENDOR, model=SILLABS_CP210X_UART_MODEL, subsystem="tty")
+        for p in usb_pieces:
+            iss = p["ID_SERIAL_SHORT"]
+            instances.append(DriverSerial.__tgen(SILLABS_CP210X_UART_VENDOR, SILLABS_CP210X_UART_MODEL, iss, iss))
+
+        return instances
 
     ###########################################################################
     ###########################################################################
