@@ -3,6 +3,7 @@ from loguru import logger
 from .serial_base import ConnectorSerialBase
 from .udev_tty import SerialPortFromUsbSetting
 
+
 class ConnectorSerialTty(ConnectorSerialBase):
     """
     """
@@ -58,11 +59,11 @@ class ConnectorSerialTty(ConnectorSerialBase):
             self.log.info(f"attached to the Serial TTY Connector")
 
             self.__internal_driver                  = serial.serial_for_url(port_name, do_not_open=True)
-            self.__internal_driver.baudrate         = 19200 if "baudrate" not in kwargs else kwargs["baudrate"]
-            self.__internal_driver.bytesize         = serial.EIGHTBITS
-            self.__internal_driver.parity           = serial.PARITY_NONE
-            self.__internal_driver.stopbits         = serial.STOPBITS_ONE
-            self.__internal_driver.rtscts           = False
+            self.__internal_driver.baudrate         = kwargs.get("baudrate", 9600               )
+            self.__internal_driver.bytesize         = kwargs.get("bytesize", serial.EIGHTBITS   )
+            self.__internal_driver.parity           = kwargs.get("parity"  , serial.PARITY_NONE )
+            self.__internal_driver.stopbits         = kwargs.get("stopbits", serial.STOPBITS_ONE)
+            self.__internal_driver.rtscts           = kwargs.get("rtscts"  , False              )
             self.__internal_driver.timeout          = 10
             self.__internal_driver.write_timeout    = 10
 
