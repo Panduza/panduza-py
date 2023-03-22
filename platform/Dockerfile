@@ -2,10 +2,8 @@ FROM ubuntu:22.04
 
 # Attach to the repository
 LABEL org.opencontainers.image.source https://github.com/Panduza/panduza-py
-
 # Argument
 ARG PZA_PY_PLATFORM_MODE
-
 # Install Packages
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Europe/Paris \
     apt-get -y install \
@@ -24,7 +22,7 @@ RUN pip3 install -r /setup/requirements.txt
 RUN echo $PZA_PY_PLATFORM_MODE
 
 # Create the mirror directory
-RUN mkdir /etc/panduza
+RUN mkdir -p /etc/panduza
 
 #
 WORKDIR /setup
@@ -42,4 +40,3 @@ WORKDIR /work
 # Then run the platform
 CMD mkdir -p /etc/panduza/plugins/py; \
     python3 /usr/local/bin/pza-py-platform-run.py
-        

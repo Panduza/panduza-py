@@ -52,10 +52,10 @@ class MetaPlatform:
 
         # Drivers
         self.drivers = []
-    
+
         # Interfaces
         self.interfaces = []
-        
+
         # Tree that must be loaded at startup
         self.tree_filepath = None
 
@@ -70,7 +70,7 @@ class MetaPlatform:
         """
         self.tree_filepath = tree_filepath
         self._log.debug(f"force tree:{self.tree_filepath}")
-        
+
     ###########################################################################
     ###########################################################################
 
@@ -245,7 +245,6 @@ class MetaPlatform:
             self.register_driver(drv)
         for drv in AARDVARK_DRIVERS:
             self.register_driver(drv)
-            
 
     ###########################################################################
     ###########################################################################
@@ -334,7 +333,7 @@ class MetaPlatform:
                 # Start all the threads
                 for thread in self.threads:
                     thread.start()
-                
+
                 # Log
                 self._log.info("Platform started!")
 

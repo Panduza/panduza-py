@@ -9,7 +9,7 @@ class Dio(Interface):
     """
 
     interface:Interface = None
-    
+
     def __post_init__(self):
 
         if self.alias:
@@ -45,4 +45,3 @@ class Dio(Interface):
         ).add_field(
             RwField( name = "polling_cycle" )
         )
-

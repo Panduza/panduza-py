@@ -8,5 +8,3 @@ PZA_DRIVERS_LIST=[
     DriverHM310T,
     DriverIPS4303S
 ]
-
-

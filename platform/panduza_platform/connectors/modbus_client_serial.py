@@ -23,7 +23,7 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
     def GetV2(**kwargs):
         """Singleton main getter
 
-
+        
         :Keyword Arguments:
         * *port_name* (``str``) --
             serial port name
@@ -117,7 +117,7 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
             # create client object
             self.client = ModbusSerialClient(
                 port=key, 
-                baudrate=kwargs.get("baudrate", 9600),
+                baudrate=kwargs.get("baudrate", 112500),
                 bytesize=kwargs.get("bytesize", 8),
                 parity=kwargs.get("parity", 'N'),
                 stopbits=kwargs.get("stopbits", 1)
@@ -167,4 +167,21 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
         else:
             raise Exception(f'Error message: {response}')
 
+    def read_coils(self, address: int, size: int = 1, unit: int = 1):
+        """
+        """
+        response = self.client.read_coils(address=address, count=size, slave=unit)
+        if not response.isError():
+            return response.bits
+        else:
+            raise Exception(f'Error message: {response}')
 
+    def write_coil(self, address: int, value: bool, slave: int = 1):
+        """
+        """
+        self.log.info("inside write")
+        response = self.client.write_coils(address=address, values=value, slave=slave)
+        if not response.isError():
+            return response.__dict__
+        else:
+            raise Exception(f'Error message: {response}')
