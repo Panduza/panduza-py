@@ -270,7 +270,7 @@ class MetaDriver(metaclass=abc.ABCMeta):
     ###########################################################################
     ###########################################################################
 
-    def _update_attribute(self, attribute, field, value, push='on-change'):
+    def _update_attribute(self, attribute, field, value, push='on-change', retain = True):
         """Function that update only one attribute field
 
         Args
@@ -293,19 +293,19 @@ class MetaDriver(metaclass=abc.ABCMeta):
         if not (field in __att) or __att[field] != value:
             __att[field] = value
             if push is 'on-change':
-                self._push_attribute(attribute)
+                self._push_attribute(attribute, retain=retain)
             return True
 
         # Push anyway if the 'push' flag is set to 'always'
         if push is 'always':
-            self._push_attribute(attribute)
+            self._push_attribute(attribute, retain=retain)
 
         # Attribute not updated
         return False
 
     # ---
 
-    def _update_attributes_from_dict(self, change_dict, push=True):
+    def _update_attributes_from_dict(self, change_dict, push=True, retain = True):
         """Function that update multiple attribute and field at the same time
         """
         for attribute in change_dict:
@@ -313,7 +313,7 @@ class MetaDriver(metaclass=abc.ABCMeta):
             for field, value in change_dict[attribute].items():
                 modification = self._update_attribute(attribute, field, value, False) or modification
             if push and modification:
-                self._push_attribute(attribute)
+                self._push_attribute(attribute, retain=retain)
 
     # ---
 
@@ -325,7 +325,7 @@ class MetaDriver(metaclass=abc.ABCMeta):
     ###########################################################################
     ###########################################################################
 
-    def _remove_attribute_field(self, attribute, field, push=True):
+    def _remove_attribute_field(self, attribute, field, push=True, retain = True):
         """
         """
         # no attribute or no field with this name
@@ -337,13 +337,16 @@ class MetaDriver(metaclass=abc.ABCMeta):
         self.__drv_atts[attribute].pop(field)
         # Push if requested
         if push:
-            self._push_attribute(attribute)
+            self._push_attribute(attribute, retain=retain)
 
     ###########################################################################
     ###########################################################################
 
-    def _push_attribute(self, attribute, qos = 0, retain = False):
+    def _push_attribute(self, attribute, qos = 0, retain = True):
         """Publish the attribute
+
+        Args
+            - retain: True by default because most attribute need it
         """
         # Check for retain
         do_retain=retain
@@ -362,7 +365,7 @@ class MetaDriver(metaclass=abc.ABCMeta):
         self.log.debug(f"MSG_OUT > %{topic}% {payload} retain={do_retain}")
 
         # Publish
-        request = self.mqtt_client.publish(topic, payload, qos=qos, retain=do_retain)
+        self.mqtt_client.publish(topic, payload, qos=qos, retain=do_retain)
 
     ###########################################################################
     ###########################################################################

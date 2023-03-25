@@ -93,7 +93,7 @@ class Attribute:
         if self.name == "misc":
             return
 
-        # 
+        # Prepare counter
         self._log.debug(f"{self._lhead}ENSURE INIT")
         self._update_event.clear()
         start_time = time.perf_counter()
@@ -105,7 +105,7 @@ class Attribute:
             remaining_time = Attribute.ENSURE_TIMEOUT - (time.perf_counter()-start_time)
             # self._log.debug(f'remaining {remaining_time:0.6f} seconds')
             self._update_event.wait(remaining_time)
-        
+
         if time.perf_counter()-start_time >= Attribute.ENSURE_TIMEOUT:
             raise EnsureError(f"{self._lhead} initial data not recieved for attribute '{self.name}'")
 

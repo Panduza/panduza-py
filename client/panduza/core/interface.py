@@ -88,7 +88,6 @@ class Interface:
         """Ensure that the interface has been initialized by the broker
         """
         for att in self._attribute_names:
-            self._log.debug(f"{self._lhead} ensure init of '{att}'")
             obj = getattr(self, att)
             obj.ensure_init()
 

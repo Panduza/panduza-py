@@ -322,14 +322,16 @@ class MetaDriverPsu(MetaDriver):
         """Manage output enable commands
         """
         if "value" in cmd_att:
+            # Control field type
             v = cmd_att["value"]
-            # if not isinstance(v, int) or not isinstance(v, float):
-            #     raise Exception(f"Invalid type for volts.value {type(v)}")
+            if not isinstance(v, bool):
+                raise Exception(f"Invalid type for enable.value {type(v)}")
+            # Call driver implementations
             try:
                 self._PZADRV_PSU_write_enable_value(v)
                 self._update_attribute("enable", "value", v)
             except Exception as e:
-                self.log.error(f"{e}")
+                raise Exception(f"Fail to set enable.value ({e})")
 
     # ---
 

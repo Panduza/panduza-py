@@ -30,7 +30,7 @@ class Psu(Interface):
         ).add_field(
             RwField( name = "value" )
         )
-        
+
         # === VOLTS ===
         self.add_attribute(
             Attribute( name = "volts" )

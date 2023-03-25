@@ -13,9 +13,8 @@ class KeywordsPsu(object):
     def turn_power_supply(self, psu_alias, state, ensure=True):
         """Turn the psu on the given state
         """
-        assert_that(state, any_of(equal_to("on"), equal_to("off")))
         pza = BuiltIn().get_variable_value("${__pza__}")
-        pza[psu_alias].enable.value.set(state, ensure)
+        pza[psu_alias].enable.value.set(boolean_str_to_boolean(state), ensure)
 
     # ---
 
@@ -24,7 +23,7 @@ class KeywordsPsu(object):
         """Turn on the psu
         """
         pza = BuiltIn().get_variable_value("${__pza__}")
-        pza[psu_alias].enable.value.set("on", ensure)
+        pza[psu_alias].enable.value.set(boolean_str_to_boolean("on"), ensure)
 
     # ---
 
@@ -38,7 +37,7 @@ class KeywordsPsu(object):
             # It is ok if panduza is not initialized, only if in the teardown process
             assert not teardown
         else:
-            pza[psu_alias].enable.value.set("off", ensure)
+            pza[psu_alias].enable.value.set(boolean_str_to_boolean("off"), ensure)
 
     # ---
 
@@ -46,10 +45,10 @@ class KeywordsPsu(object):
     def power_supply_should_be(self, psu_alias, state):
         """Check power supply state
         """
-        assert_that(state, any_of(equal_to("on"), equal_to("off")))
+        expected_state_bool = boolean_str_to_boolean(state)
         pza = BuiltIn().get_variable_value("${__pza__}")
         read_state = pza[psu_alias].enable.value.get()
-        assert_that(read_state, equal_to(state))
+        assert_that(read_state, equal_to(expected_state_bool))
 
     ###########################################################################
     # VOLTS
