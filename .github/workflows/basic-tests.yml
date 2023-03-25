@@ -21,7 +21,7 @@ jobs:
 
       # ---
       - run: pip install ${GITHUB_WORKSPACE}/client
-      - run: pip install -r ${GITHUB_WORKSPACE}/platform
+      - run: pip install ${GITHUB_WORKSPACE}/platform
 
       # ---
       - run: mosquitto -d
