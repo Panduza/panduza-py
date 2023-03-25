@@ -1,4 +1,4 @@
-name: Build latest images
+name: Build Platform Image from lastest MAIN
 
 # IF PUSH ON MAIN
 on:

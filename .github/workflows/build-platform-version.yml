@@ -1,4 +1,4 @@
-name: Build versionned images
+name: Build Platform Image from TAG
 
 # IF TAG PUSHED
 on:

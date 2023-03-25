@@ -1,4 +1,4 @@
-name: Build branch image
+name: Build Platform Image from dev BRANCH
 
 # IF PUSH ON MAIN
 on:
