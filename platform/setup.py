@@ -24,10 +24,15 @@ setup(
     cmdclass={'install': CustomInstallCommand},
 
     install_requires=[
-        'loguru',
-        'paho-mqtt',
-        'pyserial',
-        'pymodbus'
+        'aardvark-py'>=5.40
+        'colorama'>=0.4.6
+        'loguru'>=0.6.0
+        'paho-mqtt'>=1.6.1
+        'pyftdi'>=0.54.0
+        'pymodbus'>=3.2.0
+        'pyserial'>=3.5
+        'pyudev'>=0.24.0
+        'pyusb'>=1.2.1
     ],
 
     classifiers=[
