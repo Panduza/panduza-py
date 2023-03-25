@@ -9,14 +9,18 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v2
 
+
       - run: echo "${GITHUB_WORKSPACE}"
+      - name: Debug
+        run: echo "`ls -la ${GITHUB_WORKSPACE}`"
+
 
       - run: apt-get update
       - run: apt-get install -y mosquitto git
       - run: apt-get install -y python3 python3-pip
 
-      - run: pip install client
-      - run: pip install -r platform/requirements.txt
+      - run: pip install ${GITHUB_WORKSPACE}/client
+      - run: pip install -r ${GITHUB_WORKSPACE}/platform/requirements.txt
       # - run: pip install PyHamcrest coverage loguru
       # - run: pip install behave-html-formatter
       # - run: pip install python-magic
@@ -24,9 +28,6 @@ jobs:
       # - run: pip install git+https://github.com/Panduza/panduza-py-platform@$PLATFORM_PY_BRANCH
 
       - run: mosquitto -d
-
-      - name: Debug
-        run: echo "`ls -la ${GITHUB_WORKSPACE}`"
 
 
       # - name: Execute tests
