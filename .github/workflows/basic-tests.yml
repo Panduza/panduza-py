@@ -21,13 +21,13 @@ jobs:
 
       # ---
       - run: pip install ${GITHUB_WORKSPACE}/client
-      - run: pip install ${GITHUB_WORKSPACE}/platform
+      # - run: pip install ${GITHUB_WORKSPACE}/platform
 
       # ---
       - run: mosquitto -d
 
       # ---
-      - run: python3 ${GITHUB_WORKSPACE}/platform/deploy/pza-py-platform-run.py
+      # - run: python3 ${GITHUB_WORKSPACE}/platform/deploy/pza-py-platform-run.py
 
 
       # - name: Execute tests
