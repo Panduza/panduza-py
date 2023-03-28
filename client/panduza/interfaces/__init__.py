@@ -1,4 +1,4 @@
-from .io import Io
+from .dio import Dio
 from .psu import Psu
 from .serial_ import Serial
 from .modbus_client import ModbusClient
