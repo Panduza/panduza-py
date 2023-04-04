@@ -10,9 +10,8 @@ jobs:
         uses: actions/checkout@v2
 
       # ---
-      - run: echo "${GITHUB_WORKSPACE}"
       - name: Debug
-        run: echo "`ls -la ${GITHUB_WORKSPACE}`"
+        run: echo "`ls -la ."
 
       # ---
       - run: apt-get update
@@ -20,8 +19,8 @@ jobs:
       - run: apt-get install -y python3 python3-pip
 
       # ---
-      - run: pip install ${GITHUB_WORKSPACE}/client
-      # - run: pip install ${GITHUB_WORKSPACE}/platform
+      - run: pip install ./client/
+      - run: pip install ./platform/
 
       # ---
       - run: mosquitto -d
