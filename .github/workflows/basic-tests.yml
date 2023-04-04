@@ -11,7 +11,7 @@ jobs:
 
       # ---
       - name: Debug
-        run: echo "`ls -la ."
+        run: ls -la .
 
       # ---
       - run: apt-get update
