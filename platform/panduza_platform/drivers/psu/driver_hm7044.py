@@ -1,6 +1,5 @@
 import time
 import serial
-from loguru import logger
 from panduza_platform import MetaDriverPsu
 
 class DriverHm7044(MetaDriverPsu):

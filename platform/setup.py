@@ -26,7 +26,6 @@ setup(
     install_requires=[
         'aardvark-py>=5.40',
         'colorama>=0.4.6',
-        'loguru>=0.6.0',
         'paho-mqtt>=1.6.1',
         'pyftdi>=0.54.0',
         'pymodbus>=3.2.0',

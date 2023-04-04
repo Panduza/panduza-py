@@ -1,5 +1,4 @@
 import serial
-from loguru import logger
 from .serial_base import ConnectorSerialBase
 from .udev_tty import SerialPortFromUsbSetting
 

@@ -6,7 +6,6 @@ import asyncio
 import traceback
 import threading
 import paho.mqtt.client as mqtt
-from loguru import logger
 import logging
 
 from .log.driver import driver_logger
@@ -135,7 +134,7 @@ class MetaDriver(metaclass=abc.ABCMeta):
             self.log.exception("Critical error on driver %s (%s)" % (self._name, e))
 
         # Info
-        logger.info("Interface '{}' stopped !", self._name)
+        logging.info("Interface '{}' stopped !", self._name)
 
     ###########################################################################
     ###########################################################################
@@ -292,12 +291,12 @@ class MetaDriver(metaclass=abc.ABCMeta):
         __att = self.__drv_atts[attribute]
         if not (field in __att) or __att[field] != value:
             __att[field] = value
-            if push is 'on-change':
+            if push == 'on-change':
                 self._push_attribute(attribute, retain=retain)
             return True
 
         # Push anyway if the 'push' flag is set to 'always'
-        if push is 'always':
+        if push == 'always':
             self._push_attribute(attribute, retain=retain)
 
         # Attribute not updated

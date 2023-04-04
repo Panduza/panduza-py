@@ -1,5 +1,4 @@
 from .spi_master_base import ConnectorSPIMasterBase
-from loguru import logger
 
 import aardvark_py
 

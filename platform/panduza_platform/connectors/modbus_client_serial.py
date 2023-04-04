@@ -1,6 +1,5 @@
 import time
 import serial
-from loguru import logger
 
 from pymodbus.client import ModbusSerialClient 
 

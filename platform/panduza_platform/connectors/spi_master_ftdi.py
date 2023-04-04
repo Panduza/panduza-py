@@ -1,7 +1,6 @@
 # Functions called by spi_master_base for ftdi chips
 
 from .spi_master_base import ConnectorSPIMasterBase
-from loguru import logger
 import pyftdi.spi as Spi
 from pyftdi.ftdi import Ftdi
 from pyftdi.usbtools import UsbToolsError
