@@ -27,7 +27,7 @@ jobs:
       - run: mosquitto -d
 
       # ---
-      # - run: python3 ${GITHUB_WORKSPACE}/platform/deploy/pza-py-platform-run.py
+      - run: python3 ./platform/deploy/pza-py-platform-run.py --tree ./tests/pza/tree.json
 
 
       # - name: Execute tests
