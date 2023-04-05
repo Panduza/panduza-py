@@ -27,17 +27,15 @@ jobs:
       - run: mosquitto -d
 
       # ---
-      - run: python3 ./platform/deploy/pza-py-platform-run.py ./tests/pza/tree.json
+      - run: python3 ./platform/deploy/pza-py-platform-run.py ./tests/pza/tree.json &
 
-
-      # - name: Execute tests
-      #   run: coverage run --source='panduza' -m behave
+      # ---
+      - name: Execute tests
+        working-directory: tests
+        run: robot robot/*
       #   env:
       #     PYTHONPATH: "."
       #     COVERAGE_PROCESS_START: "NO"
-
-
-      # - run: echo "`ls -la ${GITHUB_WORKSPACE}`"
 
 
       # - name: Covergae Report
