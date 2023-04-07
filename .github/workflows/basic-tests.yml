@@ -39,8 +39,8 @@ jobs:
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: Export Reports
-          path: tests
+          name: tests-report
+          path: tests/
 
       # ---
       - run: echo "🎉 Basic Tests finished !"
