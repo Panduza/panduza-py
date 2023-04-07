@@ -317,7 +317,7 @@ class MetaDriverPsu(MetaDriver):
         })
 
     # ---
-    
+
     def __handle_cmds_set_enable(self, cmd_att):
         """Manage output enable commands
         """
@@ -329,7 +329,7 @@ class MetaDriverPsu(MetaDriver):
             # Call driver implementations
             try:
                 self._PZADRV_PSU_write_enable_value(v)
-                self._update_attribute("enable", "value", v)
+                self._update_attribute("enable", "value", v, push='always')
             except Exception as e:
                 raise Exception(f"Fail to set enable.value ({e})")
 
@@ -345,8 +345,8 @@ class MetaDriverPsu(MetaDriver):
                 raise Exception(f"Invalid type for volts.polling_cycle {type(v)}")
             if v < 0:
                 v = -1
-            self._update_attribute("volts", "polling_cycle", v)
-            
+            self._update_attribute("volts", "polling_cycle", v, push='always')
+
         # GOAL
         if "goal" in cmd_att:
             v = cmd_att["goal"]
@@ -381,8 +381,8 @@ class MetaDriverPsu(MetaDriver):
                 raise Exception(f"Invalid type for amps.polling_cycle {type(v)}")
             if v < 0:
                 v = -1
-            self._update_attribute("amps", "polling_cycle", v)
-            
+            self._update_attribute("amps", "polling_cycle", v, push='always')
+
         # GOAL
         if "goal" in cmd_att:
             v = cmd_att["goal"]
