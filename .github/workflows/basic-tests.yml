@@ -34,30 +34,14 @@ jobs:
       - name: Execute tests
         working-directory: tests
         run: robot robot/*
-      #   env:
-      #     PYTHONPATH: "."
-      #     COVERAGE_PROCESS_START: "NO"
 
+      # ---
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: Export Reports
+          path: tests
 
-      # - name: Covergae Report
-      #   run: coverage report
-
-
-      # - name: Execute tests to html
-      #   run: coverage run --source='panduza' -m behave -f html -o acceptance/report/test.html
-      #   env:
-      #     PYTHONPATH: ".."
-      #     COVERAGE_PROCESS_START: "NO"
-
-      # - name: Coverage Report to html
-      #   run: coverage html -d acceptance/report/coverage
-
-      # - uses: actions/upload-artifact@v3
-      #   if: always()
-      #   with:
-      #     name: acceptance-report
-      #     path: acceptance/report
-
-
+      # ---
       - run: echo "🎉 Basic Tests finished !"
 

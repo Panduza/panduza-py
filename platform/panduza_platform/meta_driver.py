@@ -291,7 +291,7 @@ class MetaDriver(metaclass=abc.ABCMeta):
         __att = self.__drv_atts[attribute]
         if not (field in __att) or __att[field] != value:
             __att[field] = value
-            if push == 'on-change':
+            if push == 'on-change' or push == 'always':
                 self._push_attribute(attribute, retain=retain)
             return True
 

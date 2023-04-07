@@ -205,7 +205,7 @@ class Attribute:
                 self._update_event.wait(remaining_time)
 
             if time.perf_counter()-start_time >= Attribute.ENSURE_TIMEOUT:
-                raise EnsureError(f"{self._lhead} {kwargs}")
+                raise EnsureError(f"client did not recieved a correct answer when changing attributes {self._lhead} with {kwargs}")
 
     # ---
 
