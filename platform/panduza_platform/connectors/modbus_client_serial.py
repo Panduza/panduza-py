@@ -3,7 +3,7 @@ import serial
 import logging
 
 from pymodbus.client import ModbusSerialClient 
-
+from loguru import logger
 from .udev_tty import TTYPortFromUsbInfo
 from .udev_tty import SerialPortFromUsbSetting
 
@@ -45,10 +45,12 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
         """
 
         # Get the serial port name
+        logger.debug("inside init")
         port_name = None
         if "port_name" in kwargs:
             port_name = kwargs["port_name"]
         elif "vendor" in kwargs:
+            logger.debug("inside init")
             port_name = SerialPortFromUsbSetting(**kwargs)
             kwargs["port_name"] = port_name
         else:
@@ -177,11 +179,21 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
         else:
             raise Exception(f'Error message: {response}')
 
-    def write_coil(self, address: int, value: bool, slave: int = 1):
+    def write_coils(self, address: int, value: bool, slave: int = 1):
         """
         """
         self.log.info("inside write")
         response = self.client.write_coils(address=address, values=value, slave=slave)
+        if not response.isError():
+            return response.__dict__
+        else:
+            raise Exception(f'Error message: {response}')
+        
+    def write_coil(self, address: int, value: bool, slave: int = 1):
+        """
+        """
+        self.log.info("inside write")
+        response = self.client.write_coil(address=address, value=value, slave=slave)
         if not response.isError():
             return response.__dict__
         else:
