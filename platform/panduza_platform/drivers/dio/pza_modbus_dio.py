@@ -5,9 +5,9 @@ from ...connectors.modbus_client_serial import ConnectorModbusClientSerial
 
 
 
-DIO_USBID_VENDOR="16c0"
 DIO_USBID_MODEL="05e1"
-DIO_TTY_BASE="/dev/ttyACM0"
+DIO_USBID_VENDOR="16c0"
+DIO_SERIAL_SHORT = "E6614C311B888B35"
 DIO_USB_BAUDRATE=112500
 
 class DriverPZA_MODBUS_DIO(MetaDriverDio):
@@ -31,7 +31,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         settings = dict() if "settings" not in tree else tree["settings"]
         settings["vendor"] = DIO_USBID_VENDOR
         settings["model"] = DIO_USBID_MODEL
-        settings["base_devname"] = DIO_TTY_BASE
+        settings["serial_short"] = DIO_SERIAL_SHORT
         settings["baudrate"] = DIO_USB_BAUDRATE
 
         self.modbus_connector = ConnectorModbusClientSerial.GetV2(**settings) # init the connector
@@ -87,7 +87,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
             response = self.modbus_connector.write_coil(82,True,1) # gpio 18
             time.sleep(2)
             response = self.modbus_connector.write_coil(82,False,1) # gpio 18
-            
+
         return self.__dir["direction"]["value"]
 
     def _PZADRV_DIO_set_direction_value(self, v):

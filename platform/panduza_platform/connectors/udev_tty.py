@@ -53,7 +53,7 @@ def SerialPortFromUsbSetting(**kwargs):
     vendor          = None if "vendor" not in kwargs else kwargs["vendor"]
     model           = None if "model" not in kwargs else kwargs["model"]
     serial_short    = None if "serial_short" not in kwargs else kwargs["serial_short"]
-    base_devname    = "/dev/ttyACM" if "base_devname" not in kwargs else kwargs["base_devname"]
+    base_devname    = None if "base_devname" not in kwargs else kwargs["base_devname"]
 
     # Explore usb device with tty subsystem
     udev_context = pyudev.Context()
@@ -63,8 +63,7 @@ def SerialPortFromUsbSetting(**kwargs):
         # For debugging purpose
         # logger.debug(f"{properties}")
 
-        # Need to find the one with the DEVNAME corresponding to the /dev serial port
-        if 'DEVNAME' not in properties or not properties['DEVNAME'].startswith(base_devname):
+        if 'ID_SERIAL_SHORT' not in properties or not properties['ID_SERIAL_SHORT'].startswith(serial_short):
             continue
 
         # Checks
@@ -72,7 +71,7 @@ def SerialPortFromUsbSetting(**kwargs):
             continue
         if model and (model != properties["ID_MODEL_ID"]):
             continue
-        if serial_short and (serial_short != properties["ID_SERIAL_SHORT"]):
+        if base_devname and (base_devname != properties["DEVNAME"]):
             continue
 
         return properties["DEVNAME"]
