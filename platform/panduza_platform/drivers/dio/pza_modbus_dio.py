@@ -69,11 +69,44 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
 
     def _PZADRV_DIO_get_direction_value(self):
         self.log.info(f"read direction value : {self.__dir['direction']['value']} !")
+        if self.__dir['direction']['value'] == "toggle_led_1":
+
+            self.log.info("turn on led 1")
+            response = self.modbus_connector.write_coil(1,True,1)
+            response = self.modbus_connector.write_coil(65,True,1) # gpio 1
+            time.sleep(2)
+            response = self.modbus_connector.write_coil(65,False,1) # gpio 1
+
+        elif self.__dir['direction']['value'] == "toggle_led_2":
+            self.log.info("turn on led 2")
+            response = self.modbus_connector.write_coil(2,True,1)
+            response = self.modbus_connector.write_coil(66,True,1) # gpio 2
+            time.sleep(2)
+            response = self.modbus_connector.write_coil(66,False,1) # gpio 2
+
+        elif self.__dir['direction']['value'] == "toggle_led_16":
+            self.log.info("turn on led 16")
+            response = self.modbus_connector.write_coil(16,True,1)
+            response = self.modbus_connector.write_coil(80,True,1) # gpio 16
+            time.sleep(2)
+            response = self.modbus_connector.write_coil(80,False,1) # gpio 16
+
+        elif self.__dir['direction']['value'] == "toggle_led_18":
+            self.log.info("turn on led 18")
+            response = self.modbus_connector.write_coil(18,True,1)
+            response = self.modbus_connector.write_coil(82,True,1) # gpio 18
+            time.sleep(2)
+            response = self.modbus_connector.write_coil(82,False,1) # gpio 18
+            
         return self.__dir["direction"]["value"]
 
+<<<<<<< HEAD
 
     # configure the direction and value of io 
     def _PZADRV_DIO_set_direction_value(self, v): # vlaue direction (in/out)
+=======
+    def _PZADRV_DIO_set_direction_value(self, v):
+>>>>>>> 8049d96... dio driver initialized after merge of first dio branch
         self.log.info(f"set direction value : {v}")
         self.__dir["direction"]["value"] = v
 
