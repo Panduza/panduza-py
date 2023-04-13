@@ -97,16 +97,12 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
             response = self.modbus_connector.write_coil(82,True,1) # gpio 18
             time.sleep(2)
             response = self.modbus_connector.write_coil(82,False,1) # gpio 18
-            
+
         return self.__dir["direction"]["value"]
 
-<<<<<<< HEAD
 
     # configure the direction and value of io 
     def _PZADRV_DIO_set_direction_value(self, v): # vlaue direction (in/out)
-=======
-    def _PZADRV_DIO_set_direction_value(self, v):
->>>>>>> 8049d96... dio driver initialized after merge of first dio branch
         self.log.info(f"set direction value : {v}")
         self.__dir["direction"]["value"] = v
 
