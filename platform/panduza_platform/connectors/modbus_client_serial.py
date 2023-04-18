@@ -49,12 +49,10 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
         """
 
         # Get the serial port name
-        logger.debug("inside init")
         port_name = None
         if "port_name" in kwargs:
             port_name = kwargs["port_name"]
         elif "vendor" in kwargs:
-            logger.debug("inside init")
             port_name = SerialPortFromUsbSetting(**kwargs)
             kwargs["port_name"] = port_name
         else:
