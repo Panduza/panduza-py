@@ -7,7 +7,6 @@ from ...connectors.modbus_client_serial import ConnectorModbusClientSerial
 
 DIO_USBID_MODEL="05e1"
 DIO_USBID_VENDOR="16c0"
-DIO_SERIAL_SHORT = "E6614C311B888B35"
 DIO_USB_BAUDRATE=112500
 
 class DriverPZA_MODBUS_DIO(MetaDriverDio):
@@ -31,7 +30,6 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         settings = dict() if "settings" not in tree else tree["settings"]
         settings["vendor"] = DIO_USBID_VENDOR
         settings["model"] = DIO_USBID_MODEL
-        settings["serial_short"] = DIO_SERIAL_SHORT
         settings["baudrate"] = DIO_USB_BAUDRATE
 
         self.modbus_connector = ConnectorModbusClientSerial.GetV2(**settings) # init the connector
