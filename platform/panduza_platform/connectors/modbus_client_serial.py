@@ -1,5 +1,6 @@
 import time
 import serial
+import logging
 
 from pymodbus.client import ModbusSerialClient 
 
@@ -56,12 +57,12 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
         # Create the new connector
         if not (port_name in ConnectorModbusClientSerial.__instances):
             ConnectorModbusClientSerial.__instances[port_name] = None
-            try:
-                new_instance = ConnectorModbusClientSerial(**kwargs)
-                ConnectorModbusClientSerial.__instances[port_name] = new_instance
-            except Exception as e:
-                ConnectorModbusClientSerial.__instances.pop(port_name)
-                raise Exception('Error during initialization').with_traceback(e.__traceback__)
+            # try:
+            new_instance = ConnectorModbusClientSerial(**kwargs)
+            ConnectorModbusClientSerial.__instances[port_name] = new_instance
+            # except Exception as e:
+            #     ConnectorModbusClientSerial.__instances.pop(port_name)
+            #     raise Exception('Error during initialization').with_traceback(e.__traceback__)
 
         # Return the previously created
         return ConnectorModbusClientSerial.__instances[port_name]
@@ -76,7 +77,7 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
         """
 
         # Warning DEPRECATED !!!
-        logger.warning("ConnectorModbusClientSerial::Get() deprecated use GetV2()")
+        logging.warning("ConnectorModbusClientSerial::Get() deprecated use GetV2()")
 
         # Get the serial port key
         port_name = None
@@ -111,7 +112,7 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
         if not (key in ConnectorModbusClientSerial.__instances):
             raise Exception("You need to pass through Get method to create an instance")
         else:
-            self.log = logger.bind(driver_name=key)
+            self.log = logging.getLogger(key)
             self.log.info(f"attached to the Modbus Serial Client Connector")
 
             # create client object

@@ -122,10 +122,20 @@ class DriverQL355P(MetaDriverPsu):
     def _PZADRV_PSU_read_volts_goal(self):
         return self.volts
 
+    def _PZADRV_PSU_read_volts_real(self):
+        return 0
+    
     def _PZADRV_PSU_write_volts_goal(self, v):
         self.volts = v
         self.__write(f"V1 {v:.3f}")
 
+    # ---
+
+    def _PZADRV_PSU_read_volts_decimals(self):
+        return 2
+
+    # ---
+    
     def _PZADRV_PSU_read_amps_goal(self):
         return self.amps
     
@@ -133,6 +143,13 @@ class DriverQL355P(MetaDriverPsu):
         self.amps = v
         self.__write(f"I1 {v:.3f}")
 
+    def _PZADRV_PSU_read_amps_real(self):
+        return 0
+
+    # ---
+
+    def _PZADRV_PSU_read_amps_decimals(self):
+        return 3
     ###########################################################################
     ###########################################################################
 

@@ -7,7 +7,7 @@ HM310T_USBID_VENDOR="1a86"
 HM310T_USBID_MODEL="7523"
 HM310T_TTY_BASE="/dev/ttyUSB"
 
-STATE_VALUE_ENUM = { "on": 1 , "off": 0  }
+STATE_VALUE_ENUM = { True : 1, False: 0  }
 VOLTS_BOUNDS     = { "min": 0, "max": 30 }
 AMPS_BOUNDS      = { "min": 0, "max": 10 }
 

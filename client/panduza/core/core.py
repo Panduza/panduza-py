@@ -71,6 +71,8 @@ class Core:
             json_filepath (string, optional): File containing json connections declaration. Defaults to Null.
         """
         if connections:
+            if type(connections) == str:
+                connections = json.loads(connections)
             Core.__LoadAliasesFromDict(connections)
         elif json_filepath:
             Core.__LoadAliasesFromFile(json_filepath)
@@ -97,21 +99,21 @@ class Core:
         """
         # Go through connections and sort them into internal attributes
         CoreLog.info(f"Load aliases from dict : {connections}")
-        for co in connections:
+        for co_name, co_data in connections.items():
 
             # Load connection
-            CoreLog.info(f"   Load connection : {co}")
-            Core.Connections[co] = {
-                "url": connections[co]["url"],
-                "port": connections[co]["port"]
+            CoreLog.info(f"   Load connection : {co_name} & {co_data}")
+            Core.Connections[co_name] = {
+                "url": co_data["url"],
+                "port": co_data["port"]
             }
 
             # Load aliases
-            for it in connections[co]["interfaces"]:
+            for it in co_data["interfaces"]:
                 CoreLog.info(f"      Load interface : {it}")
                 Core.Aliases[it] = {
-                    "co": co,
-                    "base_topic": connections[co]["interfaces"][it]
+                    "co": co_name,
+                    "base_topic": co_data["interfaces"][it]
                 }
 
     ###########################################################################

@@ -67,9 +67,16 @@ class MetaDriver(metaclass=abc.ABCMeta):
         if not ("name" in self._tree):
             raise Exception("Name of the interface is required !")
 
-        # Init name and logger
+        # Get name
         self._name = self._tree["name"]
-        self.log = driver_logger(self._name)
+        
+        # Get group name
+        group_name = self._tree["driver"]
+        if "group" in self._tree:
+            group_name = self._tree["group"]
+
+        # Init logger
+        self.log = driver_logger(f"{group_name}.{self._name}")
 
         # Check for name in the driver tree
         if not ("info" in self._PZADRV_config()):
@@ -79,9 +86,6 @@ class MetaDriver(metaclass=abc.ABCMeta):
         self.__drv_atts["info"] = self._PZADRV_config()["info"]
         
         # Topic base
-        group_name = self._tree["driver"]
-        if "group" in self._tree:
-            group_name = self._tree["group"]
         self.topic = "pza/" + self._machine + "/" + group_name + "/" + self._name
         self.topic_size = len(self.topic)
 
@@ -197,8 +201,7 @@ class MetaDriver(metaclass=abc.ABCMeta):
         try:
             self._PZADRV_loop_init(self._tree)
         except Exception as e:
-            print(traceback.format_exc())
-            self._pzadrv_error_detected(str(e))
+            self._pzadrv_error_detected(str(e) + " " + traceback.format_exc())
 
     async def __drv_state_run(self):
         """
@@ -206,8 +209,7 @@ class MetaDriver(metaclass=abc.ABCMeta):
         try:
             self._PZADRV_loop_run()
         except Exception as e:
-            print(traceback.format_exc())
-            self._pzadrv_error_detected(str(e))
+            self._pzadrv_error_detected(str(e) + " " + traceback.format_exc())
 
     async def __drv_state_err(self):
         """

@@ -1,4 +1,5 @@
 import serial
+import logging
 from .serial_base import ConnectorSerialBase
 from .udev_tty import SerialPortFromUsbSetting
 
@@ -31,12 +32,12 @@ class ConnectorSerialTty(ConnectorSerialBase):
         # Create the new connector
         if not (port_name in ConnectorSerialTty.__instances):
             ConnectorSerialTty.__instances[port_name] = None
-            try:
-                new_instance = ConnectorSerialTty(**kwargs)
-                ConnectorSerialTty.__instances[port_name] = new_instance
-            except Exception as e:
-                ConnectorSerialTty.__instances.pop(port_name)
-                raise Exception('Error during initialization').with_traceback(e.__traceback__)
+            # try:
+            new_instance = ConnectorSerialTty(**kwargs)
+            ConnectorSerialTty.__instances[port_name] = new_instance
+            # except Exception as e:
+            #     ConnectorSerialTty.__instances.pop(port_name)
+            #     raise Exception('Error during initialization').with_traceback(e.__traceback__)
 
         # Return the previously created
         return ConnectorSerialTty.__instances[port_name]
@@ -53,7 +54,7 @@ class ConnectorSerialTty(ConnectorSerialBase):
         if not (port_name in ConnectorSerialTty.__instances):
             raise Exception("You need to pass through Get method to create an instance")
         else:
-            self.log = logger.bind(driver_name=port_name)
+            self.log = logging.getLogger(port_name)
             self.log.info(f"attached to the Serial TTY Connector")
 
             self.__internal_driver                  = serial.serial_for_url(port_name, do_not_open=True)
