@@ -33,7 +33,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         settings["baudrate"] = DIO_USB_BAUDRATE
 
         self.modbus_connector = ConnectorModbusClientSerial.GetV2(**settings) # init the connector
-
+        
         # first configuration
         self.__dir = {
             "direction":{
@@ -57,41 +57,21 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
 
     def _PZADRV_DIO_get_direction_value(self):
         self.log.info(f"read direction value : {self.__dir['direction']['value']} !")
-        if self.__dir['direction']['value'] == "toggle_led_1":
-
-            self.log.info("turn on led 1")
-            response = self.modbus_connector.write_coil(1,True,1)
-            response = self.modbus_connector.write_coil(65,True,1) # gpio 1
-            time.sleep(2)
-            response = self.modbus_connector.write_coil(65,False,1) # gpio 1
-
-        elif self.__dir['direction']['value'] == "toggle_led_2":
-            self.log.info("turn on led 2")
-            response = self.modbus_connector.write_coil(2,True,1)
-            response = self.modbus_connector.write_coil(66,True,1) # gpio 2
-            time.sleep(2)
-            response = self.modbus_connector.write_coil(66,False,1) # gpio 2
-
-        elif self.__dir['direction']['value'] == "toggle_led_16":
-            self.log.info("turn on led 16")
-            response = self.modbus_connector.write_coil(16,True,1)
-            response = self.modbus_connector.write_coil(80,True,1) # gpio 16
-            time.sleep(2)
-            response = self.modbus_connector.write_coil(80,False,1) # gpio 16
-
-        elif self.__dir['direction']['value'] == "toggle_led_18":
-            self.log.info("turn on led 18")
-            response = self.modbus_connector.write_coil(18,True,1)
-            response = self.modbus_connector.write_coil(82,True,1) # gpio 18
-            time.sleep(2)
-            response = self.modbus_connector.write_coil(82,False,1) # gpio 18
 
         return self.__dir["direction"]["value"]
 
     def _PZADRV_DIO_set_direction_value(self, v):
         self.log.info(f"set direction value : {v}")
         self.__dir["direction"]["value"] = v
-    
+
+        if self.__dir['direction']['value'] == v:
+            self.log.info(f"turn on led {v}")
+            self.modbus_connector.write_coil(v,True,1)
+            self.modbus_connector.write_coil(v+1,False,1)
+            self.modbus_connector.write_coil(64+v,True,1)
+            time.sleep(2)
+            self.modbus_connector.write_coil(64+v,False,1)
+
     def _PZADRV_DIO_get_direction_pull(self):
         self.log.info(f"read direction pull : {self.__dir['direction']['pull']}!")
         return self.__dir["direction"]["pull"]
@@ -99,7 +79,16 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
     def _PZADRV_DIO_set_direction_pull(self, v):
         self.log.info(f"set direction pull : {v}")
         self.__dir["direction"]["pull"] = v
-    
+        gpio = self.__dir["direction"]["value"]
+
+        if self.__dir["direction"]["pull"]  == "up":
+            self.log.info("set gpio as pull up")
+            self.modbus_connector.write_coil(gpio+32, True,1)
+        elif self.__dir["direction"]["pull"]  == "down":
+            self.log.info("set gpio as pull down")
+            self.modbus_connector.write_coil(gpio+32, False,1)
+
+
     def _PZADRV_DIO_get_state_active(self):
         self.log.info(f"read state active : {self.__dir['state']['active']}!")
         return self.__dir["state"]["active"]
