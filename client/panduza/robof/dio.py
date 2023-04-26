@@ -29,6 +29,7 @@ class KeywordsDio(object):
         pza = BuiltIn().get_variable_value("${__pza__}")
         pza[dio_alias].direction.polling_cycle.set(float(cycle), ensure)
 
+
     ###########################################################################
     # State
     ###########################################################################
