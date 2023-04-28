@@ -41,7 +41,7 @@ class DriverAardvarkSpiMaster(MetaDriverSpiMaster):
     ###########################################################################
 
     def _PZADRV_hunt_instances(self):
-        instances = ConnectorSPIMasterAardvark.hunt()
+        instances = [] # ConnectorSPIMasterAardvark.hunt()
 
         # 0403:6001 Future Technology Devices International, Ltd FT232 Serial (UART) IC
         # 0403:e0d0 Future Technology Devices International, Ltd Total Phase Aardvark I2C/SPI Host Adapter
