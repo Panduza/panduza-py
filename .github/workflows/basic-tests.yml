@@ -31,7 +31,6 @@ jobs:
       - name: Build and push Docker image panduza-py-platform
         uses: docker/build-push-action@v3
         with:
-          context: platform
           tags: test-image:latest
           push: false
 
@@ -40,6 +39,7 @@ jobs:
       # - run: pzadmin --hunt test_hunt_directory # need docker, should be tested with an other method
 
       - uses: addnab/docker-run-action@v3
+        working-directory: test_hunt_directory
         with:
           context: platform
           image: test-image:latest
