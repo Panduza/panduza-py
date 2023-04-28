@@ -39,9 +39,8 @@ jobs:
       # - run: pzadmin --hunt test_hunt_directory # need docker, should be tested with an other method
 
       - uses: addnab/docker-run-action@v3
-        working-directory: test_hunt_directory
         with:
-          context: platform
+          options: -v .:/etc/panduza -e HUNT=1
           image: test-image:latest
 
       # ---
