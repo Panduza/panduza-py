@@ -30,7 +30,11 @@ jobs:
 
       # ---
       - run: pzadmin --init test_hunt_directory
-      # - run: pzadmin --hunt test_hunt_directory # need docker, should be tested with an other method
+
+      # ---
+      - run: python3 ./platform/deploy/pza-py-platform-run.py 
+        env:
+          HUNT: 1
 
       # ---
       - run: mosquitto -d
