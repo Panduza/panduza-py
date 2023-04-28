@@ -55,5 +55,12 @@ jobs:
           path: tests/
 
       # ---
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: hunt-results
+          path: ./panduza/platform
+
+      # ---
       - run: echo "🎉 Basic Tests finished !"
 
