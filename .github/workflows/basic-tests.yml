@@ -24,24 +24,14 @@ jobs:
       - run: pip install ./client/
       - run: pip install ./platform/
 
-      # Login against a Docker registry except on PR
-      - name: Log into registry ${{ env.REGISTRY }}
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       # Build Docker image with Buildx
       - name: Build and push Docker image panduza-py-platform
-        id: build-and-push
+        # id: build-and-push
         uses: docker/build-push-action@v3
         with:
           context: platform
-          image: test-image:latest
+          tags: test-image:latest
           push: false
-
-
 
       # ---
       - run: pzadmin --init test_hunt_directory
