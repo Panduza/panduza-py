@@ -31,6 +31,7 @@ jobs:
       - name: Build and push Docker image panduza-py-platform
         uses: docker/build-push-action@v3
         with:
+          context: platform
           tags: test-image:latest
           push: false
 
