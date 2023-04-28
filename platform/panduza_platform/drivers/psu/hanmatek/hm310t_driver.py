@@ -2,6 +2,7 @@ import time
 from collections import ChainMap
 from panduza_platform.meta_drivers.psu import MetaDriverPsu
 from panduza_platform.connectors.modbus_client_serial import ConnectorModbusClientSerial
+from panduza_platform.connectors.udev_tty import HuntUsbDevs
 
 HM310T_USBID_VENDOR="1a86"
 HM310T_USBID_MODEL="7523"
