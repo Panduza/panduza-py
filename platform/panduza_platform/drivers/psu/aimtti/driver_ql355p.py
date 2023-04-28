@@ -10,7 +10,7 @@ QL355P_USBID_MODEL="03e8"
 QL355P_SERIAL_BAUDRATE=19200
 QL355P_TTY_BASE="/dev/ttyUSB"
 
-STATE_VALUE_ENUM = { "on": True, "off": False }
+STATE_VALUE_ENUM = { True: 1, False: 0 }
 VOLTS_BOUNDS     = { "min": 0, "max": 30 }
 AMPS_BOUNDS      = { "min": 0, "max":  5 }
 
@@ -111,37 +111,60 @@ class DriverQL355P(MetaDriverPsu):
     ###########################################################################
     ###########################################################################
 
+    # STATE #
+
     def _PZADRV_PSU_read_enable_value(self):
         return self.state
+
+    # ---
 
     def _PZADRV_PSU_write_enable_value(self, v):
         self.state = v
         cmd = STATE_VALUE_ENUM[v]
         self.__write(f"OP1 {int(cmd)}")
 
+    # VOLTS #
+
     def _PZADRV_PSU_read_volts_goal(self):
         return self.volts
+
+    # ---
 
     def _PZADRV_PSU_read_volts_real(self):
         return 0
     
+    # ---
+
     def _PZADRV_PSU_write_volts_goal(self, v):
         self.volts = v
         self.__write(f"V1 {v:.3f}")
 
     # ---
 
+    def _PZADRV_PSU_volts_goal_min_max(self):
+        return VOLTS_BOUNDS
+    # ---
+
     def _PZADRV_PSU_read_volts_decimals(self):
         return 2
 
-    # ---
+    # AMPS #
     
     def _PZADRV_PSU_read_amps_goal(self):
         return self.amps
-    
+
+    # ---
+
     def _PZADRV_PSU_write_amps_goal(self, v):
         self.amps = v
         self.__write(f"I1 {v:.3f}")
+
+    # ---
+    
+    def _PZADRV_PSU_amps_goal_min_max(self):
+        return AMPS_BOUNDS
+    
+    # ---
 
     def _PZADRV_PSU_read_amps_real(self):
         return 0
@@ -150,6 +173,16 @@ class DriverQL355P(MetaDriverPsu):
 
     def _PZADRV_PSU_read_amps_decimals(self):
         return 3
+    
+    # SETTINGS #
+
+    def _PZADRV_PSU_settings_capabilities(self):
+        return  {
+            "ovp": False,
+            "ocp": False,
+            "silent": False,
+        }
+    
     ###########################################################################
     ###########################################################################
 
