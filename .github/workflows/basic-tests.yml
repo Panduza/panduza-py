@@ -37,6 +37,10 @@ jobs:
           HUNT: 1
 
       # ---
+      - name: Debug
+        run: ls -la .
+
+      # ---
       - run: mosquitto -d
 
       # ---
