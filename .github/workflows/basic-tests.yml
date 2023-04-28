@@ -39,6 +39,13 @@ jobs:
       # ---
       - name: Debug
         run: ls -la .
+      # ---
+      - name: Debug
+        run: ls -la /etc/panduza
+      # ---
+      - name: Debug
+        run: ls -la ./platform
+
 
       # ---
       - run: mosquitto -d
@@ -59,11 +66,11 @@ jobs:
           path: tests/
 
       # ---
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: hunt-results
-          path: ./panduza/platform
+      # - uses: actions/upload-artifact@v3
+      #   if: always()
+      #   with:
+      #     name: hunt-results
+      #     path: /etc/panduza/platform
 
       # ---
       - run: echo "🎉 Basic Tests finished !"
