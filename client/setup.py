@@ -1,10 +1,6 @@
 from setuptools import setup, find_packages
 from setuptools.command.install import install
 
-class CustomInstallCommand(install):
-    def run(self):
-        install.run(self)
-
 # Setting up
 setup(
         name="panduza", 
@@ -14,9 +10,14 @@ setup(
         description='Wrapper for Panduza MQTT Calls',
         long_description='This library provides simple wrapper to help implementing tests through panduza interfaces',
         packages=find_packages(),
-        cmdclass={'install': CustomInstallCommand},
 
-        install_requires=['paho-mqtt', 'python-magic', 'colorama', 'robotframework-pythonlibcore'],
+        install_requires=['setuptools', 'paho-mqtt', 'python-magic', 'colorama', 'robotframework-pythonlibcore'],
+
+        entry_points={
+            'console_scripts': [
+                'pzadmin=panduza.admin.pzadmin:pzadmin_main',
+            ],
+        },
 
         classifiers= [
             "Development Status :: 3 - Alpha",
