@@ -21,7 +21,7 @@ jobs:
       - run: pip install ./platform/
 
       # ---
-      - run: pzadmin --init test_hunt_directory
+      - run: pzadmin init test_hunt_directory
 
       # ---
       - run: python3 ./platform/deploy/pza-py-platform-run.py 

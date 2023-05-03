@@ -88,10 +88,10 @@ protocol websockets
             f.write(json.dumps(tree, indent=4))
 
 
-def init_directory(directory_path):
-    os.makedirs(directory_path, exist_ok=True)
-    os.makedirs(Path(directory_path) / 'data', exist_ok=True)
-    DockerComposeWriter(Path(directory_path) / 'docker-compose.yml').write()
-    TreeWriter(Path(directory_path) / 'tree.json').write()
-    MosquittoConfWriter(Path(directory_path) / 'data/mosquitto.conf').write()
+def init_directory(args):
+    os.makedirs(args.directory_path, exist_ok=True)
+    os.makedirs(Path(args.directory_path) / 'data', exist_ok=True)
+    DockerComposeWriter(Path(args.directory_path) / 'docker-compose.yml').write()
+    TreeWriter(Path(args.directory_path) / 'tree.json').write()
+    MosquittoConfWriter(Path(args.directory_path) / 'data/mosquitto.conf').write()
 
