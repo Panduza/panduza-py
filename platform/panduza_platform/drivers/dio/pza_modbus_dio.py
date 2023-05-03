@@ -32,7 +32,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         self.settings["model"] = DIO_USBID_MODEL
         self.settings["baudrate"] = DIO_USB_BAUDRATE
         self.settings["usb_serial_id"]
-        DIO_GPIO_ID = self.settings["gpio_id"]
+        self.settings["gpio_id"]
         
         self.modbus = ConnectorModbusClientSerial.GetV2(**self.settings) # init the connector
         self.log.info(tree["settings"])
@@ -66,26 +66,18 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
     def _PZADRV_DIO_set_direction_value(self, v): # vlaue direction (in/out)
         self.log.info(f"set direction value : {v}")
         self.__dir["direction"]["value"] = v
-        io = self.settings["gpio_id"] # get the gpio_id number
-        self.log.debug(f"value of io repeated {io}")
+        gpio_id = self.settings["gpio_id"] # get the gpio_id number
+        self.log.debug(f"value of io repeated {gpio_id}")
 
         if v == "out":    
             self.log.info(f"it's a output")
-            self.modbus.write_coil(int(io),True,DIO_MODBUS_ADDR) # configure output+
-            self.modbus.write_coil(64+int(io),1,DIO_MODBUS_ADDR)  # write to coil
+            self.modbus.write_coil(int(gpio_id),True,DIO_MODBUS_ADDR) # configure output+
+            self.modbus.write_coil(64+int(gpio_id),1,DIO_MODBUS_ADDR)  # write to coil
             
-            test = self.modbus.read_discrete_inputs(int(io)+1,1,DIO_MODBUS_ADDR)
-            self.log.warning(f"value of IO 1 {test}")
+            io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR)
+            self.log.warning(f"value of IO 1 {io_controling}")
             time.sleep(2)
-            self.modbus.write_coil(64+int(io),False,DIO_MODBUS_ADDR)
-
-        #         
-        # if self.__dir["direction"]["value"] == "out":
-        #     self.log.info(f"turn on io {DIO_USB_GPIO_CONTROL}")
-        #     self.modbus.write_coil(DIO_USB_GPIO_CONTROL,True,DIO_MODBUS_ADDR) # configure output
-        #     self.modbus.write_coil(64+DIO_USB_GPIO_CONTROL,True,DIO_MODBUS_ADDR)  # write to coil
-        #     time.sleep(2)
-        #     self.modbus.write_coil(64+DIO_USB_GPIO_CONTROL,False,DIO_MODBUS_ADDR)
+            self.modbus.write_coil(64+int(gpio_id),False,DIO_MODBUS_ADDR)
 
     def _PZADRV_DIO_set_direction_pull(self, v):
         self.log.info(f"set direction pull : {v}")
