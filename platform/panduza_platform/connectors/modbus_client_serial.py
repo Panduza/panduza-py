@@ -189,8 +189,19 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
         
     def write_coil(self, address: int, value: bool, slave: int = 1):
         """
+        write to single coil register
         """
         response = self.client.write_coil(address=address, value=value, slave=slave)
+        if not response.isError():
+            return response.__dict__
+        else:
+            raise Exception(f'Error message: {response}')
+        
+
+    def read_discrete_inputs(self, address: int, size: int = 1, unit: int = 1):
+        """
+        """
+        response = self.client.read_discrete_inputs(address=address, count=size, slave=unit)
         if not response.isError():
             return response.__dict__
         else:
