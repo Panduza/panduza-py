@@ -117,11 +117,9 @@ class MetaDriverDio(MetaDriver):
 
 
     def _PZADRV_loop_run(self):
-
         # polls
         self.__poll_att_direction()
         self.__poll_att_state()
-        # Limit on python platform
         time.sleep(0.1)
 
     def _PZADRV_cmds_set(self, payload):
@@ -135,10 +133,10 @@ class MetaDriverDio(MetaDriver):
 
 
     def __poll_att_direction(self):
-        polling_cycle1 = float(self._get_field("direction", "polling_cycle"))
-        if polling_cycle1 < 0:
+        polling_cycle = float(self._get_field("direction", "polling_cycle"))
+        if polling_cycle < 0:
             return
-        if (time.perf_counter() - self.polling_ref["direction"]) > polling_cycle1:
+        if (time.perf_counter() - self.polling_ref["direction"]) > polling_cycle:
             p = False
             p = self._update_attribute("direction", "pull", self._PZADRV_DIO_get_direction_pull(), False) or p
             p = self._update_attribute("direction", "value", self._PZADRV_DIO_get_direction_value(), False) or p
@@ -148,13 +146,13 @@ class MetaDriverDio(MetaDriver):
 
 
     def __poll_att_state(self):
-        polling_cycle1 = float(self._get_field("state", "polling_cycle"))
-        if polling_cycle1 < 0:
+        polling_cycle = float(self._get_field("state", "polling_cycle"))
+        if polling_cycle < 0:
             return
-        if (time.perf_counter() - self.polling_ref["state"]) > polling_cycle1:
+        if (time.perf_counter() - self.polling_ref["state"]) > polling_cycle:
             p = False
-            p = self._update_attribute("state", "active", self._PZADRV_DIO_set_state_active(), False) or p
-            p = self._update_attribute("state", "active_low", self._PZADRV_DIO_set_state_activeLow(), False) or p
+            p = self._update_attribute("state", "active", self._PZADRV_DIO_get_state_active(), False) or p
+            p = self._update_attribute("state", "active_low", self._PZADRV_DIO_get_state_activeLow(), False) or p
             if p:
                 self._push_attribute("state")
             self.polling_ref["state"] = time.perf_counter()
