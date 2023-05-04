@@ -3,6 +3,7 @@ import argparse
 
 from .hunt import hunt
 from .start import start
+from .stop import stop
 from .setup import setup
 from .init_directory import init_directory
 
@@ -17,6 +18,10 @@ def pzadmin_main():
     parser.add_argument('directory_path', metavar='directory_path', type=str,
                         default='.', nargs='?',
                         help='path to the directory')
+    parser.add_argument('-d', dest='deamon', action='store_true',
+                        help='for the command "start", the platform is started in background')
+    parser.add_argument('--stop-all', dest='stopall', action='store_true',
+                        help='for the command "stop", mosquitto is also stopped')
 
     args = parser.parse_args()
 
@@ -28,9 +33,9 @@ def pzadmin_main():
     elif args.command == "hunt":
         hunt(args.directory_path)
     elif args.command == "start":
-        start(args.directory_path)
+        start(args)
     elif args.command == "stop":
-        print(f'Stopping to process directory: {args.directory_path}')
+        stop(args)
     elif args.command == "setup":
         setup(args)
     else:
