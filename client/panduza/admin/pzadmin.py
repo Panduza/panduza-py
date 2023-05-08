@@ -5,6 +5,7 @@ from .hunt import hunt
 from .start import start
 from .stop import stop
 from .setup import setup
+from .scan import scan
 from .init_directory import init_directory
 
 
@@ -13,7 +14,7 @@ def pzadmin_main():
 
     parser = argparse.ArgumentParser(description='Panduza Admin Helper')
     parser.add_argument('command', metavar='command', type=str,
-                        choices=["init", "hunt", "start", "stop", "setup"],
+                        choices=["init", "hunt", "start", "stop", "setup", "scan"],
                         help='command to execute')
     parser.add_argument('directory_path', metavar='directory_path', type=str,
                         default='.', nargs='?',
@@ -25,8 +26,8 @@ def pzadmin_main():
 
     args = parser.parse_args()
 
-    print(f'Command             : {args.command}')
-    print(f'Working directory   : {args.directory_path}')
+    # print(f'Command             : {args.command}')
+    # print(f'Working directory   : {args.directory_path}')
 
     if args.command == "init":
         init_directory(args)
@@ -38,6 +39,8 @@ def pzadmin_main():
         stop(args)
     elif args.command == "setup":
         setup(args)
+    elif args.command == "scan":
+        scan(args)
     else:
         print(f'Invalid arguments provided for pzadmin.')
 
