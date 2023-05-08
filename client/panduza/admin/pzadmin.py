@@ -23,6 +23,8 @@ def pzadmin_main():
                         help='for the command "start", the platform is started in background')
     parser.add_argument('--stop-all', dest='stopall', action='store_true',
                         help='for the command "stop", mosquitto is also stopped')
+    parser.add_argument('--dev', dest='dev', action='store_true',
+                        help='tell the command that the admin is a panduza dev')
 
     args = parser.parse_args()
 

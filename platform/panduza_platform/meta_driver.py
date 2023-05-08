@@ -31,14 +31,19 @@ class MetaDriver(metaclass=abc.ABCMeta):
         name = "unnamed" if "name" not in config else config["name"]
         description = "" if "description" not in config else config["description"]
         template = self._PZADRV_tree_template()
-        instances = self._PZADRV_hunt_instances()
-        obj = {
+        driver = {
             "name": name,
             "description": description,
-            "template": template,
-            "instances": instances
+            "template": template
         }
-        return obj
+        meat = self._PZADRV_hunt_instances()
+        instances = None
+        if meat:
+            instances = {
+                "name": name,
+                "instances": meat
+            }
+        return driver, instances
 
     ###########################################################################
     ###########################################################################

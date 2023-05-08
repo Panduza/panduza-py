@@ -277,19 +277,25 @@ class MetaPlatform:
         self._log.info("*********************************")
 
         os.makedirs(f"{self.run_dir}/panduza/platform", exist_ok=True)
-        filepath = f"{self.run_dir}/panduza/platform/py.json"
+        filepath_drivers = f"{self.run_dir}/panduza/platform/py_drivers.json"
+        filepath_instances = f"{self.run_dir}/panduza/platform/py_instances.json"
 
-        f = open(filepath, "w")
-
-        hunting_bag = []
+        # Hunt data for each driver
+        hunting_bag_driver = []
+        hunting_bag_instances = []
         for drv in self.drivers:
-            meat = drv().hunt()
-            if meat:
-                hunting_bag.append(meat)
+            self._log.info(f"Hunt with: {drv()._PZADRV_config()['name']}")
+            driver, instances = drv().hunt()
+            if driver:
+                hunting_bag_driver.append(driver)
+            if instances:
+                hunting_bag_instances.extend(instances)
 
-        content = { "drivers": hunting_bag } 
-        f.write(json.dumps(content, indent=4))
-        f.close()
+        # Write data into files
+        with open(filepath_drivers, "w") as f:
+            f.write(json.dumps(hunting_bag_driver, indent=4))
+        with open(filepath_instances, "w") as f:
+            f.write(json.dumps(hunting_bag_instances, indent=4))
 
     ###########################################################################
     ###########################################################################
