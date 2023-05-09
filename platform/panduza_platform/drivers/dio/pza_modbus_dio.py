@@ -40,7 +40,6 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         self.settings["gpio_id"]
         
         self.modbus = ConnectorModbusClientSerial.GetV2(**self.settings) # init the connector
-        self.io_controling = 0
         self.direction = False
         self.pullUp = ""
         self.pullDown = ""
@@ -109,7 +108,6 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         
     def _PZADRV_DIO_get_state_active(self):
         self.log.info(f"read state active : {self.__dir['state']['active']}!")
-
         return self.__dir["state"]["active"]
     
     def _PZADRV_DIO_set_state_active(self,v):
@@ -120,19 +118,19 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         if self.direction == True and (v == True and self.__dir["state"]["active_low"] == False):
             self.log.warning("OKAY TO WRITE")
             self.turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),v,DIO_MODBUS_ADDR)  # write to coil
-            self.readValue = self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
+            self.readValue = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
         elif self.direction == True and (v == False and self.__dir["state"]["active_low"] == False):
             self.turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),v,DIO_MODBUS_ADDR)  # write to coil
-            self.readValue = self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
+            self.readValue = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
 
         elif self.direction == True and (v == False and self.__dir["state"]["active_low"] == True): 
             invert = not v
             self.turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),invert,DIO_MODBUS_ADDR) 
-            self.readValue = self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
+            self.readValue = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
         elif self.direction == True and (v == True and self.__dir["state"]["active_low"] == True):
             invert = not v
             self.turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),invert,DIO_MODBUS_ADDR) 
-            self.readValue = self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
+            self.readValue = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
         elif self.direction == False:    
             self.log.warning("you can't write a output")
 
