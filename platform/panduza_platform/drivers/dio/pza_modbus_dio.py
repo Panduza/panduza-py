@@ -29,7 +29,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
     def _PZADRV_loop_init(self, tree):
         """Driver initialization
         """
-        self.log.info("inside loop init of driver")
+        self.log.warning("inside loop init of driver")
         # Load tree settings
 
         self.settings = dict() if "settings" not in tree else tree["settings"]
@@ -41,7 +41,12 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         
         self.modbus = ConnectorModbusClientSerial.GetV2(**self.settings) # init the connector
         self.io_controling = 0
-            
+        self.direction = False
+        self.pullUp = ""
+        self.pullDown = ""
+        self.turnOn = False
+        self.readValue = False
+
         self.log.info(tree["settings"])
 
         # first configuration
@@ -59,6 +64,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         }
         super()._PZADRV_loop_init(tree)
 
+
     def _PZADRV_DIO_get_direction_value(self):
         self.log.info(f"read direction value : {self.__dir['direction']['value']} !")
         gpio_id = self.settings["gpio_id"]
@@ -74,35 +80,36 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
 
         if v == "out":    
             self.log.info(f"it's a output")
-            output = self.modbus.write_coil(int(gpio_id),True,DIO_MODBUS_ADDR) # configure output+
-
-
-            # self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),True,DIO_MODBUS_ADDR)  # write to coil
-            # self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
-            # self.__dir["state"]["active"] = self.io_controling
-            # time.sleep(1)
-            # # self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),False,DIO_MODBUS_ADDR)
-            # self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
-            # self.__dir["state"]["active"] = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
-
+            self.direction = self.modbus.write_coil(int(gpio_id),True,DIO_MODBUS_ADDR)
+            self.log.warning(f"value of output {self.direction}")
+        elif v == "in":
+            self.log.info("configuration as input")
+            self.direction = self.modbus.write_coil(int(gpio_id),False,DIO_MODBUS_ADDR)
+            self.log.warning(f"value of input {self.direction}")
+        else:
+            self.log.warning("unexpected string for DIRECTION")
 
     def _PZADRV_DIO_set_direction_pull(self, v):
         self.log.info(f"set direction pull : {v}")
         self.__dir["direction"]["pull"] = v # update brocker
 
-        gpio_id = self.settings["gpio_id"] # get the gpio_id from the json
-        if self.__dir["direction"]["pull"]  == "up":
-            pullUp = self.modbus.write_coil(int(gpio_id)+DIO_OFFSET_PULLS, True,DIO_MODBUS_ADDR)
-        elif self.__dir["direction"]["pull"]  == "down":
-            pullDown = self.modbus.write_coil(int(gpio_id)+DIO_OFFSET_PULLS, False,DIO_MODBUS_ADDR)
-        
-    
+        gpio_id = self.settings["gpio_id"]
+        if self.__dir["direction"]["pull"]  == "up" and self.direction == False: # False => not a output
+            self.log.debug("configuration as pull up")
+            self.pullUp = self.modbus.write_coil(int(gpio_id)+DIO_OFFSET_PULLS, True,DIO_MODBUS_ADDR)
+        elif self.__dir["direction"]["pull"]  == "down" and self.direction == False : # False => not a output
+            self.log.debug("configuration as pull down")
+            self.pullDown = self.modbus.write_coil(int(gpio_id)+DIO_OFFSET_PULLS, False,DIO_MODBUS_ADDR)
+        else : 
+            self.log.warning("you cant set pull for a output")
+
     def _PZADRV_DIO_get_direction_pull(self):
         self.log.info(f"read direction pull : {self.__dir['direction']['pull']}!")
         return self.__dir["direction"]["pull"]
         
     def _PZADRV_DIO_get_state_active(self):
-        self.log.info(f"read state active : {self.__dir['state']['active']}!")  
+        self.log.info(f"read state active : {self.__dir['state']['active']}!")
+
         return self.__dir["state"]["active"]
     
     def _PZADRV_DIO_set_state_active(self,v):
@@ -110,12 +117,25 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         self.__dir["state"]["active"] = v
 
         gpio_id = self.settings["gpio_id"]
+        if self.direction == True and (v == True and self.__dir["state"]["active_low"] == False):
+            self.log.warning("OKAY TO WRITE")
+            self.turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),v,DIO_MODBUS_ADDR)  # write to coil
+            self.readValue = self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
+        elif self.direction == True and (v == False and self.__dir["state"]["active_low"] == False):
+            self.turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),v,DIO_MODBUS_ADDR)  # write to coil
+            self.readValue = self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
 
-        turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),v,DIO_MODBUS_ADDR)  # write to coil
-        readValue = self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
+        elif self.direction == True and (v == False and self.__dir["state"]["active_low"] == True): 
+            invert = not v
+            self.turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),invert,DIO_MODBUS_ADDR) 
+            self.readValue = self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
+        elif self.direction == True and (v == True and self.__dir["state"]["active_low"] == True):
+            invert = not v
+            self.turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),invert,DIO_MODBUS_ADDR) 
+            self.readValue = self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
+        elif self.direction == False:    
+            self.log.warning("you can't write a output")
 
-
-    
     def _PZADRV_DIO_get_state_activeLow(self):
         self.log.info(f"read state active low : {self.__dir['state']['active_low']}!")
         return self.__dir["state"]["active_low"]
