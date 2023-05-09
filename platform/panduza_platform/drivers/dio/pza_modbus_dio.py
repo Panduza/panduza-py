@@ -29,7 +29,9 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
     def _PZADRV_loop_init(self, tree):
         """Driver initialization
         """
+        self.log.info("inside loop init of driver")
         # Load tree settings
+
         self.settings = dict() if "settings" not in tree else tree["settings"]
         self.settings["vendor"] = DIO_USBID_VENDOR
         self.settings["model"] = DIO_USBID_MODEL
@@ -38,6 +40,8 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         self.settings["gpio_id"]
         
         self.modbus = ConnectorModbusClientSerial.GetV2(**self.settings) # init the connector
+        self.io_controling = 0
+            
         self.log.info(tree["settings"])
 
         # first configuration
@@ -45,30 +49,22 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
             "direction":{
                 "value":"in",
                 "pull": "down", 
-                "polling_cycle":5
+                "polling_cycle":1
             },
             "state":{
                 "active":False,
                 "active_low":False,
-                "polling_cycle":5
+                "polling_cycle":1
             }    
         }
-        super()._PZADRV_loop_init(tree) # update tree
-    
-    # def _PZADRV_loop_run(self):
-    #     pass
+        super()._PZADRV_loop_init(tree)
 
-    # def _PZADRV_loop_err(self):
-    #     pass
-    
     def _PZADRV_DIO_get_direction_value(self):
         self.log.info(f"read direction value : {self.__dir['direction']['value']} !")
-        
-        id = self.settings["gpio_id"]        
-        self.log.warning(id)
+        gpio_id = self.settings["gpio_id"]
         return self.__dir["direction"]["value"]
 
-    
+
     # configure the direction and value of io 
     def _PZADRV_DIO_set_direction_value(self, v): # vlaue direction (in/out)
         self.log.info(f"set direction value : {v}")
@@ -78,38 +74,47 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
 
         if v == "out":    
             self.log.info(f"it's a output")
-            self.modbus.write_coil(int(gpio_id),True,DIO_MODBUS_ADDR) # configure output+
-            self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),1,DIO_MODBUS_ADDR)  # write to coil
+            output = self.modbus.write_coil(int(gpio_id),True,DIO_MODBUS_ADDR) # configure output+
 
-            self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
-            time.sleep(3)
-            self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),False,DIO_MODBUS_ADDR)
-            self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
+
+            # self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),True,DIO_MODBUS_ADDR)  # write to coil
+            # self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
+            # self.__dir["state"]["active"] = self.io_controling
+            # time.sleep(1)
+            # # self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),False,DIO_MODBUS_ADDR)
+            # self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
+            # self.__dir["state"]["active"] = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
+
 
     def _PZADRV_DIO_set_direction_pull(self, v):
         self.log.info(f"set direction pull : {v}")
-        self.__dir["direction"]["pull"] = v
+        self.__dir["direction"]["pull"] = v # update brocker
 
         gpio_id = self.settings["gpio_id"] # get the gpio_id from the json
-    
         if self.__dir["direction"]["pull"]  == "up":
-            self.log.info("set gpio as pull up")
-            self.modbus.write_coil(int(gpio_id)+DIO_OFFSET_PULLS, True,DIO_MODBUS_ADDR)
+            pullUp = self.modbus.write_coil(int(gpio_id)+DIO_OFFSET_PULLS, True,DIO_MODBUS_ADDR)
         elif self.__dir["direction"]["pull"]  == "down":
-            self.log.info("set gpio as pull down")
-            self.modbus.write_coil(int(gpio_id)+DIO_OFFSET_PULLS, False,DIO_MODBUS_ADDR)
-
+            pullDown = self.modbus.write_coil(int(gpio_id)+DIO_OFFSET_PULLS, False,DIO_MODBUS_ADDR)
+        
+    
     def _PZADRV_DIO_get_direction_pull(self):
         self.log.info(f"read direction pull : {self.__dir['direction']['pull']}!")
         return self.__dir["direction"]["pull"]
         
     def _PZADRV_DIO_get_state_active(self):
-        self.log.info(f"read state active : {self.__dir['state']['active']}!")
+        self.log.info(f"read state active : {self.__dir['state']['active']}!")  
         return self.__dir["state"]["active"]
     
     def _PZADRV_DIO_set_state_active(self,v):
         self.log.info(f"set state active : {v}")
         self.__dir["state"]["active"] = v
+
+        gpio_id = self.settings["gpio_id"]
+
+        turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),v,DIO_MODBUS_ADDR)  # write to coil
+        readValue = self.io_controling = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
+
+
     
     def _PZADRV_DIO_get_state_activeLow(self):
         self.log.info(f"read state active low : {self.__dir['state']['active_low']}!")
