@@ -41,8 +41,6 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         
         self.modbus = ConnectorModbusClientSerial.GetV2(**self.settings) # init the connector
 
-
-
         self.direction = False
         self.pullUp = ""
         self.pullDown = ""
@@ -65,6 +63,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
             }    
         }
         super()._PZADRV_loop_init(tree)
+
 
     def _PZADRV_DIO_get_direction_value(self):
         self.log.info(f"read direction value : {self.__dir['direction']['value']} !")
