@@ -66,12 +66,9 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         }
         super()._PZADRV_loop_init(tree)
 
-
     def _PZADRV_DIO_get_direction_value(self):
         self.log.info(f"read direction value : {self.__dir['direction']['value']} !")
-        
-        id = self.settings["gpio_id"]        
-        self.log.warning(id)
+        gpio_id = self.settings["gpio_id"]
         return self.__dir["direction"]["value"]
 
     # configure the direction and value of io 
