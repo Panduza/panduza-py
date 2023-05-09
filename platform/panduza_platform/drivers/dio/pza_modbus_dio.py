@@ -40,7 +40,6 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         self.settings["gpio_id"]
         
         self.modbus = ConnectorModbusClientSerial.GetV2(**self.settings) # init the connector
-
         self.direction = False
         self.pullUp = ""
         self.pullDown = ""
