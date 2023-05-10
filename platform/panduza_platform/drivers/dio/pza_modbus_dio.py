@@ -41,8 +41,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         
         self.modbus = ConnectorModbusClientSerial.GetV2(**self.settings) # init the connector
 
-        self.modbus._ConnectorModbusClientSerial__instances["value_i0"] = False
-        self.modbus._ConnectorModbusClientSerial__instances["value_i2"] = False
+
 
         self.direction = False
         self.pullUp = ""

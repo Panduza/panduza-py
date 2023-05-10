@@ -6,9 +6,12 @@ from pymodbus.client import ModbusSerialClient
 from loguru import logger
 from .udev_tty import TTYPortFromUsbInfo
 from .udev_tty import SerialPortFromUsbSetting
+from threading import Lock
+
 
 from .modbus_client_base import ConnectorModbusClientBase
 
+mutex = Lock()
 
 class ConnectorModbusClientSerial(ConnectorModbusClientBase):
     """The serial modbus client connector centralize access to a given port as a modbus client
@@ -114,7 +117,7 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
         else:
             self.log = logging.getLogger(key)
             self.log.info(f"attached to the Modbus Serial Client Connector")
-
+             
             # create client object
             self.client = ModbusSerialClient(
                 port=key, 
@@ -132,37 +135,42 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
             #     validator(self)
   
 
-
-
     ###########################################################################
     ###########################################################################
 
     def write_register(self, address: int, value, unit: int = 1):
         """
         """
+        mutex.acquire()
         response = self.client.write_register(address, value, slave=unit)
+        mutex.release()
         if response.isError():
             raise Exception(f'Error message: {response}')
-
+        
     ###########################################################################
     ###########################################################################
 
     def read_input_registers(self, address: int, size: int = 1, unit: int = 1):
         """
         """
+        mutex.acquire()
         response = self.client.read_input_registers(address, size, slave=unit)
+        mutex.release()
         if not response.isError():
+            
             return response.registers
         else:
             raise Exception(f'Error message: {response}')
-
+        
     ###########################################################################
     ###########################################################################
 
     def read_holding_registers(self, address: int, size: int = 1, unit: int = 1):
         """
         """
+        mutex.acquire()
         response = self.client.read_holding_registers(address=address, count=size, slave=unit)
+        mutex.release()
         if not response.isError():
             return response.registers
         else:
@@ -171,7 +179,9 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
     def read_coils(self, address: int, size: int = 1, unit: int = 1):
         """
         """
+        mutex.acquire()
         response = self.client.read_coils(address=address, count=size, slave=unit)
+        mutex.release()
         if not response.isError():
             return response.bits
         else:
@@ -180,8 +190,9 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
     def write_coils(self, address: int, value: bool, slave: int = 1):
         """
         """
-        self.log.info("inside write")
+        mutex.acquire()
         response = self.client.write_coils(address=address, values=value, slave=slave)
+        mutex.release()
         if not response.isError():
             return response.__dict__
         else:
@@ -191,9 +202,12 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
         """
         write to single coil register
         """
+        mutex.acquire()
+        self.log.info("inside write")
         response = self.client.write_coil(address=address, value=value, slave=slave)
+        mutex.release()
         if not response.isError():
-            return response.__dict__
+            return response.value
         else:
             raise Exception(f'Error message: {response}')
         
@@ -201,8 +215,10 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
     def read_discrete_inputs(self, address: int, size: int = 1, unit: int = 1):
         """
         """
+        mutex.acquire()
         response = self.client.read_discrete_inputs(address=address, count=size, slave=unit)
+        mutex.release()
         if not response.isError():
-            return response.__dict__
+            return response.bits[0]
         else:
             raise Exception(f'Error message: {response}')
