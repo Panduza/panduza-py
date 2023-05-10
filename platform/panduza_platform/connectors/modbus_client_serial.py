@@ -228,8 +228,10 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
     def read_discrete_inputs(self, address: int, size: int = 1, unit: int = 1):
         """
         """
+        mutex.acquire()
         response = self.client.read_discrete_inputs(address=address, count=size, slave=unit)
+        mutex.release()
         if not response.isError():
-            return response.__dict__
+            return response.bits[0]
         else:
             raise Exception(f'Error message: {response}')
