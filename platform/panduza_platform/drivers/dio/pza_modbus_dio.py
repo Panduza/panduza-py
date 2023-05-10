@@ -20,9 +20,9 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         return ChainMap(
             super()._PZADRV_config(),
             {
-                "name": "paul_control_io",
+                "name": "io_control",
                 "description": "Virtual DIO", 
-                "compatible": ["pza_modbus_dio","driver_of_PaulFisher", "py.pza_modbus_dio"], # name to put in the tree.json
+                "compatible": ["pza_modbus_dio","io_pza_controling", "py.pza_modbus_dio"], # name to put in the tree.json
             },
         )
 
@@ -40,6 +40,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         self.settings["gpio_id"]
         
         self.modbus = ConnectorModbusClientSerial.GetV2(**self.settings) # init the connector
+
         self.modbus._ConnectorModbusClientSerial__instances["value_i0"] = False
         self.modbus._ConnectorModbusClientSerial__instances["value_i2"] = False
 
