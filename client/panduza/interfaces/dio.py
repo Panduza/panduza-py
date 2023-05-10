@@ -28,11 +28,11 @@ class Dio(Interface):
         self.add_attribute(
             Attribute( name = "direction" )
         ).add_field(
-            RwField( name = "value" )
+            RwField( name = "value")
         ).add_field(
-            RwField( name = "pull" )
+            RwField( name = "pull")
         ).add_field(
-            RwField( name = "polling_cycle" )
+            RwField( name = "polling_cycle")
         )
 
         # === STATE ===
