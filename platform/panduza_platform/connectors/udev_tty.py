@@ -1,5 +1,6 @@
 import pyudev
 from loguru import logger
+import logging
 
 def TTYPortFromUsbInfo(vendor_id:str , product_id:str , serial=None, base_devname="/dev/ttyACM"):
     """Find tty port from usb information

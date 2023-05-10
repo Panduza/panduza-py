@@ -1,2 +1,3 @@
 robotframework
 PyHamcrest
+loguru

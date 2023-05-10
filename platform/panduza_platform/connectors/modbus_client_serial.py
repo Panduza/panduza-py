@@ -4,6 +4,7 @@ import logging
 
 from pymodbus.client import ModbusSerialClient 
 from loguru import logger
+import logging
 from .udev_tty import TTYPortFromUsbInfo
 from .udev_tty import SerialPortFromUsbSetting
 from threading import Lock
