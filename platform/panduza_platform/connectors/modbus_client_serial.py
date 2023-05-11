@@ -3,7 +3,6 @@ import serial
 import logging
 
 from pymodbus.client import ModbusSerialClient 
-from loguru import logger
 import logging
 from .udev_tty import TTYPortFromUsbInfo
 from .udev_tty import SerialPortFromUsbSetting
@@ -61,12 +60,12 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
         # Create the new connector
         if not (port_name in ConnectorModbusClientSerial.__instances):
             ConnectorModbusClientSerial.__instances[port_name] = None
-            # try:
-            new_instance = ConnectorModbusClientSerial(**kwargs)
-            ConnectorModbusClientSerial.__instances[port_name] = new_instance
-            # except Exception as e:
-            #     ConnectorModbusClientSerial.__instances.pop(port_name)
-            #     raise Exception('Error during initialization').with_traceback(e.__traceback__)
+            try:
+                new_instance = ConnectorModbusClientSerial(**kwargs)
+                ConnectorModbusClientSerial.__instances[port_name] = new_instance
+            except Exception as e:
+                ConnectorModbusClientSerial.__instances.pop(port_name)
+                raise Exception('Error during initialization').with_traceback(e.__traceback__)
 
         # Return the previously created
         return ConnectorModbusClientSerial.__instances[port_name]

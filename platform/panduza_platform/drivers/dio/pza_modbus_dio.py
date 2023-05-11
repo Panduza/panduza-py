@@ -2,8 +2,9 @@ import time
 from ...meta_drivers.dio import MetaDriverDio
 from collections import ChainMap
 from ...connectors.modbus_client_serial import ConnectorModbusClientSerial
+from threading import Lock
 
-
+mutex = Lock()
 
 DIO_USBID_MODEL="05e1"
 DIO_USBID_VENDOR="16c0"
@@ -39,10 +40,11 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         self.settings["usb_serial_id"]
         self.settings["gpio_id"]
         
+        mutex.acquire()
         self.modbus = ConnectorModbusClientSerial.GetV2(**self.settings) # init the connector
+        mutex.release()
 
-
-
+        
         self.direction = False
         self.pullUp = ""
         self.pullDown = ""
@@ -111,6 +113,17 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         self.log.info(f"read state active : {self.__dir['state']['active']}!")
         valueio_0 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i0")
         valueio_2 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i2")
+        valueio_4 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i4")
+        valueio_6 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i6")
+        valueio_8 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i8")
+        valueio_10 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i10")
+        valueio_12 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i12")
+        valueio_14 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i14")
+        valueio_16 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i16")
+        valueio_18 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i18")
+        valueio_20 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i20")
+        valueio_22 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i22")
+        valueio_26 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i26")
         activeLow = self.modbus._ConnectorModbusClientSerial__instances.get("active_low")
         
         if int(self.settings["gpio_id"]) == 1:
@@ -118,7 +131,14 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
             self.__dir["state"]["active_low"] = activeLow
         elif int(self.settings["gpio_id"]) == 3:
             self.__dir["state"]["active"] = valueio_2
-            self.__dir["state"]["active_low"] = activeLow                
+            self.__dir["state"]["active_low"] = activeLow
+        elif int(self.settings["gpio_id"]) == 5:
+            self.__dir["state"]["active"] = valueio_4
+            self.__dir["state"]["active_low"] = activeLow
+        elif int(self.settings["gpio_id"]) == 7:
+            self.__dir["state"]["active"] = valueio_6
+            self.__dir["state"]["active_low"] = activeLow
+
         return self.__dir["state"]["active"]
     
     def _PZADRV_DIO_set_state_active(self,v):
@@ -126,34 +146,24 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         self.__dir["state"]["active"] = v
 
         gpio_id = self.settings["gpio_id"]
-        if self.direction == True and (v == True and self.__dir["state"]["active_low"] == False) and int(gpio_id) == 0:
+        if self.direction == True and (v == True and self.__dir["state"]["active_low"] == False):
             self.log.warning("OKAY TO WRITE")
             self.turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),v,DIO_MODBUS_ADDR)  # write to coil
             self.readValue = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
             self.modbus._ConnectorModbusClientSerial__instances[f"value_i{int(gpio_id)}"] = self.readValue
-            # self.modbus._ConnectorModbusClientSerial__instances.update({f"value_i{int(gpio_id)}": self.readValue})
             self.modbus._ConnectorModbusClientSerial__instances["active_low"] = self.__dir["state"]["active_low"]
 
-        elif self.direction == True and (v == False and self.__dir["state"]["active_low"] == False) and int(gpio_id) == 0:
+        elif self.direction == True and (v == False and self.__dir["state"]["active_low"] == False):
             self.turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),v,DIO_MODBUS_ADDR)  # write to coil
             self.readValue = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
             self.modbus._ConnectorModbusClientSerial__instances[f"value_i{int(gpio_id)}"] = self.readValue
-            # self.modbus._ConnectorModbusClientSerial__instances.update({f"value_i{int(gpio_id)}": self.readValue})
             self.modbus._ConnectorModbusClientSerial__instances["active_low"] = self.__dir["state"]["active_low"]
 
-        elif self.direction == True and (v == False and self.__dir["state"]["active_low"] == True) and int(gpio_id) == 0: 
+        elif self.direction == True and (v == False and self.__dir["state"]["active_low"] == True): 
             invert = not v
             self.turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),invert,DIO_MODBUS_ADDR) 
             self.readValue = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
             self.modbus._ConnectorModbusClientSerial__instances["value_i0"] = self.readValue
-            self.modbus._ConnectorModbusClientSerial__instances["active_low"] = self.__dir["state"]["active_low"]
-        
-        elif self.direction == True and (v == True and self.__dir["state"]["active_low"] == True) and int(gpio_id) == 0:
-            invert = not v
-            self.turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),invert,DIO_MODBUS_ADDR) 
-            self.readValue = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
-            self.modbus._ConnectorModbusClientSerial__instances[f"value_i{int(gpio_id)}"] = self.readValue
-            # self.modbus._ConnectorModbusClientSerial__instances.update({f"value_i{int(gpio_id)}": self.readValue})
             self.modbus._ConnectorModbusClientSerial__instances["active_low"] = self.__dir["state"]["active_low"]
         
         elif self.direction == True and (v == True and self.__dir["state"]["active_low"] == True):
@@ -161,7 +171,13 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
             self.turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),invert,DIO_MODBUS_ADDR) 
             self.readValue = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
             self.modbus._ConnectorModbusClientSerial__instances[f"value_i{int(gpio_id)}"] = self.readValue
-            # self.modbus._ConnectorModbusClientSerial__instances.update({f"value_i{int(gpio_id)}": self.readValue})
+            self.modbus._ConnectorModbusClientSerial__instances["active_low"] = self.__dir["state"]["active_low"]
+        
+        elif self.direction == True and (v == True and self.__dir["state"]["active_low"] == True):
+            invert = not v
+            self.turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),invert,DIO_MODBUS_ADDR) 
+            self.readValue = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
+            self.modbus._ConnectorModbusClientSerial__instances[f"value_i{int(gpio_id)}"] = self.readValue
             self.modbus._ConnectorModbusClientSerial__instances["active_low"] = self.__dir["state"]["active_low"]
 
         elif self.direction == False:    
