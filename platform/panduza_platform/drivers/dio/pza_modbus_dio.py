@@ -44,7 +44,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         self.modbus = ConnectorModbusClientSerial.GetV2(**self.settings) # init the connector
         mutex.release()
 
-        
+
         self.direction = False
         self.pullUp = ""
         self.pullDown = ""
@@ -122,6 +122,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         valueio_16 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i16")
         valueio_18 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i18")
         valueio_20 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i20")
+        valueio_21 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i21")
         valueio_22 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i22")
         valueio_26 = self.modbus._ConnectorModbusClientSerial__instances.get("value_i26")
         activeLow = self.modbus._ConnectorModbusClientSerial__instances.get("active_low")

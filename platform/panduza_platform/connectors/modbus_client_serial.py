@@ -1,16 +1,17 @@
 import time
 import serial
-import logging
+# import logging
 
 from pymodbus.client import ModbusSerialClient 
 import logging
+from panduza_platform.log.driver import driver_logger
+
 from .udev_tty import TTYPortFromUsbInfo
 from .udev_tty import SerialPortFromUsbSetting
 from threading import Lock
 
 
 from .modbus_client_base import ConnectorModbusClientBase
-
 mutex = Lock()
 
 class ConnectorModbusClientSerial(ConnectorModbusClientBase):
@@ -19,6 +20,7 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
 
     # Contains instances
     __instances = {}
+    log = driver_logger("ConnectorModbusClientSerial")
 
     ###########################################################################
     ###########################################################################
@@ -63,6 +65,7 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
             try:
                 new_instance = ConnectorModbusClientSerial(**kwargs)
                 ConnectorModbusClientSerial.__instances[port_name] = new_instance
+                ConnectorModbusClientSerial.log.info("connector created")
             except Exception as e:
                 ConnectorModbusClientSerial.__instances.pop(port_name)
                 raise Exception('Error during initialization').with_traceback(e.__traceback__)
