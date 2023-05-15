@@ -1,5 +1,4 @@
 import pyudev
-from loguru import logger
 import logging
 
 def TTYPortFromUsbInfo(vendor_id:str , product_id:str , serial=None, base_devname="/dev/ttyACM"):
@@ -82,7 +81,7 @@ def SerialPortFromUsbSetting(**kwargs):
 
         return properties["DEVNAME"]
 
-
+    
     raise Exception(f"ERROR: device tty for [{vendor}:{model}:{usb_id}:{base_devname}] not found !")
 
 
