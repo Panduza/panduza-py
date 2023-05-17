@@ -50,6 +50,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         self.pullDown = ""
         self.turnOn = False
         self.readValue = False
+        self.readValue1 = False
 
         self.log.info(tree["settings"])
 
@@ -68,26 +69,13 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         }
         super()._PZADRV_loop_init(tree)
 
-
-    def _PZADRV_loop_run(self):
-
-        self.log.info(self.modbus._ConnectorModbusClientSerial__instances)
-        # get the values of the instance dictionary
-        valueOfIo = self.modbus._ConnectorModbusClientSerial__instances.get("value_OUTPUT")
-        activeLow = self.modbus._ConnectorModbusClientSerial__instances.get("active_low")
-
-        if int(self.settings["gpio_id"])%2 != 0 or int(self.settings["gpio_id"]) == 22 or int(self.settings["gpio_id"]) == 28 :    
-            self.__dir["state"]["active"] = valueOfIo
-            self.__dir["state"]["active_low"] = activeLow
-
-        return super()._PZADRV_loop_run()
     
     def _PZADRV_DIO_get_direction_value(self):
         self.log.info(f"read direction value : {self.__dir['direction']['value']} !")
         return self.__dir["direction"]["value"]
 
     # configure the direction and value of io 
-    def _PZADRV_DIO_set_direction_value(self, v): # vlaue direction (in/out)
+    def _PZADRV_DIO_set_direction_value(self, v): # value direction (in/out)
         self.log.info(f"set direction value : {v}")
         self.__dir["direction"]["value"] = v
 
@@ -111,25 +99,34 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
 
         gpio_id = self.settings["gpio_id"]
 
-        if self.__dir["direction"]["pull"]  == "up" and self.direction == False: # False => not a output
+        if self.__dir["direction"]["pull"]  == "up" and self.direction == False: # self.direction is false if it's input
             self.log.debug("configuration as pull up")
             self.pullUp = self.modbus.write_coil(int(gpio_id)+DIO_OFFSET_PULLS, True,DIO_MODBUS_ADDR)
-        elif self.__dir["direction"]["pull"]  == "down" and self.direction == False : # False => not a output
+        elif self.__dir["direction"]["pull"]  == "down" and self.direction == False :
             self.log.debug("configuration as pull down")
             self.pullDown = self.modbus.write_coil(int(gpio_id)+DIO_OFFSET_PULLS, False,DIO_MODBUS_ADDR)
         else : 
             self.log.warning("you cant set pull for a output")
 
-
     def _PZADRV_DIO_get_direction_pull(self):
         self.log.info(f"read direction pull : {self.__dir['direction']['pull']}!")
+
         return self.__dir["direction"]["pull"]
         
         
     def _PZADRV_DIO_get_state_active(self):
         self.log.info(f"read state active : {self.__dir['state']['active']}!")
-        self.log.info(self.modbus._ConnectorModbusClientSerial__instances)
+            # get the values of the instance dictionary
+        valueOfIo = self.modbus._ConnectorModbusClientSerial__instances.get("value_OUTPUT")
+        activeLow = self.modbus._ConnectorModbusClientSerial__instances.get("active_low")
 
+        # update the fields
+        if int(self.settings["gpio_id"])%2 != 0 or int(self.settings["gpio_id"]) == 22 or int(self.settings["gpio_id"]) == 28 :    
+            self.__dir["state"]["active"] = valueOfIo
+            self.__dir["state"]["active_low"] = activeLow
+            self.readValue = self.modbus.read_discrete_inputs(int(self.settings["gpio_id"]),1,DIO_MODBUS_ADDR) # read the input value
+            self.__dir["state"]["active"] = self.readValue 
+            
         return self.__dir["state"]["active"]
     
     def _PZADRV_DIO_set_state_active(self,v):
@@ -153,6 +150,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
 
         elif self.direction == False:    
             self.log.warning("this operation is not possible")
+
 
     def _PZADRV_DIO_get_state_activeLow(self):
         self.log.info(f"read state active low : {self.__dir['state']['active_low']}!")
