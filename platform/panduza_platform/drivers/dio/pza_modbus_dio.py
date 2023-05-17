@@ -124,7 +124,12 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         if int(self.settings["gpio_id"])%2 != 0 or int(self.settings["gpio_id"]) == 22 or int(self.settings["gpio_id"]) == 28 :    
             self.__dir["state"]["active"] = valueOfIo
             self.__dir["state"]["active_low"] = activeLow
-            self.readValue = self.modbus.read_discrete_inputs(int(self.settings["gpio_id"]),1,DIO_MODBUS_ADDR) # read the input value
+            self.readValue = self.modbus.read_discrete_inputs(int(self.settings["gpio_id"]),1,DIO_MODBUS_ADDR) # push button test
+            self.__dir["state"]["active"] = self.readValue 
+        elif int(self.settings["gpio_id"])%2 == 0 or int(self.settings["gpio_id"]) == 21:
+            self.__dir["state"]["active"] = valueOfIo
+            self.__dir["state"]["active_low"] = activeLow
+            self.readValue = self.modbus.read_discrete_inputs(int(self.settings["gpio_id"]),1,DIO_MODBUS_ADDR) # push button test
             self.__dir["state"]["active"] = self.readValue 
             
         return self.__dir["state"]["active"]
