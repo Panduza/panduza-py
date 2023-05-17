@@ -69,7 +69,25 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         }
         super()._PZADRV_loop_init(tree)
 
+    def _PZADRV_loop_run(self):
+        valueOfIo = self.modbus._ConnectorModbusClientSerial__instances.get("value_OUTPUT")
+        activeLow = self.modbus._ConnectorModbusClientSerial__instances.get("active_low")
+
+        # update the fields
+        if int(self.settings["gpio_id"])%2 != 0 or int(self.settings["gpio_id"]) == 22 or int(self.settings["gpio_id"]) == 28 :    
+            self.__dir["state"]["active"] = valueOfIo
+            self.__dir["state"]["active_low"] = activeLow
+            self.readValue = self.modbus.read_discrete_inputs(int(self.settings["gpio_id"]),1,DIO_MODBUS_ADDR) # push button test
+            self.__dir["state"]["active"] = self.readValue 
+        elif int(self.settings["gpio_id"])%2 == 0 or int(self.settings["gpio_id"]) == 21:
+            self.__dir["state"]["active"] = valueOfIo
+            self.__dir["state"]["active_low"] = activeLow
+            self.readValue = self.modbus.read_discrete_inputs(int(self.settings["gpio_id"]),1,DIO_MODBUS_ADDR) # push button test
+            self.__dir["state"]["active"] = self.readValue
+
+        return super()._PZADRV_loop_run()
     
+
     def _PZADRV_DIO_get_direction_value(self):
         self.log.info(f"read direction value : {self.__dir['direction']['value']} !")
         return self.__dir["direction"]["value"]
@@ -117,20 +135,20 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
     def _PZADRV_DIO_get_state_active(self):
         self.log.info(f"read state active : {self.__dir['state']['active']}!")
             # get the values of the instance dictionary
-        valueOfIo = self.modbus._ConnectorModbusClientSerial__instances.get("value_OUTPUT")
-        activeLow = self.modbus._ConnectorModbusClientSerial__instances.get("active_low")
+        # valueOfIo = self.modbus._ConnectorModbusClientSerial__instances.get("value_OUTPUT")
+        # activeLow = self.modbus._ConnectorModbusClientSerial__instances.get("active_low")
 
-        # update the fields
-        if int(self.settings["gpio_id"])%2 != 0 or int(self.settings["gpio_id"]) == 22 or int(self.settings["gpio_id"]) == 28 :    
-            self.__dir["state"]["active"] = valueOfIo
-            self.__dir["state"]["active_low"] = activeLow
-            self.readValue = self.modbus.read_discrete_inputs(int(self.settings["gpio_id"]),1,DIO_MODBUS_ADDR) # push button test
-            self.__dir["state"]["active"] = self.readValue 
-        elif int(self.settings["gpio_id"])%2 == 0 or int(self.settings["gpio_id"]) == 21:
-            self.__dir["state"]["active"] = valueOfIo
-            self.__dir["state"]["active_low"] = activeLow
-            self.readValue = self.modbus.read_discrete_inputs(int(self.settings["gpio_id"]),1,DIO_MODBUS_ADDR) # push button test
-            self.__dir["state"]["active"] = self.readValue 
+        # # update the fields
+        # if int(self.settings["gpio_id"])%2 != 0 or int(self.settings["gpio_id"]) == 22 or int(self.settings["gpio_id"]) == 28 :    
+        #     self.__dir["state"]["active"] = valueOfIo
+        #     self.__dir["state"]["active_low"] = activeLow
+        #     self.readValue = self.modbus.read_discrete_inputs(int(self.settings["gpio_id"]),1,DIO_MODBUS_ADDR) # push button test
+        #     self.__dir["state"]["active"] = self.readValue 
+        # elif int(self.settings["gpio_id"])%2 == 0 or int(self.settings["gpio_id"]) == 21:
+        #     self.__dir["state"]["active"] = valueOfIo
+        #     self.__dir["state"]["active_low"] = activeLow
+        #     self.readValue = self.modbus.read_discrete_inputs(int(self.settings["gpio_id"]),1,DIO_MODBUS_ADDR) # push button test
+        #     self.__dir["state"]["active"] = self.readValue 
             
         return self.__dir["state"]["active"]
     
