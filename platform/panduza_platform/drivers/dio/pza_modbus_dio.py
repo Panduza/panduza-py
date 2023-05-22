@@ -44,13 +44,16 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         self.modbus = ConnectorModbusClientSerial.GetV2(**self.settings) # init the connector
         mutex.release()
 
+        # init values of instance dictionary
+        self.modbus._ConnectorModbusClientSerial__instances["value_OUTPUT"] = False
+        self.modbus._ConnectorModbusClientSerial__instances["active_low"] = False
+
 
         self.direction = False
         self.pullUp = ""
         self.pullDown = ""
         self.turnOn = False
         self.readValue = False
-        self.readValue1 = False
 
         self.log.info(tree["settings"])
 
@@ -110,13 +113,13 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
 
     def _PZADRV_DIO_get_direction_pull(self):
         self.log.info(f"read direction pull : {self.__dir['direction']['pull']}!")
-
         return self.__dir["direction"]["pull"]
         
         
     def _PZADRV_DIO_get_state_active(self):
         self.log.info(f"read state active : {self.__dir['state']['active']}!")
-            # get the values of the instance dictionary
+
+        # get the values of the instance dictionary
         valueOfIo = self.modbus._ConnectorModbusClientSerial__instances.get("value_OUTPUT")
         activeLow = self.modbus._ConnectorModbusClientSerial__instances.get("active_low")
 
@@ -125,13 +128,14 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
             self.__dir["state"]["active"] = valueOfIo
             self.__dir["state"]["active_low"] = activeLow
             self.readValue = self.modbus.read_discrete_inputs(int(self.settings["gpio_id"]),1,DIO_MODBUS_ADDR) # push button test
-            self.__dir["state"]["active"] = self.readValue 
+            self.__dir["state"]["active"] = self.readValue
         elif int(self.settings["gpio_id"])%2 == 0 or int(self.settings["gpio_id"]) == 21:
             self.__dir["state"]["active"] = valueOfIo
             self.__dir["state"]["active_low"] = activeLow
             self.readValue = self.modbus.read_discrete_inputs(int(self.settings["gpio_id"]),1,DIO_MODBUS_ADDR) # push button test
             self.__dir["state"]["active"] = self.readValue 
-            
+        
+        
         return self.__dir["state"]["active"]
     
     def _PZADRV_DIO_set_state_active(self,v):
