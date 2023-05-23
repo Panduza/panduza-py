@@ -60,27 +60,27 @@ class MetaDriverDio(MetaDriver):
         """
         raise NotImplementedError("Must be implemented !")
     
-    def _PZADRV_DIO_get_state_pulling(self,v):
-        """ get pulling state
+    def _PZADRV_DIO_get_state_polling_cycle(self,v):
+        """ get polling state
         -Args
             none   
         """
         raise NotImplementedError("Must be implemented !")
     
-    def _PZADRV_DIO_set_state_pulling(self,v):
-        """ set pulling state
+    def _PZADRV_DIO_set_state_polling_cycle(self,v):
+        """ set polling state
             -Args
             value : value to be set : integer > 0
         """
         raise NotImplementedError("Must be implemented !")
     
-    def _PZADRV_DIO_get_direction_pulling(self,v):
-        """ get pulling direction
+    def _PZADRV_DIO_get_direction_polling_cycle(self,v):
+        """ get polling direction
         """
         raise NotImplementedError("Must be implemented !")
     
-    def _PZADRV_DIO_set_direction_pulling(self,v):
-        """ set the pulling direction
+    def _PZADRV_DIO_set_direction_polling_cycle(self,v):
+        """ set the polling direction
             -Args
             value : value to be set : integer > 0
         """
@@ -171,7 +171,7 @@ class MetaDriverDio(MetaDriver):
         # /!\ 'or p' must be at the end
         d = self._update_attribute("direction", "value", self._PZADRV_DIO_get_direction_value(), False) or d
         d = self._update_attribute("direction", "pull", self._PZADRV_DIO_get_direction_pull(), False) or d
-        d = self._update_attribute("direction", "polling_cycle", self._PZADRV_DIO_get_direction_pulling(), False) or d
+        d = self._update_attribute("direction", "polling_cycle", self._PZADRV_DIO_get_direction_polling_cycle(), False) or d
         if d:
             self._push_attribute("direction")
 
@@ -179,7 +179,7 @@ class MetaDriverDio(MetaDriver):
         s = False
         s = self._update_attribute("state", "active", self._PZADRV_DIO_get_state_active(), False) or s
         s = self._update_attribute("state", "active_low", self._PZADRV_DIO_get_state_activeLow(), False) or s
-        s = self._update_attribute("state", "polling_cycle", self._PZADRV_DIO_get_state_pulling(), False) or s
+        s = self._update_attribute("state", "polling_cycle", self._PZADRV_DIO_get_state_polling_cycle(), False) or s
         if s:
             self._push_attribute("state")
 

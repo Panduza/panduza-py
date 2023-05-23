@@ -62,12 +62,12 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
             "direction":{
                 "value":"in",
                 "pull": "up", 
-                "polling_cycle":1
+                "polling_cycle":5
             },
             "state":{
                 "active":False,
                 "active_low":False,
-                "polling_cycle":1
+                "polling_cycle":5
             }    
         }
         super()._PZADRV_loop_init(tree)
@@ -148,14 +148,12 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
             self.readValue = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
             self.modbus._ConnectorModbusClientSerial__instances["value_OUTPUT"] = self.readValue
             self.modbus._ConnectorModbusClientSerial__instances["active_low"] = self.__dir["state"]["active_low"]
-
         elif self.direction == True and (self.__dir["state"]["active_low"] == True): 
             invert = not v
             self.turnOn = self.modbus.write_coil(DIO_OFFSET_WRITE+int(gpio_id),invert,DIO_MODBUS_ADDR) 
             self.readValue = self.modbus.read_discrete_inputs(int(gpio_id)+1,1,DIO_MODBUS_ADDR) # read the input value
-            self.modbus._ConnectorModbusClientSerial__instances["value_OUTPUT"] = self.readValue
+            self.modbus._ConnectorModbusClientSerial__instances["value_OUTPUT"] = invert(self.readValue)
             self.modbus._ConnectorModbusClientSerial__instances["active_low"] = self.__dir["state"]["active_low"]
-
         elif self.direction == False:    
             self.log.warning("this operation is not possible")
 
@@ -168,18 +166,18 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         self.log.info(f"set state active low : {v}")
         self.__dir["state"]["active_low"] = v
 
-    def _PZADRV_DIO_get_state_pulling(self):
+    def _PZADRV_DIO_get_state_polling_cycle(self):
         self.log.info(f"read state pulling : {self.__dir['state']['polling_cycle']}!")
         return self.__dir["state"]["polling_cycle"]
     
-    def _PZADRV_DIO_set_state_pulling(self,v):
-        self.log.info(f"set state pulling : {v}")
+    def _PZADRV_DIO_set_state_polling_cycle(self,v):
+        self.log.error(f"set state pulling : {v}")
         self.__dir["state"]["polling_cycle"] = v
 
-    def _PZADRV_DIO_get_direction_pulling(self):
+    def _PZADRV_DIO_get_direction_polling_cycle(self):
         self.log.info(f"read direction pulling : {self.__dir['direction']['polling_cycle']}!")
         return self.__dir["direction"]["polling_cycle"]
     
-    def _PZADRV_DIO_set_direction_pulling(self,v):
-        self.log.info(f"set direction pulling : {v}")
+    def _PZADRV_DIO_set_direction_polling_cycle(self,v):
+        self.log.error(f"set direction pulling : {v}")
         self.__dir["direction"]["polling_cycle"] = v
