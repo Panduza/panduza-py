@@ -87,14 +87,11 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         if v == "out":    
             self.log.info(f"it's a output")
             self.direction = self.modbus.write_coil(int(gpio_id),True,DIO_MODBUS_ADDR)
-            self.log.warning(f"value of output {self.direction}")
         elif v == "in":
             self.log.info("configuration as input")
             self.direction = self.modbus.write_coil(int(gpio_id),False,DIO_MODBUS_ADDR)
-            self.log.warning(f"value of input {self.direction}")
         else:
-            self.log.warning("unexpected string for DIRECTION")
-
+            raise Exception("error in value")
 
     def _PZADRV_DIO_set_direction_pull(self, v):
         self.log.info(f"set direction pull : {v}")
@@ -103,13 +100,11 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         gpio_id = self.settings["gpio_id"]
 
         if self.__dir["direction"]["pull"]  == "up" and self.direction == False: # self.direction is false if it's input
-            self.log.debug("configuration as pull up")
             self.pullUp = self.modbus.write_coil(int(gpio_id)+DIO_OFFSET_PULLS, True,DIO_MODBUS_ADDR)
         elif self.__dir["direction"]["pull"]  == "down" and self.direction == False :
-            self.log.debug("configuration as pull down")
             self.pullDown = self.modbus.write_coil(int(gpio_id)+DIO_OFFSET_PULLS, False,DIO_MODBUS_ADDR)
         else : 
-            self.log.warning("you cant set pull for a output")
+            raise Exception('You cant configure a pull for a output')
 
     def _PZADRV_DIO_get_direction_pull(self):
         self.log.info(f"read direction pull : {self.__dir['direction']['pull']}!")
@@ -140,7 +135,6 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
     def _PZADRV_DIO_set_state_active(self,v):
         self.log.info(f"set state active : {v}")
         self.__dir["state"]["active"] = v
-
         gpio_id = self.settings["gpio_id"]
 
         if self.direction == True and (self.__dir["state"]["active_low"] == False):
@@ -155,7 +149,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
             self.modbus._ConnectorModbusClientSerial__instances["value_OUTPUT"] = invert(self.readValue)
             self.modbus._ConnectorModbusClientSerial__instances["active_low"] = self.__dir["state"]["active_low"]
         elif self.direction == False:    
-            self.log.warning("this operation is not possible")
+            raise Exception("can't write value to a input")
 
 
     def _PZADRV_DIO_get_state_activeLow(self):
