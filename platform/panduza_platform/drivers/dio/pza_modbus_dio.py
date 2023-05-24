@@ -62,12 +62,12 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
             "direction":{
                 "value":"in",
                 "pull": "up", 
-                "polling_cycle":5
+                "polling_cycle":1
             },
             "state":{
                 "active":False,
                 "active_low":False,
-                "polling_cycle":5
+                "polling_cycle":1
             }    
         }
         super()._PZADRV_loop_init(tree)
