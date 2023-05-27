@@ -37,16 +37,16 @@ class Platform:
         """ Constructor
         """
         # Init the platform logger
-        self._log = platform_logger()
+        self.log = platform_logger()
         self.run_dir = run_dir
 
         # Debug logs to structure log file
-        self._log.info("==========================================")
-        self._log.info(f"= PANDUZA PYTHON PLATFORM          {PLATFORM_VERSION} =")
-        self._log.info("==========================================")
+        self.log.info("==========================================")
+        self.log.info(f"= PANDUZA PYTHON PLATFORM          {PLATFORM_VERSION} =")
+        self.log.info("==========================================")
 
         # Create Factories
-        self.device_factory = PlatformDeviceFactory(self._log)
+        self.device_factory = PlatformDeviceFactory(self)
 
         # Threads
         self.threads = []
@@ -70,7 +70,7 @@ class Platform:
     #     """platform will use the given tree filepath
     #     """
     #     self.tree_filepath = tree_filepath
-    #     self._log.debug(f"force tree:{self.tree_filepath}")
+    #     self.log.debug(f"force tree:{self.tree_filepath}")
 
     # ###########################################################################
     # ###########################################################################
@@ -86,7 +86,7 @@ class Platform:
 
     #     # Check if logs are enabled
     #     if not args.enable_logs and self.force_log != True:
-    #         self._log.remove()
+    #         self.log.remove()
 
     #     # Check tree filepath value
     #     self.tree_filepath = args.tree
@@ -98,7 +98,7 @@ class Platform:
     #     """ Load interfaces declared in the tree for the given broker
     #     """
     #     # Debug log
-    #     self._log.info(f" + {broker_name} ({broker_tree['addr']}:{broker_tree['port']})")
+    #     self.log.info(f" + {broker_name} ({broker_tree['addr']}:{broker_tree['port']})")
 
     #     # Create broker object
     #     broker = Broker(broker_tree["addr"], broker_tree["port"])
@@ -153,7 +153,7 @@ class Platform:
     #         driver_name = "?"
     #         if "driver" in interface_declaration:
     #             driver_name = interface_declaration["driver"]
-    #         self._log.warning(f"> {name} [{driver_name}] interface disabled")
+    #         self.log.warning(f"> {name} [{driver_name}] interface disabled")
     #         return
 
     #     # Multiple interfaces, need to create one interface for each
@@ -169,25 +169,6 @@ class Platform:
     # ###########################################################################
     # ###########################################################################
 
-    # def __load_interface(self, machine, broker, interface_info):
-    #     """
-    #     """
-    #     name = interface_info["name"]
-    #     driver_name = interface_info["driver"]
-
-    #     try:
-    #         driver_obj = self.__get_compatible_driver(driver_name)
-
-    #         instance = driver_obj()
-    #         instance.initialize(self, machine, broker, interface_info)
-    #         self.interfaces.append({
-    #             "name": name,
-    #             "instance":instance
-    #         })
-
-    #         self._log.info(f"> {name} [{driver_name}]")
-    #     except Exception as e:
-    #         self._log.error(f"{driver_name} : {name} ({str(e)})")
 
     # ###########################################################################
     # ###########################################################################
@@ -214,23 +195,23 @@ class Platform:
     #     """Function to discover python plugins related to panduza python platform
     #     """
     #     #
-    #     # self._log.debug(f"PYPATH: {sys.path}")
+    #     # self.log.debug(f"PYPATH: {sys.path}")
     #     # help('modules')
 
     #     # Discovering process
-    #     self._log.debug("Start plugin discovery")
+    #     self.log.debug("Start plugin discovery")
     #     discovered_plugins = {
     #         name: importlib.import_module(name)
     #         for finder, name, ispkg
     #         in pkgutil.iter_modules()
     #         if name.startswith("panduza_class")
     #     }
-    #     self._log.debug(f"Discovered plugins: {str(discovered_plugins)}")
+    #     self.log.debug(f"Discovered plugins: {str(discovered_plugins)}")
 
     #     # Import plugin inside the platform manager
     #     # Each class plugins export a PZA_DRIVERS_LIST with the list of all the managed drivers
     #     for plugin_name in discovered_plugins :
-    #         self._log.info(f"Load plugin: '{plugin_name}'")
+    #         self.log.info(f"Load plugin: '{plugin_name}'")
     #         plugin_package = __import__(plugin_name)
     #         for drv in plugin_package.PZA_DRIVERS_LIST:
     #             self.register_driver(drv)
@@ -264,26 +245,52 @@ class Platform:
     # def register_driver(self, driver):
     #     """
     #     """
-    #     self._log.info(f"Register driver: {driver()._PZADRV_config()['compatible']}")
+    #     self.log.info(f"Register driver: {driver()._PZADRV_config()['compatible']}")
     #     self.drivers.append(driver)
 
 
     ###########################################################################
     ###########################################################################
+    ### PUBLIC
+    ###########################################################################
+    ###########################################################################
+
+    # --
 
     def run(self):
         """Starting point of the platform
         """
         # First go into factories initialization
-
-
+        self.device_factory.discover_available_devices()
 
         # Check if the hunt mode is enabled
         if self.__hunt_mode_requested():
             self.__hunt_mode()
-
         else:
             self.__oper_mode()
+
+    # --
+
+    def load_interface(self, bench_name, device_name, interface_config):
+        """Load a new interface
+        """
+        name = interface_config["name"]
+        driver_name = interface_config["driver"]
+
+        # try:
+        #     driver_obj = self.__get_compatible_driver(driver_name)
+
+        #     instance = driver_obj()
+        #     instance.initialize(self, machine, broker, interface_config)
+        #     self.interfaces.append({
+        #         "name": name,
+        #         "instance":instance
+        #     })
+
+        #     self.log.info(f"> {name} [{driver_name}]")
+        # except Exception as e:
+        #     self.log.error(f"{driver_name} : {name} ({str(e)})")
+
     # ###########################################################################
     # ###########################################################################
 
@@ -305,7 +312,95 @@ class Platform:
     ###########################################################################
     ###########################################################################
 
-    def load_tree(self):
+    # --
+
+    def __hunt_mode_requested(self):
+        """Return true if the hunt mode has been requested
+        """
+        HUNT = os.getenv('HUNT')
+        hunt = os.getenv('hunt')
+        self.log.info(f"Hunt Flags : HUNT={HUNT} & hunt={hunt}")
+        if HUNT == "on" or HUNT == "1" or hunt == "on" or hunt == "1":
+            return True
+        return False
+
+    # --
+
+    def __oper_mode(self):
+        """Run the operational mode
+        """
+        try:
+            self.__load_tree()
+            self.__load_devices()
+
+            
+                
+                
+                
+                # self.__load_tree_broker(self.tree["machine"], broker, self.tree["devices"][broker])
+
+
+    #             # Parse configs
+    #             self.log.debug(f"load tree:{json.dumps(self.tree, indent=1)}")
+
+    #             # Run all the interfaces on differents threads
+    #             thread_id=0
+    #             for interface in self.interfaces:
+    #                 t = threading.Thread(target=interface["instance"].start, name="T" + str(thread_id))
+    #                 thread_id+=1
+    #                 self.threads.append(t)
+
+    #             # Start all the threads
+    #             for thread in self.threads:
+    #                 thread.start()
+
+    #             # Log
+    #             self.log.info("Platform started!")
+
+    #             # Join them all !
+    #             for thread in self.threads:
+    #                 thread.join()
+
+        except KeyboardInterrupt:
+            self.log.warning("ctrl+c => user stop requested")
+            self.stop()
+        except FileNotFoundError:
+            self.log.critical(f"Platform configuration file 'tree.json' has not been found at location '{self.tree_filepath}' !!==>> STOP PLATFORM")
+
+    # --
+
+    def __hunt_mode(self):
+        """Fonction to perform the interface auto-detection on the system
+        """
+        self.log.info("*********************************")
+        self.log.info("*** !!! HUNT MODE ENABLED !!! ***")
+        self.log.info("*********************************")
+
+    #     os.makedirs(f"{self.run_dir}/panduza/platform", exist_ok=True)
+    #     filepath_drivers = f"{self.run_dir}/panduza/platform/py_drivers.json"
+    #     filepath_instances = f"{self.run_dir}/panduza/platform/py_instances.json"
+
+    #     # Hunt data for each driver
+    #     hunting_bag_driver = []
+    #     hunting_bag_instances = []
+    #     for drv in self.drivers:
+    #         self.log.info(f"Hunt with: {drv()._PZADRV_config()['name']}")
+    #         driver, instances = drv().hunt()
+    #         if driver:
+    #             hunting_bag_driver.append(driver)
+    #         if instances:
+    #             hunting_bag_instances.extend(instances)
+
+    #     # Write data into files
+    #     with open(filepath_drivers, "w") as f:
+    #         f.write(json.dumps(hunting_bag_driver, indent=4))
+    #     with open(filepath_instances, "w") as f:
+    #         f.write(json.dumps(hunting_bag_instances, indent=4))
+
+
+    # --
+
+    def __load_tree(self):
         """Load the configuration tree into python object
         """
         # Load a default tree path if not provided
@@ -321,84 +416,16 @@ class Platform:
 
     # --
 
-    def __oper_mode(self):
-        """Run the operational mode
+    def __load_devices(self):
+        """Load interfaces from device configurations
         """
-        try:
-            self.load_tree()
+        for device_cfg in self.tree["devices"]:
+            
+            device = self.device_factory.produce_device(device_cfg)
+            
+            
 
-            for devv in self.tree["devices"]:
-                print(devv)
-                # self.__load_tree_broker(self.tree["machine"], broker, self.tree["devices"][broker])
-
-
-    #             # Parse configs
-    #             self._log.debug(f"load tree:{json.dumps(self.tree, indent=1)}")
-
-    #             # Run all the interfaces on differents threads
-    #             thread_id=0
-    #             for interface in self.interfaces:
-    #                 t = threading.Thread(target=interface["instance"].start, name="T" + str(thread_id))
-    #                 thread_id+=1
-    #                 self.threads.append(t)
-
-    #             # Start all the threads
-    #             for thread in self.threads:
-    #                 thread.start()
-
-    #             # Log
-    #             self._log.info("Platform started!")
-
-    #             # Join them all !
-    #             for thread in self.threads:
-    #                 thread.join()
-
-        except KeyboardInterrupt:
-            self._log.warning("ctrl+c => user stop requested")
-            self.stop()
-        except FileNotFoundError:
-            self._log.critical(f"Platform configuration file 'tree.json' has not been found at location '{self.tree_filepath}' !!==>> STOP PLATFORM")
+            for interface in device._PZA_DEV_interfaces():
+                self.load_interface(self, "default", device_name, interface_config)
 
 
-
-    # --
-
-    def __hunt_mode_requested(self):
-        """Return true if the hunt mode has been requested
-        """
-        HUNT = os.getenv('HUNT')
-        hunt = os.getenv('hunt')
-        self._log.info(f"Hunt Flags : HUNT={HUNT} & hunt={hunt}")
-        if HUNT == "on" or HUNT == "1" or hunt == "on" or hunt == "1":
-            return True
-        return False
-
-    # --
-
-    def __hunt_mode(self):
-        """Fonction to perform the interface auto-detection on the system
-        """
-        self._log.info("*********************************")
-        self._log.info("*** !!! HUNT MODE ENABLED !!! ***")
-        self._log.info("*********************************")
-
-    #     os.makedirs(f"{self.run_dir}/panduza/platform", exist_ok=True)
-    #     filepath_drivers = f"{self.run_dir}/panduza/platform/py_drivers.json"
-    #     filepath_instances = f"{self.run_dir}/panduza/platform/py_instances.json"
-
-    #     # Hunt data for each driver
-    #     hunting_bag_driver = []
-    #     hunting_bag_instances = []
-    #     for drv in self.drivers:
-    #         self._log.info(f"Hunt with: {drv()._PZADRV_config()['name']}")
-    #         driver, instances = drv().hunt()
-    #         if driver:
-    #             hunting_bag_driver.append(driver)
-    #         if instances:
-    #             hunting_bag_instances.extend(instances)
-
-    #     # Write data into files
-    #     with open(filepath_drivers, "w") as f:
-    #         f.write(json.dumps(hunting_bag_driver, indent=4))
-    #     with open(filepath_instances, "w") as f:
-    #         f.write(json.dumps(hunting_bag_instances, indent=4))

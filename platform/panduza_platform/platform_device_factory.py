@@ -2,29 +2,45 @@ import abc
 
 
 
-class PlatformDevice:
+class PlatformDeviceModel:
 
-    @abc.abstractmethod
     def _PZA_DEV_config(self):
         """
         """
         pass
 
 
+    def _PZA_DEV_interfaces(self):
+        """
+        """
+        return {}
 
-class DevicePanduzaFakePsu(PlatformDevice):
 
-    def __init__(self):
+
+class DevicePanduzaFakePsu(PlatformDeviceModel):
+
+    def __init__(self, config = None):
         """ Constructor
         """
         pass
-    
+
     def _PZA_DEV_config(self):
         """
         """
         return {
-            "model": "Panduza.FakePsu"
+            "model": "Panduza.FakePsu",
         }
+
+    def _PZA_DEV_interfaces(self):
+        """
+        """
+        return [
+            {
+                "name": "psu_1",
+                "driver": "psu.fake"
+            }
+        ]
+
 
 
 class PlatformDeviceFactory:
@@ -33,17 +49,35 @@ class PlatformDeviceFactory:
 
     # ---
 
-    def __init__(self, logger):
+    def __init__(self, parent_platform):
         """ Constructor
         """
-        self.devices = []
-        self._log = logger
+        self.__devices = {}
+        self.__platform = parent_platform
+        self.__log = self.__platform.log
+
+    # ---
+
+    def produce_device(self, config):
+        model = config["model"]
+        return self.__devices[model]()
+
+    # ---
+
+    def discover_available_devices(self):
+        """Find device models managers
+        """
+        self.__log.info(f"=")
+        self.register_device(DevicePanduzaFakePsu)
+        self.__log.info(f"=")
 
     # ---
 
     def register_device(self, dev):
-        self._log.info(f"Register device: {dev()._PZA_DEV_config()['model']}")
-        self.devices.append(dev)
-
+        """Register a new device model
+        """
+        model = dev()._PZA_DEV_config()['model']
+        self.__log.info(f"Register device model: '{model}'")
+        self.__devices[model] = dev
 
 
