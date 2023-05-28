@@ -1,10 +1,13 @@
 import time
+import asyncio
 import threading
 
 
 class PlatformThread:
-    
+
     ID_COUNT = 0
+
+    PERF_CYCLE_TIME = 2
 
     # ---
 
@@ -14,6 +17,8 @@ class PlatformThread:
 
         self.__alive = True
 
+        self.__mutex = threading.Lock()
+
         # List of managed worker 
         self.__workers = []
 
@@ -21,7 +26,9 @@ class PlatformThread:
     # ---
 
     def attach_worker(self, worker):
+        self.__mutex.acquire()
         self.__workers.append(worker)
+        self.__mutex.release()
 
     # ---
 
@@ -30,7 +37,6 @@ class PlatformThread:
         self.__thread.start()
 
     # ---
-
 
     #   def stop(self):
     #        self.__alive = False
@@ -43,32 +49,40 @@ class PlatformThread:
     # ---
 
     def exec(self):
-        
-                
+        # Create an event loop and start the driver
+        self.evloop = asyncio.new_event_loop()
+        self.evloop.run_until_complete(self.__async_exec())
+
+    # ---
+
+    async def __async_exec(self):
+
         while(self.__alive):
+            # 
+            self.__mutex.acquire()
 
+            # Run works during 1 time cycle
             loop_t0 = time.perf_counter()
-            work_time = 0
-
-            while(time.perf_counter() - loop_t0 < 1):
-
+            while(time.perf_counter() - loop_t0 < PlatformThread.PERF_CYCLE_TIME):
                 for w in self.__workers:
-                    work_t0 = time.perf_counter()
-                    w.exec()
-                    work_time += (time.perf_counter() - work_t0)
+                    await w.work()
+                await asyncio.sleep(0.01)
 
-                time.sleep(0.0001)
+            # Compute work time
+            work_time = 0
+            for w in self.__workers:
+                work_time += w.work_time
+                w.reset_work_time()
 
-
-
-    #              If (tnow - t_start > 1):
-    #                     Compute stats
-
+            # Compute loop time
             loop_time = time.perf_counter() - loop_t0
 
+            # 
             print(f"{work_time} - {loop_time}")
             print(f"pok {(work_time/loop_time) * 100.0} %")
 
+            # 
+            self.__mutex.release()
 
 
     #     def detach_worker(self, worker):

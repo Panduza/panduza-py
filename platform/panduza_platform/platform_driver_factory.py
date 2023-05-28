@@ -28,11 +28,10 @@ class PlatformDriverFactory:
             driver_obj = self.__drivers[driver_name] 
 
             instance = driver_obj()
-            # instance.initialize(self, machine, broker, interface_config)
-            #     self.interfaces.append({
-            #         "name": name,
-            #         "instance":instance
-            #     })
+            instance.set_platform(self.__platform)
+            instance.set_bench_name(bench_name)
+            instance.set_device_name(device_name)
+            instance.set_tree(interface_config)
 
             self.__log.info(f"> {name} [{driver_name}]")
 

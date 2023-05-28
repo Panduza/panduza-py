@@ -13,6 +13,8 @@ from .log.platform import platform_logger
 
 from .platform_thread import PlatformThread
 
+from .platform_client import PlatformClient
+
 from .platform_driver_factory import PlatformDriverFactory
 from .platform_device_factory import PlatformDeviceFactory
 
@@ -59,7 +61,7 @@ class Platform:
         self.drivers = []
 
         # Interfaces
-        self.interfaces = []
+        self.__interfaces = []
 
         # Tree that must be loaded at startup
         self.tree_filepath = None
@@ -217,7 +219,7 @@ class Platform:
     # def get_interface_instance_from_name(self, name):
     #     """
     #     """
-    #     for interface in self.interfaces:
+    #     for interface in self.__interfaces:
     #         if interface["name"] == name:
     #             return interface["instance"]
     #     raise Exception("interface not found")
@@ -259,24 +261,7 @@ class Platform:
         """Load a new interface
         """
         instance = self.driver_factory.produce_interface(bench_name, device_name, interface_config)
-        self.interfaces.append(instance)
-
-
-
-    # ###########################################################################
-    # ###########################################################################
-
-    # def stop(self):
-    #     """To stop the entire platform
-    #     """
-    #     # Request a stop for each driver
-    #     for interface in self.interfaces:
-    #         interface["instance"].stop()
-
-    #     # Join them all !
-    #     for thread in self.threads:
-    #         thread.join()
-
+        self.__interfaces.append(instance)
 
     ###########################################################################
     ###########################################################################
@@ -305,25 +290,41 @@ class Platform:
             self.__load_tree()
             self.__load_devices()
 
+            # Create and start thread pool
+            t = PlatformThread()
+            t.start()
 
             # modify interfaces with tree bench configs
 
             # create clients
+
+            client = PlatformClient("localhost", 1883)
+
             # attach interface to client
 
             # attach clients   to thread
-            # attach interface to thread
 
 
-            t = PlatformThread()
-            t.start()
+            # Prepare interface internal data
+            for interface in self.__interfaces:
+                interface.initialize()
 
+            # attach clients to thread
+            t.attach_worker(client)
+
+            # attach interfaces to thread
+            for interface in self.__interfaces:
+                t.attach_worker(interface)
+
+
+
+            # 
             t.join()
 
 
     #             # Run all the interfaces on differents threads
     #             thread_id=0
-    #             for interface in self.interfaces:
+    #             for interface in self.__interfaces:
     #                 t = threading.Thread(target=interface["instance"].start, name="T" + str(thread_id))
     #                 thread_id+=1
     #                 self.threads.append(t)
@@ -341,9 +342,23 @@ class Platform:
 
         except KeyboardInterrupt:
             self.log.warning("ctrl+c => user stop requested")
-            self.stop()
+            self.__stop()
         except FileNotFoundError:
             self.log.critical(f"Platform configuration file 'tree.json' has not been found at location '{self.tree_filepath}' !!==>> STOP PLATFORM")
+
+    # --
+
+    def __stop(self):
+        """To stop the entire platform
+        """
+        pass
+    #     # Request a stop for each driver
+    #     for interface in self.__interfaces:
+    #         interface["instance"].stop()
+
+    #     # Join them all !
+    #     for thread in self.threads:
+    #         thread.join()
 
     # --
 

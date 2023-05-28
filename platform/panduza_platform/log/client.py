@@ -32,24 +32,24 @@ patterns = {
 }
 
 
-BACKS = [Back.RED, Back.GREEN, Back.YELLOW, Back.BLUE, Back.MAGENTA, Back.CYAN, Back.WHITE]
+FORES = [Fore.RED, Fore.GREEN, Fore.YELLOW, Fore.BLUE, Fore.MAGENTA, Fore.CYAN, Fore.WHITE]
 
 
-class DriverFormatter(logging.Formatter):
+class ClientFormatter(logging.Formatter):
 
     NextBackId=0
 
     def __init__(self):
         super().__init__()
-        self.back_id = DriverFormatter.NextBackId
-        self.back = BACKS[self.back_id]
-        DriverFormatter.NextBackId = (DriverFormatter.NextBackId+1)%len(BACKS)
+        self.fore_id = ClientFormatter.NextBackId
+        self.fore = FORES[self.fore_id]
+        ClientFormatter.NextBackId = (ClientFormatter.NextBackId+1)%len(FORES)
 
 
     def formatMessage(self, record):
 
         # print(record.__dict__)
-        # print(self.back_id)
+        # print(self.fore_id)
 
         debug=""
         if record.levelname == "DEBUG":
@@ -68,7 +68,7 @@ class DriverFormatter(logging.Formatter):
         output += "| "
         output += level_highlighter(record.levelname.ljust(8, ' '), level_patterns)
         output += "| "
-        output += Style.BRIGHT + self.back + record.name + Style.RESET_ALL + "."
+        output += self.fore + record.name + Style.RESET_ALL + " > "
         output += debug + hmsg
 
         return output
@@ -76,18 +76,16 @@ class DriverFormatter(logging.Formatter):
 
 # =============================================================================
 
-def driver_logger(driver_name):
-    """Logger for platform drivers
+def client_logger(client_name):
+    """Logger for platform clients
     """
 
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
-    ch.setFormatter(DriverFormatter())
+    ch.setFormatter(ClientFormatter())
 
-    __logger = logging.getLogger(driver_name)
+    __logger = logging.getLogger(client_name)
     __logger.setLevel(logging.DEBUG)
     __logger.addHandler(ch)
 
     return __logger
-
-

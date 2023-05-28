@@ -10,48 +10,40 @@ import logging
 
 from .log.driver import driver_logger
 
-class PlatformDriver(metaclass=abc.ABCMeta):
+from .platform_worker import PlatformWorker
+
+class PlatformDriver(PlatformWorker):
     """Mother class for all the python drivers
     """
 
     # Time in error state before trying a restart of the interface
     ERROR_TIME_BEFORE_RETRY_S = 10
 
-    ###########################################################################
-    ###########################################################################
+    # ---
 
-    def hunt(self):
-        """
-        """
-        config = self._PZA_DRV_config()
-        name = "unnamed" if "name" not in config else config["name"]
-        description = "" if "description" not in config else config["description"]
-        template = self._PZADRV_tree_template()
-        driver = {
-            "name": name,
-            "description": description,
-            "template": template
-        }
-        meat = self._PZADRV_hunt_instances()
-        instances = None
-        if meat:
-            instances = {
-                "name": name,
-                "instances": meat
-            }
-        return driver, instances
+    def set_platform(self, platform):
+        self._platform = platform
 
-    ###########################################################################
-    ###########################################################################
+    # ---
 
-    def initialize(self, platform, machine, broker, tree):
+    def set_bench_name(self, name):
+        self._bench_name = name
+
+    # ---
+
+    def set_device_name(self, name):
+        self._device_name = name
+
+    # ---
+
+    def set_tree(self, tree):
+        self._tree = tree
+
+    # ---
+
+    def initialize(self):
         """Post initialization
         """
-        # Basics
-        self._platform = platform
-        self._machine = machine
-        self._broker = broker
-        self._tree = tree
 
         # Store attribute representation
         # Contains all the attributes and fields of the driver class in dict
@@ -61,23 +53,18 @@ class PlatformDriver(metaclass=abc.ABCMeta):
         self.__drv_state = 'init'
         self.__drv_state_prev = None
 
-        # Time where the state started
-        self._state_started_time = 0
+        # # Time where the state started
+        # self._state_started_time = 0
 
-        # Check for name in the driver tree
-        if not ("name" in self._tree):
-            raise Exception("Name of the interface is required !")
+        # # Check for name in the driver tree
+        # if not ("name" in self._tree):
+        #     raise Exception("Name of the interface is required !")
 
         # Get name
         self._name = self._tree["name"]
-        
-        # Get group name
-        group_name = self._tree["driver"]
-        if "group" in self._tree:
-            group_name = self._tree["group"]
 
         # Init logger
-        self.log = driver_logger(f"{group_name}.{self._name}")
+        self.log = driver_logger(f"{self._bench_name}.{self._device_name}.{self._name}")
 
         # Check for name in the driver tree
         if not ("info" in self._PZA_DRV_config()):
@@ -85,9 +72,9 @@ class PlatformDriver(metaclass=abc.ABCMeta):
 
         # Info attribute
         self.__drv_atts["info"] = self._PZA_DRV_config()["info"]
-        
+
         # Topic base
-        self.topic = "pza/" + self._machine + "/" + group_name + "/" + self._name
+        self.topic = "pza/" + self._bench_name + "/" + self._device_name + "/" + self._name
         self.topic_size = len(self.topic)
 
         # cmds
@@ -98,6 +85,14 @@ class PlatformDriver(metaclass=abc.ABCMeta):
         self.topic_atts = self.topic + "/atts/"
         self.topic_atts_size = len(self.topic_atts)
         self.topic_atts_info = self.topic_atts + "info"
+
+        # States
+        self.__states = {
+            'init': self.__drv_state_init,
+            'run': self.__drv_state_run,
+            'err': self.__drv_state_err
+        }
+
 
     ###########################################################################
     ###########################################################################
@@ -155,43 +150,36 @@ class PlatformDriver(metaclass=abc.ABCMeta):
     ###########################################################################
     ###########################################################################
 
-    async def __run_state_machine(self):
-        """Core of the state machine
+    # ---
+
+    async def _PZA_WORKER_task(self):
+        """Worker task
         """
-        # log
-        self.log.info("Interface started!")
+        # Log state transition
+        if self.__drv_state != self.__drv_state_prev:
 
-        # States
-        __states = {
-            'init': self.__drv_state_init,
-            'run': self.__drv_state_run,
-            'err': self.__drv_state_err
-        }
+            # Managed message
+            self._state_started_time = time.time()
+            self.log.debug(f"STATE CHANGE ::: {self.__drv_state_prev} => {self.__drv_state}")
+            self.__drv_state_prev = self.__drv_state
 
-        # Main loop
-        while self.alive:
-            # Log state transition
-            if self.__drv_state != self.__drv_state_prev:
-                self._state_started_time = time.time()
-                self.log.debug(f"STATE CHANGE ::: {self.__drv_state_prev} => {self.__drv_state}")
-                self.__drv_state_prev = self.__drv_state
-                # Manage the errstring
-                if self.__drv_state == "err":
-                    self.log.error(f"ERROR ::: {self.__err_string}")
-                    self._update_attribute("info", "error", self.__err_string, False)
-                else:
-                    self._remove_attribute_field("info", "error", False)
-                # update the state
-                self._update_attribute("info", "state", self.__drv_state)
+            # Manage the errstring
+            if self.__drv_state == "err":
+                self.log.error(f"ERROR ::: {self.__err_string}")
+                self._update_attribute("info", "error", self.__err_string, False)
+            else:
+                self._remove_attribute_field("info", "error", False)
 
-            # Execute the correct callback
-            if not (self.__drv_state in __states):
-                # error critique !
-                pass
-            await __states[self.__drv_state]()
-            
-            #
-            time.sleep(0.001)
+            # update the state
+            self._update_attribute("info", "state", self.__drv_state)
+
+
+        # Execute the correct callback
+        if not (self.__drv_state in self.__states):
+            # error critique !
+            pass
+        await self.__states[self.__drv_state]()
+
 
     ###########################################################################
     ###########################################################################
@@ -350,24 +338,25 @@ class PlatformDriver(metaclass=abc.ABCMeta):
         Args
             - retain: True by default because most attribute need it
         """
-        # Check for retain
-        do_retain=retain
-        if do_retain and attribute == "info":
-            do_retain=False
+        pass
+        # # Check for retain
+        # do_retain=retain
+        # if do_retain and attribute == "info":
+        #     do_retain=False
 
-        # topic
-        topic = self.topic_atts + attribute
+        # # topic
+        # topic = self.topic_atts + attribute
 
-        # Payload
-        pdict = dict()
-        pdict[attribute] = self.__drv_atts.get(attribute, dict())
-        payload = json.dumps(pdict)
+        # # Payload
+        # pdict = dict()
+        # pdict[attribute] = self.__drv_atts.get(attribute, dict())
+        # payload = json.dumps(pdict)
 
-        # Debug purpose
-        self.log.debug(f"MSG_OUT > %{topic}% {payload} retain={do_retain}")
+        # # Debug purpose
+        # self.log.debug(f"MSG_OUT > %{topic}% {payload} retain={do_retain}")
 
-        # Publish
-        self.mqtt_client.publish(topic, payload, qos=qos, retain=do_retain)
+        # # Publish
+        # self.mqtt_client.publish(topic, payload, qos=qos, retain=do_retain)
 
     ###########################################################################
     ###########################################################################
@@ -474,4 +463,40 @@ class PlatformDriver(metaclass=abc.ABCMeta):
         """Must apply the command on the driver
         """
         pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ###########################################################################
+    ###########################################################################
+
+    # def hunt(self):
+    #     """
+    #     """
+    #     config = self._PZA_DRV_config()
+    #     name = "unnamed" if "name" not in config else config["name"]
+    #     description = "" if "description" not in config else config["description"]
+    #     template = self._PZADRV_tree_template()
+    #     driver = {
+    #         "name": name,
+    #         "description": description,
+    #         "template": template
+    #     }
+    #     meat = self._PZADRV_hunt_instances()
+    #     instances = None
+    #     if meat:
+    #         instances = {
+    #             "name": name,
+    #             "instances": meat
+    #         }
+    #     return driver, instances
 
