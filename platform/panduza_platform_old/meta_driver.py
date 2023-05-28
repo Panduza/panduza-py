@@ -27,7 +27,7 @@ class MetaDriver(metaclass=abc.ABCMeta):
     def hunt(self):
         """
         """
-        config = self._PZADRV_config()
+        config = self._PZA_DRV_config()
         name = "unnamed" if "name" not in config else config["name"]
         description = "" if "description" not in config else config["description"]
         template = self._PZADRV_tree_template()
@@ -84,11 +84,11 @@ class MetaDriver(metaclass=abc.ABCMeta):
         self.log = driver_logger(f"{group_name}.{self._name}")
 
         # Check for name in the driver tree
-        if not ("info" in self._PZADRV_config()):
-            raise Exception("Config must have *info* in there *_PZADRV_config*")
+        if not ("info" in self._PZA_DRV_config()):
+            raise Exception("Config must have *info* in there *_PZA_DRV_config*")
 
         # Info attribute
-        self.__drv_atts["info"] = self._PZADRV_config()["info"]
+        self.__drv_atts["info"] = self._PZA_DRV_config()["info"]
         
         # Topic base
         self.topic = "pza/" + self._machine + "/" + group_name + "/" + self._name
@@ -436,7 +436,7 @@ class MetaDriver(metaclass=abc.ABCMeta):
     ###########################################################################
 
     @abc.abstractmethod
-    def _PZADRV_config(self):
+    def _PZA_DRV_config(self):
         """
         """
         pass

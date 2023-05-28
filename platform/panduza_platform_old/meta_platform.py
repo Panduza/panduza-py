@@ -197,7 +197,7 @@ class MetaPlatform:
         for drv in self.drivers:
             # Driver must provide a compatibilty array
             # If the driver name is in the array then it is considered compatible
-            compat = drv()._PZADRV_config()["compatible"]
+            compat = drv()._PZA_DRV_config()["compatible"]
             if isinstance(compat, list):
                 if driver_name in compat:
                     return drv
@@ -263,7 +263,7 @@ class MetaPlatform:
     def register_driver(self, driver):
         """
         """
-        self._log.info(f"Register driver: {driver()._PZADRV_config()['compatible']}")
+        self._log.info(f"Register driver: {driver()._PZA_DRV_config()['compatible']}")
         self.drivers.append(driver)
 
     ###########################################################################
@@ -284,7 +284,7 @@ class MetaPlatform:
         hunting_bag_driver = []
         hunting_bag_instances = []
         for drv in self.drivers:
-            self._log.info(f"Hunt with: {drv()._PZADRV_config()['name']}")
+            self._log.info(f"Hunt with: {drv()._PZA_DRV_config()['name']}")
             driver, instances = drv().hunt()
             if driver:
                 hunting_bag_driver.append(driver)

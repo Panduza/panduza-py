@@ -1,46 +1,5 @@
-import abc
 
-
-
-class PlatformDeviceModel:
-
-    def _PZA_DEV_config(self):
-        """
-        """
-        pass
-
-
-    def _PZA_DEV_interfaces(self):
-        """
-        """
-        return {}
-
-
-
-class DevicePanduzaFakePsu(PlatformDeviceModel):
-
-    def __init__(self, config = None):
-        """ Constructor
-        """
-        pass
-
-    def _PZA_DEV_config(self):
-        """
-        """
-        return {
-            "model": "Panduza.FakePsu",
-        }
-
-    def _PZA_DEV_interfaces(self):
-        """
-        """
-        return [
-            {
-                "name": "psu_1",
-                "driver": "psu.fake"
-            }
-        ]
-
+from .inbuilt import PZA_DEVICES_LIST as INBUILT_DEVICES
 
 
 class PlatformDeviceFactory:
@@ -64,11 +23,12 @@ class PlatformDeviceFactory:
 
     # ---
 
-    def discover_available_devices(self):
+    def discover(self):
         """Find device models managers
         """
         self.__log.info(f"=")
-        self.register_device(DevicePanduzaFakePsu)
+        for dev in INBUILT_DEVICES:
+            self.register_device(dev)
         self.__log.info(f"=")
 
     # ---

@@ -2,6 +2,7 @@ import os
 import json
 import pkgutil
 import argparse
+import traceback
 import threading
 import importlib
 
@@ -10,13 +11,15 @@ from sys import platform
 from .conf import PLATFORM_VERSION
 from .log.platform import platform_logger
 
+from .platform_thread import PlatformThread
+
+from .platform_driver_factory import PlatformDriverFactory
 from .platform_device_factory import PlatformDeviceFactory
 
 # from .broker import Broker
 
 
 
-# from .inbuilt import PZA_DRIVERS_LIST as INBUILT_DRIVERS
 # from .drivers.std import PZA_DRIVERS_LIST as STD_DRIVERS
 # from .drivers.fake import PZA_DRIVERS_LIST as FAKE_DRIVERS
 # from .drivers.ftdi import PZA_DRIVERS_LIST as FTDI_DRIVERS
@@ -46,6 +49,7 @@ class Platform:
         self.log.info("==========================================")
 
         # Create Factories
+        self.driver_factory = PlatformDriverFactory(self)
         self.device_factory = PlatformDeviceFactory(self)
 
         # Threads
@@ -166,27 +170,6 @@ class Platform:
     #     else:
     #         self.__load_interface(machine, broker, interface_declaration)
 
-    # ###########################################################################
-    # ###########################################################################
-
-
-    # ###########################################################################
-    # ###########################################################################
-
-    # def __get_compatible_driver(self, driver_name):
-    #     """Walk through driver and try to find a matching one for the given driven name
-    #     """
-    #     for drv in self.drivers:
-    #         # Driver must provide a compatibilty array
-    #         # If the driver name is in the array then it is considered compatible
-    #         compat = drv()._PZADRV_config()["compatible"]
-    #         if isinstance(compat, list):
-    #             if driver_name in compat:
-    #                 return drv
-    #         elif isinstance(compat, str):
-    #             if driver_name == compat:
-    #                 return drv
-    #     raise Exception("driver not found")
 
     # ###########################################################################
     # ###########################################################################
@@ -245,7 +228,7 @@ class Platform:
     # def register_driver(self, driver):
     #     """
     #     """
-    #     self.log.info(f"Register driver: {driver()._PZADRV_config()['compatible']}")
+    #     self.log.info(f"Register driver: {driver()._PZA_DRV_config()['compatible']}")
     #     self.drivers.append(driver)
 
 
@@ -261,7 +244,8 @@ class Platform:
         """Starting point of the platform
         """
         # First go into factories initialization
-        self.device_factory.discover_available_devices()
+        self.driver_factory.discover()
+        self.device_factory.discover()
 
         # Check if the hunt mode is enabled
         if self.__hunt_mode_requested():
@@ -274,22 +258,10 @@ class Platform:
     def load_interface(self, bench_name, device_name, interface_config):
         """Load a new interface
         """
-        name = interface_config["name"]
-        driver_name = interface_config["driver"]
+        instance = self.driver_factory.produce_interface(bench_name, device_name, interface_config)
+        self.interfaces.append(instance)
 
-        # try:
-        #     driver_obj = self.__get_compatible_driver(driver_name)
 
-        #     instance = driver_obj()
-        #     instance.initialize(self, machine, broker, interface_config)
-        #     self.interfaces.append({
-        #         "name": name,
-        #         "instance":instance
-        #     })
-
-        #     self.log.info(f"> {name} [{driver_name}]")
-        # except Exception as e:
-        #     self.log.error(f"{driver_name} : {name} ({str(e)})")
 
     # ###########################################################################
     # ###########################################################################
@@ -333,15 +305,15 @@ class Platform:
             self.__load_tree()
             self.__load_devices()
 
-            
-                
-                
-                
                 # self.__load_tree_broker(self.tree["machine"], broker, self.tree["devices"][broker])
 
+            t = PlatformThread()
+            t.start()
+            
+            
+            
+            t.join()
 
-    #             # Parse configs
-    #             self.log.debug(f"load tree:{json.dumps(self.tree, indent=1)}")
 
     #             # Run all the interfaces on differents threads
     #             thread_id=0
@@ -384,7 +356,7 @@ class Platform:
     #     hunting_bag_driver = []
     #     hunting_bag_instances = []
     #     for drv in self.drivers:
-    #         self.log.info(f"Hunt with: {drv()._PZADRV_config()['name']}")
+    #         self.log.info(f"Hunt with: {drv()._PZA_DRV_config()['name']}")
     #         driver, instances = drv().hunt()
     #         if driver:
     #             hunting_bag_driver.append(driver)
@@ -414,18 +386,26 @@ class Platform:
         with open(self.tree_filepath) as tree_file:
             self.tree = json.load(tree_file)
 
+        # Parse configs
+        self.log.debug(f"load tree:{json.dumps(self.tree, indent=1)}")
+
     # --
 
     def __load_devices(self):
         """Load interfaces from device configurations
         """
+        # device_cfg =
+        # {
+        #    "model": "Panduza.FakePsu"
+        # }
         for device_cfg in self.tree["devices"]:
-            
-            device = self.device_factory.produce_device(device_cfg)
-            
-            
 
-            for interface in device._PZA_DEV_interfaces():
-                self.load_interface(self, "default", device_name, interface_config)
+            # device == class type for device
+            device = self.device_factory.produce_device(device_cfg)
+
+            device_name = device_cfg["model"].replace(".", "_")
+
+            for interface_config in device._PZA_DEV_interfaces():
+                self.load_interface("default", device_name, interface_config)
 
 
