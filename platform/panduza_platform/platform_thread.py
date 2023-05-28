@@ -52,15 +52,13 @@ class PlatformThread:
 
             while(time.perf_counter() - loop_t0 < 1):
 
-                work_t0 = time.perf_counter()
-                print("pif")
-                # time.sleep(0.0001)
-                work_time += (time.perf_counter() - work_t0)
+                for w in self.__workers:
+                    work_t0 = time.perf_counter()
+                    w.exec()
+                    work_time += (time.perf_counter() - work_t0)
 
                 time.sleep(0.0001)
 
-    #             For w in self.__workers:
-    #                    w.exec()
 
 
     #              If (tnow - t_start > 1):

@@ -58,9 +58,14 @@ class DriverFormatter(logging.Formatter):
         hmsg = record.message
         hmsg = re_highlighter(hmsg, re_patterns, debug)
         hmsg = highlighter(hmsg, patterns, debug)
-        
+
+        t_name = "Main"
+        if record.threadName != "MainThread":
+            t_name = record.threadName
+
         output = ""
-        # output += record.threadName + "."
+        output += t_name.ljust(5, ' ')
+        output += "| "
         output += level_highlighter(record.levelname.ljust(8, ' '), level_patterns)
         output += "| "
         output += Style.BRIGHT + self.back + record.name + Style.RESET_ALL + "."

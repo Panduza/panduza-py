@@ -305,13 +305,19 @@ class Platform:
             self.__load_tree()
             self.__load_devices()
 
-                # self.__load_tree_broker(self.tree["machine"], broker, self.tree["devices"][broker])
+
+            # modify interfaces with tree bench configs
+
+            # create clients
+            # attach interface to client
+
+            # attach clients   to thread
+            # attach interface to thread
+
 
             t = PlatformThread()
             t.start()
-            
-            
-            
+
             t.join()
 
 

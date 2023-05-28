@@ -34,7 +34,6 @@ class PlatformDriverFactory:
             #         "instance":instance
             #     })
 
-
             self.__log.info(f"> {name} [{driver_name}]")
 
         except Exception as e:
