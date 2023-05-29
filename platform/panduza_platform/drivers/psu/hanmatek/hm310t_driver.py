@@ -59,7 +59,7 @@ class DriverHM310T(MetaDriverPsu):
 
     # ---
 
-    def _PZADRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, tree):
         """Driver initialization
         """
         # Load settings
@@ -82,7 +82,7 @@ class DriverHM310T(MetaDriverPsu):
         }
 
         # Call meta class PSU ini
-        super()._PZADRV_loop_init(tree)
+        super()._PZA_DRV_loop_init(tree)
 
     ###########################################################################
     ###########################################################################

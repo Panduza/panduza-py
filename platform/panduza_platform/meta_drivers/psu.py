@@ -138,24 +138,7 @@ class MetaDriverPsu(PlatformDriver):
     ###########################################################################
     ###########################################################################
 
-    def _pzadrv_psu_update_volts_min_max(self, min, max):
-        self.log.warning(f"!!! DEPRECATED !!! _pzadrv_psu_update_volts_min_max")
-        self._update_attribute("volts", "min", min, False)
-        self._update_attribute("volts", "max", max)
 
-    # ---
-
-    def _pzadrv_psu_update_amps_min_max(self, min, max):
-        self.log.warning(f"!!! DEPRECATED !!! _pzadrv_psu_update_amps_min_max")
-        self._update_attribute("amps", "min", min, False)
-        self._update_attribute("amps", "max", max)
-
-    # ---
-
-    def _pzadrv_psu_update_misc(self, field, value):
-        self.log.warning(f"!!! DEPRECATED !!! _pzadrv_psu_update_misc")
-        self._update_attribute("misc", field, value)
-        
     ###########################################################################
     ###########################################################################
     #
@@ -176,7 +159,7 @@ class MetaDriverPsu(PlatformDriver):
 
     # ---
 
-    def _PZADRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, tree):
         # Set command handlers
         self.__cmd_handlers = {
             "enable": self.__handle_cmds_set_enable,
@@ -207,8 +190,6 @@ class MetaDriverPsu(PlatformDriver):
         self.__poll_att_enable()
         self.__poll_att_volts()
         self.__poll_att_amps()
-        # Limit on python platform
-        time.sleep(0.1)
 
     # ---
 

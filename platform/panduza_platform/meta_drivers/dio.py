@@ -96,7 +96,7 @@ class MetaDriverDio(MetaDriver):
             } 
         }
 
-    def _PZADRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, tree):
 
         self.__cmd_handlers = {
             "direction" : self.__handle_cmd_set_direction_dio,

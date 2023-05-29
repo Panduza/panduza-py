@@ -38,7 +38,7 @@ class MetaDriverAmpermt(MetaDriver):
 
     # ---
 
-    def _PZADRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, tree):
         # Set command handlers
         self.__cmd_handlers = {
             "measure": self.__handle_cmds_set_measure,

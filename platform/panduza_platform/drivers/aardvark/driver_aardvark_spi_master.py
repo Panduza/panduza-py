@@ -26,14 +26,14 @@ class DriverAardvarkSpiMaster(MetaDriverSpiMaster):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, tree):
         # self.log.debug(f"{tree}")
         settings = tree["settings"]
 
         # Get the gate
         self.spi_connector = ConnectorSPIMasterAardvark.Get(**settings)
         
-        super()._PZADRV_loop_init(tree)
+        super()._PZA_DRV_loop_init(tree)
 
         
 

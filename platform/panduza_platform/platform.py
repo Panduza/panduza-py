@@ -285,14 +285,17 @@ class Platform:
 
     def __oper_mode(self):
         """Run the operational mode
+
+        First all the static aspects are resolved.
+        The number of instances, clients and thread are fixed for the rest of the execution.
+
+        Then the dynamic aspect starts
+        Threads are started and worker are bring to life
         """
         try:
             self.__load_tree()
             self.__load_devices()
 
-            # Create and start thread pool
-            t = PlatformThread()
-            t.start()
 
             # modify interfaces with tree bench configs
 
@@ -305,9 +308,17 @@ class Platform:
             # attach clients   to thread
 
 
+            for interface in self.__interfaces:
+                interface.attach_pclient(client)
+
             # Prepare interface internal data
             for interface in self.__interfaces:
                 interface.initialize()
+
+
+
+            # Create and start thread pool
+            t = PlatformThread()
 
             # attach clients to thread
             t.attach_worker(client)
@@ -316,6 +327,8 @@ class Platform:
             for interface in self.__interfaces:
                 t.attach_worker(interface)
 
+
+            t.start()
 
 
             # 

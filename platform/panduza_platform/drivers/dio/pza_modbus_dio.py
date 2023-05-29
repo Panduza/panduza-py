@@ -27,7 +27,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
             },
         )
 
-    def _PZADRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, tree):
         """Driver initialization
         """
         self.log.warning("inside loop init of driver")
@@ -70,7 +70,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
                 "polling_cycle":5
             }    
         }
-        super()._PZADRV_loop_init(tree)
+        super()._PZA_DRV_loop_init(tree)
     
 
     def _PZADRV_DIO_get_direction_value(self):

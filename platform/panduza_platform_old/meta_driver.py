@@ -204,7 +204,7 @@ class MetaDriver(metaclass=abc.ABCMeta):
         """
         """
         try:
-            self._PZADRV_loop_init(self._tree)
+            self._PZA_DRV_loop_init(self._tree)
         except Exception as e:
             self._pzadrv_error_detected(str(e) + " " + traceback.format_exc())
 
@@ -452,7 +452,7 @@ class MetaDriver(metaclass=abc.ABCMeta):
         return []
 
     @abc.abstractmethod
-    def _PZADRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, tree):
         """
         """
         pass

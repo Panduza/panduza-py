@@ -41,9 +41,16 @@ class PlatformDriver(PlatformWorker):
 
     # ---
 
+    def attach_pclient(self, pclient):
+        self._pclient = pclient
+
+    # ---
+
     def initialize(self):
         """Post initialization
         """
+        # Keep alive flag
+        self.alive = True
 
         # Store attribute representation
         # Contains all the attributes and fields of the driver class in dict
@@ -93,48 +100,9 @@ class PlatformDriver(PlatformWorker):
             'err': self.__drv_state_err
         }
 
+        self.log.info("Interface initialized")
 
-    ###########################################################################
-    ###########################################################################
 
-    def start(self):
-        """Start the driver engine
-        """
-        # Mqtt connection
-        self.mqtt_client = mqtt.Client()
-        self.mqtt_client.on_message = self.__on_message
-
-        try:
-            # log
-            self.log.info("Interface starting...")
-
-            # Keep alive flag
-            self.alive = True
-
-            # Start connection
-            self.mqtt_client.connect(self._broker.addr, self._broker.port)
-
-            # Start the mqtt client
-            self.mqtt_client.loop_start()
-
-            #
-            self.__subscribe_topics()
-
-            # Create an event loop and start the driver
-            self.evloop = asyncio.new_event_loop()
-            self.evloop.run_until_complete(self.__run_state_machine())
-
-        # except AttributeError as err:
-        #     mog.error("Critical error on the serial interface %s (%s)" % (self._name, err))
-        # except ConnectionRefusedError as err:
-        #     mog.error("Critical error on the driver, MQTT connection failed %s (%s)" % (self._name, err))
-        #     mog.error("- you can check if the port %d is open on the broker %s" % (self.bridge.port, self.bridge.port))
-        except:
-            e = sys.exc_info()[0]
-            self.log.exception("Critical error on driver %s (%s)" % (self._name, e))
-
-        # Info
-        logging.info("Interface '{}' stopped !", self._name)
 
     ###########################################################################
     ###########################################################################
@@ -152,33 +120,51 @@ class PlatformDriver(PlatformWorker):
 
     # ---
 
-    async def _PZA_WORKER_task(self):
-        """Worker task
+    def PZA_WORKER_on_thread_attach(self, loop):
         """
-        # Log state transition
-        if self.__drv_state != self.__drv_state_prev:
+        """
+        self.log.info("Interface attached to thread")
 
-            # Managed message
-            self._state_started_time = time.time()
-            self.log.debug(f"STATE CHANGE ::: {self.__drv_state_prev} => {self.__drv_state}")
-            self.__drv_state_prev = self.__drv_state
+        #
+        self.__subscribe_topics()
 
-            # Manage the errstring
-            if self.__drv_state == "err":
-                self.log.error(f"ERROR ::: {self.__err_string}")
-                self._update_attribute("info", "error", self.__err_string, False)
-            else:
-                self._remove_attribute_field("info", "error", False)
+    # ---
 
-            # update the state
-            self._update_attribute("info", "state", self.__drv_state)
+    async def _PZA_WORKER_task(self, loop):
+        """
+        """
+
+        try:
+
+            # Log state transition
+            if self.__drv_state != self.__drv_state_prev:
+
+                # Managed message
+                self._state_started_time = time.time()
+                self.log.debug(f"STATE CHANGE ::: {self.__drv_state_prev} => {self.__drv_state}")
+                self.__drv_state_prev = self.__drv_state
+
+                # Manage the errstring
+                if self.__drv_state == "err":
+                    self.log.error(f"ERROR ::: {self.__err_string}")
+                    self._update_attribute("info", "error", self.__err_string, False)
+                else:
+                    self._remove_attribute_field("info", "error", False)
+
+                # update the state
+                self._update_attribute("info", "state", self.__drv_state)
 
 
-        # Execute the correct callback
-        if not (self.__drv_state in self.__states):
-            # error critique !
-            pass
-        await self.__states[self.__drv_state]()
+            # Execute the correct callback
+            if not (self.__drv_state in self.__states):
+                # error critique !
+                pass
+            await self.__states[self.__drv_state]()
+
+        except:
+            e = sys.exc_info()[0]
+            self.log.exception("Critical error on driver %s (%s)" % (self._name, e))
+
 
 
     ###########################################################################
@@ -188,7 +174,7 @@ class PlatformDriver(PlatformWorker):
         """
         """
         try:
-            self._PZADRV_loop_init(self._tree)
+            self._PZA_DRV_loop_init(self._tree)
         except Exception as e:
             self._pzadrv_error_detected(str(e) + " " + traceback.format_exc())
 
@@ -215,52 +201,45 @@ class PlatformDriver(PlatformWorker):
         """Subscribe to the required topics
         """
         # Register the common discovery topic 'pza'
-        self.mqtt_client.subscribe("pza")
+        self._pclient.subscribe("pza", self.__on_pza_message)
         # Register to all commands
-        self.mqtt_client.subscribe(self.topic_cmds + "#")
+        self._pclient.subscribe(self.topic_cmds + "#", self.__on_cmds_message)
 
     ###########################################################################
     ###########################################################################
-    
-    def __on_message(self, client, userdata, msg):
-        """Callback to manage incomming mqtt messages
+
+    def __on_pza_message(self, client, userdata, msg):
+        # If the request is for all interfaces '*'
+        if msg.payload == b'*':
+            self.log.info("scan request received !")
+            self._push_attribute("info", 0, False) # heartbeat_pulse
+
+    def __on_cmds_message(self, client, userdata, msg):
+        self._PZADRV_cmds_set(msg.payload)
+
+    # def __on_message(self, client, userdata, msg):
+    #     """Callback to manage incomming mqtt messages
+
+    #     Args:
+    #         - client: from paho.mqtt.client
+    #         - userdata: from paho.mqtt.client
+    #         - msg: from paho.mqtt.client
+    #     """
+    #     # Get the topix string
+    #     topic_string = str(msg.topic)
+
+    #     # Debug purpose
+    #     self.log.debug(f"MSG_IN < %{topic_string}% {msg.payload}")
+
         
-        Args:
-            - client: from paho.mqtt.client
-            - userdata: from paho.mqtt.client
-            - msg: from paho.mqtt.client
-        """
-        # Get the topix string
-        topic_string = str(msg.topic)
-        
-        # Debug purpose
-        self.log.debug(f"MSG_IN < %{topic_string}% {msg.payload}")
-
-        # Check if it is a discovery request
-        if topic_string == "pza":
-            # If the request is for all interfaces '*'
-            if msg.payload == b'*':
-                self.log.info("scan request received !")
-                self._push_attribute("info", 0, False) # heartbeat_pulse
-            # Else check if it is specific, there is an array in the payload
-            else:
-                # TODO
-                pass
-                # try:
-                #     specifics = self.payload_to_dict(msg.payload)
-                # except:
-                #     pass
-            return
-        
-        # Route to the handle for the command set
-        suffix = topic_string[self.topic_cmds_size:]
-        if suffix == "set":
-            self._PZADRV_cmds_set(msg.payload)
+    #     # Route to the handle for the command set
+    #     suffix = topic_string[self.topic_cmds_size:]
+    #     if suffix == "set":
 
     ###########################################################################
     ###########################################################################
 
-    def _update_attribute(self, attribute, field, value, push='on-change', retain = True):
+    async def _update_attribute(self, attribute, field, value, push='on-change', retain = True):
         """Function that update only one attribute field
 
         Args
@@ -283,19 +262,19 @@ class PlatformDriver(PlatformWorker):
         if not (field in __att) or __att[field] != value:
             __att[field] = value
             if push == 'on-change' or push == 'always':
-                self._push_attribute(attribute, retain=retain)
+                await self._push_attribute(attribute, retain=retain)
             return True
 
         # Push anyway if the 'push' flag is set to 'always'
         if push == 'always':
-            self._push_attribute(attribute, retain=retain)
+            await self._push_attribute(attribute, retain=retain)
 
         # Attribute not updated
         return False
 
     # ---
 
-    def _update_attributes_from_dict(self, change_dict, push=True, retain = True):
+    async def _update_attributes_from_dict(self, change_dict, push=True, retain = True):
         """Function that update multiple attribute and field at the same time
         """
         for attribute in change_dict:
@@ -303,7 +282,7 @@ class PlatformDriver(PlatformWorker):
             for field, value in change_dict[attribute].items():
                 modification = self._update_attribute(attribute, field, value, False) or modification
             if push and modification:
-                self._push_attribute(attribute, retain=retain)
+                await self._push_attribute(attribute, retain=retain)
 
     # ---
 
@@ -332,47 +311,42 @@ class PlatformDriver(PlatformWorker):
     ###########################################################################
     ###########################################################################
 
-    def _push_attribute(self, attribute, qos = 0, retain = True):
+    async def _push_attribute(self, attribute, qos = 0, retain = True):
         """Publish the attribute
 
         Args
             - retain: True by default because most attribute need it
         """
-        pass
-        # # Check for retain
-        # do_retain=retain
-        # if do_retain and attribute == "info":
-        #     do_retain=False
+        # Check for retain
+        do_retain=retain
+        if do_retain and attribute == "info":
+            do_retain=False
 
-        # # topic
-        # topic = self.topic_atts + attribute
+        # topic
+        topic = self.topic_atts + attribute
 
-        # # Payload
-        # pdict = dict()
-        # pdict[attribute] = self.__drv_atts.get(attribute, dict())
-        # payload = json.dumps(pdict)
+        # Payload
+        pdict = dict()
+        pdict[attribute] = self.__drv_atts.get(attribute, dict())
 
-        # # Debug purpose
-        # self.log.debug(f"MSG_OUT > %{topic}% {payload} retain={do_retain}")
-
-        # # Publish
-        # self.mqtt_client.publish(topic, payload, qos=qos, retain=do_retain)
+        # Publish
+        await self._pclient.publish_json(topic, pdict, qos=qos, retain=do_retain)
 
     ###########################################################################
     ###########################################################################
 
-    def payload_to_dict(self, payload):
-        """ To parse json payload
-        """
-        return json.loads(payload.decode("utf-8"))
+    # def payload_to_dict(self, payload):
+    #     """ To parse json payload
+    #     """
+    #     return json.loads(payload.decode("utf-8"))
 
     ###########################################################################
     ###########################################################################
 
-    def payload_to_int(self, payload):
-        """
-        """
-        return int(payload.decode("utf-8"))
+    # def payload_to_int(self, payload):
+    #     """
+    #     """
+    #     return int(payload.decode("utf-8"))
 
     ###########################################################################
     ###########################################################################
@@ -437,7 +411,7 @@ class PlatformDriver(PlatformWorker):
         return []
 
     @abc.abstractmethod
-    def _PZADRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, tree):
         """
         """
         pass

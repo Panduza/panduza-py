@@ -22,7 +22,7 @@ class MetaDriverSerial(MetaDriver):
             },
         }
 
-    def _PZADRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, tree):
 
         self.__cmd_handlers = {
             "data": self.__handle_cmds_set_data

@@ -62,7 +62,7 @@ class DriverIPS4303S(MetaDriverPsu):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, tree):
 
         # Get settings from tree and append constant settings for this device
         settings = dict() if "settings" not in tree else tree["settings"]
@@ -98,7 +98,7 @@ class DriverIPS4303S(MetaDriverPsu):
         self._pzadrv_psu_update_misc("model", "IPS4303S (RS Pro)")
 
         # Call meta class PSU ini
-        super()._PZADRV_loop_init(tree)
+        super()._PZA_DRV_loop_init(tree)
 
 
     ###########################################################################

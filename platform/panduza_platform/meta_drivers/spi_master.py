@@ -23,7 +23,7 @@ class MetaDriverSpiMaster(MetaDriver):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, tree):
         self.__cmd_handlers = {"transfer": self.__handle_cmd_transfer}
 
         self._pzadrv_init_success()
