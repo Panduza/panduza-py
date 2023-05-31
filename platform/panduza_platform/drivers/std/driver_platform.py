@@ -1,7 +1,7 @@
 import time
-from ...meta_driver import MetaDriver
+from ...platform_driver import PlatformDriver
 
-class DriverPlatform(MetaDriver):
+class DriverPlatform(PlatformDriver):
     """
     """
 
@@ -10,21 +10,18 @@ class DriverPlatform(MetaDriver):
 
     def _PZA_DRV_config(self):
         return {
-            "name": "PyPlatform",
+            "name": "py.platform",
             "description": "Platform driver for python platform",
             "info": {
                 "type": "platform",
                 "version": "0.0"
-            },
-            "compatible": [
-                "py.platform"
-            ]
+            }
         }
 
     ###########################################################################
     ###########################################################################
 
-    def _PZA_DRV_loop_init(self, tree):
+    async def _PZA_DRV_loop_init(self, tree):
 
         # self.log.debug(f"{tree}")
         # self.log.debug(f">>>>>>>>>{len(self._platform.interfaces)}")
@@ -32,7 +29,7 @@ class DriverPlatform(MetaDriver):
         
         # Update the number of managed interface
         self.number_of_interfaces = len(self._platform.interfaces)
-        self._update_attribute("info", "interfaces", self.number_of_interfaces)
+        await self._update_attribute("info", "interfaces", self.number_of_interfaces)
 
         # Tell the platform that the init state end sucessfuly
         self._pzadrv_init_success()
@@ -41,7 +38,7 @@ class DriverPlatform(MetaDriver):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_loop_run(self):
+    async def _PZADRV_loop_run(self):
         """
         """
         pass
@@ -49,7 +46,7 @@ class DriverPlatform(MetaDriver):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_loop_err(self):
+    async def _PZADRV_loop_err(self):
         """
         """
         pass
@@ -57,7 +54,7 @@ class DriverPlatform(MetaDriver):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_cmds_set(self, payload):
+    async def _PZADRV_cmds_set(self, payload):
         """From MetaDriver
         """
         pass

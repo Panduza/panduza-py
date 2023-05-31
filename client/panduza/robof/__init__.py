@@ -3,13 +3,19 @@ from robotlibcore import DynamicCore, keyword
 from robot.libraries.BuiltIn import BuiltIn
 
 from ..core.core import Core
+
+from .client import KeywordsClient
 from .psu import KeywordsPsu
+
 from ..interfaces.generator import GenerateAllInterfacesFromAliases
 
 class Keywords(DynamicCore):
 
     def __init__(self):
-        libraries = [KeywordsPsu()]
+        libraries = [
+            KeywordsClient(),
+            KeywordsPsu()
+        ]
         DynamicCore.__init__(self, libraries)
 
     @keyword

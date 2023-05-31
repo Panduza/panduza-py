@@ -19,7 +19,7 @@ class DriverPsuFake(MetaDriverPsu):
     ###########################################################################
     ###########################################################################
 
-    def _PZA_DRV_loop_init(self, tree):
+    async def _PZA_DRV_loop_init(self, tree):
         """Init function
         Reset fake parameters
         """
@@ -57,7 +57,7 @@ class DriverPsuFake(MetaDriverPsu):
         }
 
         # Call meta class PSU ini
-        super()._PZA_DRV_loop_init(tree)
+        await super()._PZA_DRV_loop_init(tree)
 
     ###########################################################################
 

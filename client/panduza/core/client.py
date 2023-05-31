@@ -52,8 +52,8 @@ class Client:
             self.url, self.port = Core.BrokerInfoFromInterfaceAlias(
                 interface_alias)
         else:
-            self.url = url
-            self.port = port
+            self.url = str(url)
+            self.port = int(port)
 
         # Set flags
         self.is_connected = False

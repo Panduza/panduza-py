@@ -61,7 +61,7 @@ class Platform:
         self.drivers = []
 
         # Interfaces
-        self.__interfaces = []
+        self.interfaces = []
 
         # Tree that must be loaded at startup
         self.tree_filepath = None
@@ -219,7 +219,7 @@ class Platform:
     # def get_interface_instance_from_name(self, name):
     #     """
     #     """
-    #     for interface in self.__interfaces:
+    #     for interface in self.interfaces:
     #         if interface["name"] == name:
     #             return interface["instance"]
     #     raise Exception("interface not found")
@@ -261,7 +261,7 @@ class Platform:
         """Load a new interface
         """
         instance = self.driver_factory.produce_interface(bench_name, device_name, interface_config)
-        self.__interfaces.append(instance)
+        self.interfaces.append(instance)
 
     ###########################################################################
     ###########################################################################
@@ -294,7 +294,15 @@ class Platform:
         """
         try:
             self.__load_tree()
+            
+            
             self.__load_devices()
+            
+            
+            self.load_interface("server", "platforms", {
+                    "name": "py",
+                    "driver": "py.platform"
+                })
 
 
             # modify interfaces with tree bench configs
@@ -308,11 +316,11 @@ class Platform:
             # attach clients   to thread
 
 
-            for interface in self.__interfaces:
+            for interface in self.interfaces:
                 interface.attach_pclient(client)
 
             # Prepare interface internal data
-            for interface in self.__interfaces:
+            for interface in self.interfaces:
                 interface.initialize()
 
 
@@ -324,7 +332,7 @@ class Platform:
             t.attach_worker(client)
 
             # attach interfaces to thread
-            for interface in self.__interfaces:
+            for interface in self.interfaces:
                 t.attach_worker(interface)
 
 
@@ -337,7 +345,7 @@ class Platform:
 
     #             # Run all the interfaces on differents threads
     #             thread_id=0
-    #             for interface in self.__interfaces:
+    #             for interface in self.interfaces:
     #                 t = threading.Thread(target=interface["instance"].start, name="T" + str(thread_id))
     #                 thread_id+=1
     #                 self.threads.append(t)
@@ -366,7 +374,7 @@ class Platform:
         """
         pass
     #     # Request a stop for each driver
-    #     for interface in self.__interfaces:
+    #     for interface in self.interfaces:
     #         interface["instance"].stop()
 
     #     # Join them all !

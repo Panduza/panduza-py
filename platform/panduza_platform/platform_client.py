@@ -154,28 +154,23 @@ class TopicListeners:
 
 class PlatformClient(PlatformWorker):
     """Mqtt Client used by the platform and compatible with PlatformThreads
-
-    Paho recommend to run the client in a separate thread.
-    This lead to the fact that 1 client == 1 thread
     """
 
     # ---
 
     def __init__(self, addr, port) -> None:
+        """Constructor
+        """
         super().__init__()
 
-
-        # Mqtt connection
-        self.mqtt_client = mqtt.Client()
-        self.mqtt_client.on_message = self.__on_message
-
-        # 
+        # Save address and port
         self.__addr = addr
         self.__port = port
         self.log = client_logger(str(addr) + ":" + str(port))
 
-
-        self.__listeners_store = TopicListeners()
+        # Mqtt connection
+        self.mqtt_client = mqtt.Client()
+        self.mqtt_client.on_message = self.__on_message
 
         # Initialize state
         self.__state = "init"
@@ -187,6 +182,10 @@ class PlatformClient(PlatformWorker):
             'run': self.__state_run,
             'err': self.__state_err
         }
+
+        # Topic listeners will store callbacks that must be triggered when
+        # a message for a given topic arrive.
+        self.__listeners_store = TopicListeners()
 
     # ---
 

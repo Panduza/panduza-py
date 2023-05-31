@@ -147,12 +147,12 @@ class PlatformDriver(PlatformWorker):
                 # Manage the errstring
                 if self.__drv_state == "err":
                     self.log.error(f"ERROR ::: {self.__err_string}")
-                    self._update_attribute("info", "error", self.__err_string, False)
+                    await self._update_attribute("info", "error", self.__err_string, False)
                 else:
                     self._remove_attribute_field("info", "error", False)
 
                 # update the state
-                self._update_attribute("info", "state", self.__drv_state)
+                await self._update_attribute("info", "state", self.__drv_state)
 
 
             # Execute the correct callback
@@ -174,7 +174,7 @@ class PlatformDriver(PlatformWorker):
         """
         """
         try:
-            self._PZA_DRV_loop_init(self._tree)
+            await self._PZA_DRV_loop_init(self._tree)
         except Exception as e:
             self._pzadrv_error_detected(str(e) + " " + traceback.format_exc())
 
@@ -182,7 +182,7 @@ class PlatformDriver(PlatformWorker):
         """
         """
         try:
-            self._PZADRV_loop_run()
+            await self._PZADRV_loop_run()
         except Exception as e:
             self._pzadrv_error_detected(str(e) + " " + traceback.format_exc())
 
@@ -190,7 +190,7 @@ class PlatformDriver(PlatformWorker):
         """
         """
         try:
-            self._PZADRV_loop_err()
+            await self._PZADRV_loop_err()
         except Exception as e:
             self.log.error(str(e))
 
@@ -280,7 +280,7 @@ class PlatformDriver(PlatformWorker):
         for attribute in change_dict:
             modification = False
             for field, value in change_dict[attribute].items():
-                modification = self._update_attribute(attribute, field, value, False) or modification
+                modification = await self._update_attribute(attribute, field, value, False) or modification
             if push and modification:
                 await self._push_attribute(attribute, retain=retain)
 
@@ -411,18 +411,18 @@ class PlatformDriver(PlatformWorker):
         return []
 
     @abc.abstractmethod
-    def _PZA_DRV_loop_init(self, tree):
+    async def _PZA_DRV_loop_init(self, tree):
         """
         """
         pass
 
     @abc.abstractmethod
-    def _PZADRV_loop_run(self):
+    async def _PZADRV_loop_run(self):
         """
         """
         pass
 
-    def _PZADRV_loop_err(self):
+    async def _PZADRV_loop_err(self):
         """
         """
         elasped = time.time() - self._state_started_time

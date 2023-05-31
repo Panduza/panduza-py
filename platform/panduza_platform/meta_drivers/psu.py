@@ -159,7 +159,7 @@ class MetaDriverPsu(PlatformDriver):
 
     # ---
 
-    def _PZA_DRV_loop_init(self, tree):
+    async def _PZA_DRV_loop_init(self, tree):
         # Set command handlers
         self.__cmd_handlers = {
             "enable": self.__handle_cmds_set_enable,
@@ -170,7 +170,7 @@ class MetaDriverPsu(PlatformDriver):
         }
 
         # First update
-        self.__update_attribute_initial()
+        await self.__update_attribute_initial()
 
         # Polling cycle reset
         start_time = time.perf_counter()
@@ -185,11 +185,11 @@ class MetaDriverPsu(PlatformDriver):
 
     # ---
 
-    def _PZADRV_loop_run(self):
+    async def _PZADRV_loop_run(self):
         # Polls
-        self.__poll_att_enable()
-        self.__poll_att_volts()
-        self.__poll_att_amps()
+        await self.__poll_att_enable()
+        await self.__poll_att_volts()
+        await self.__poll_att_amps()
 
     # ---
 
@@ -210,90 +210,90 @@ class MetaDriverPsu(PlatformDriver):
     ###########################################################################
     ###########################################################################
 
-    def __poll_att_enable(self):
+    async def __poll_att_enable(self):
         polling_cycle = float(self._get_field("enable", "polling_cycle"))
         if polling_cycle < 0:
             return
         if (time.perf_counter() - self.polling_ref["enable"]) > polling_cycle:
-            self._update_attribute("enable", "value", self._PZADRV_PSU_read_enable_value())
+            await self._update_attribute("enable", "value", self._PZADRV_PSU_read_enable_value())
             self.polling_ref["enable"] = time.perf_counter()
 
     # ---
 
-    def __poll_att_volts(self):
+    async def __poll_att_volts(self):
         polling_cycle = float(self._get_field("volts", "polling_cycle"))
         if polling_cycle < 0:
             return
         if (time.perf_counter() - self.polling_ref["volts"]) > polling_cycle:
             p = False
-            p = self._update_attribute("volts", "goal", self._PZADRV_PSU_read_volts_goal(), False) or p
-            p = self._update_attribute("volts", "real", self._PZADRV_PSU_read_volts_real(), False) or p
+            p = await self._update_attribute("volts", "goal", self._PZADRV_PSU_read_volts_goal(), False) or p
+            p = await self._update_attribute("volts", "real", self._PZADRV_PSU_read_volts_real(), False) or p
             if p:
-                self._push_attribute("volts")
+                await self._push_attribute("volts")
             self.polling_ref["volts"] = time.perf_counter()
 
     # ---
 
-    def __poll_att_amps(self):
+    async def __poll_att_amps(self):
         polling_cycle = float(self._get_field("amps", "polling_cycle"))
         if polling_cycle < 0:
             return
         if (time.perf_counter() - self.polling_ref["amps"]) > polling_cycle:
             p = False
-            p = self._update_attribute("amps", "goal", self._PZADRV_PSU_read_amps_goal(), False) or p
-            p = self._update_attribute("amps", "real", self._PZADRV_PSU_read_amps_real(), False) or p
+            p = await self._update_attribute("amps", "goal", self._PZADRV_PSU_read_amps_goal(), False) or p
+            p = await self._update_attribute("amps", "real", self._PZADRV_PSU_read_amps_real(), False) or p
             if p:
-                self._push_attribute("amps")
+                await self._push_attribute("amps")
             self.polling_ref["amps"] = time.perf_counter()
 
     # ---
 
-    def __update_attribute_initial(self):
+    async def __update_attribute_initial(self):
         # === ENABLE
-        self._update_attribute("enable", "value", self._PZADRV_PSU_read_enable_value())
-        self._update_attribute("enable", "polling_cycle", 5)
+        await self._update_attribute("enable", "value", self._PZADRV_PSU_read_enable_value())
+        await self._update_attribute("enable", "polling_cycle", 5)
 
         # === VOLTS
         p = False
         min_max = self._PZADRV_PSU_volts_goal_min_max()
         # /!\ 'or p' must be at the end
-        p = self._update_attribute("volts", "min", min_max.get("min", 0), False) or p
-        p = self._update_attribute("volts", "max", min_max.get("max", 0), False) or p
-        p = self._update_attribute("volts", "goal", self._PZADRV_PSU_read_volts_goal(), False) or p
-        p = self._update_attribute("volts", "real", self._PZADRV_PSU_read_volts_real(), False) or p
-        p = self._update_attribute("volts", "decimals", self._PZADRV_PSU_read_volts_decimals(), False) or p
-        p = self._update_attribute("volts", "polling_cycle", 5, False) or p
+        p = await self._update_attribute("volts", "min", min_max.get("min", 0), False) or p
+        p = await self._update_attribute("volts", "max", min_max.get("max", 0), False) or p
+        p = await self._update_attribute("volts", "goal", self._PZADRV_PSU_read_volts_goal(), False) or p
+        p = await self._update_attribute("volts", "real", self._PZADRV_PSU_read_volts_real(), False) or p
+        p = await self._update_attribute("volts", "decimals", self._PZADRV_PSU_read_volts_decimals(), False) or p
+        p = await self._update_attribute("volts", "polling_cycle", 5, False) or p
         if p:
-            self._push_attribute("volts")
+            await self._push_attribute("volts")
 
         # === AMPS
         p = False
         min_max = self._PZADRV_PSU_amps_goal_min_max()
         # /!\ 'or p' must be at the end
-        p = self._update_attribute("amps", "min", min_max.get("min", 0), False) or p
-        p = self._update_attribute("amps", "max", min_max.get("max", 0), False) or p
-        p = self._update_attribute("amps", "goal", self._PZADRV_PSU_read_amps_goal(), False) or p
-        p = self._update_attribute("amps", "real", self._PZADRV_PSU_read_amps_real(), False) or p
-        p = self._update_attribute("amps", "decimals", self._PZADRV_PSU_read_amps_decimals(), False) or p
-        p = self._update_attribute("amps", "polling_cycle", 5, False) or p
+        p = await self._update_attribute("amps", "min", min_max.get("min", 0), False) or p
+        p = await self._update_attribute("amps", "max", min_max.get("max", 0), False) or p
+        p = await self._update_attribute("amps", "goal", self._PZADRV_PSU_read_amps_goal(), False) or p
+        p = await self._update_attribute("amps", "real", self._PZADRV_PSU_read_amps_real(), False) or p
+        p = await self._update_attribute("amps", "decimals", self._PZADRV_PSU_read_amps_decimals(), False) or p
+        p = await self._update_attribute("amps", "polling_cycle", 5, False) or p
         if p:
-            self._push_attribute("amps")
+            await self._push_attribute("amps")
 
         # === SETTINGS
         p = False
         # /!\ 'or p' must be at the end
         sc = self._PZADRV_PSU_settings_capabilities()
         if sc.get("ovp", False):
-            p = self._update_attribute("settings", "ovp", self._PZADRV_PSU_read_settings_ovp(), False) or p
+            p = await self._update_attribute("settings", "ovp", self._PZADRV_PSU_read_settings_ovp(), False) or p
         if sc.get("ocp", False):
-            p = self._update_attribute("settings", "ocp", self._PZADRV_PSU_read_settings_ocp(), False) or p
+            p = await self._update_attribute("settings", "ocp", self._PZADRV_PSU_read_settings_ocp(), False) or p
         if sc.get("silent", False):
-            p = self._update_attribute("settings", "silent", self._PZADRV_PSU_read_settings_silent(), False) or p
+            p = await self._update_attribute("settings", "silent", self._PZADRV_PSU_read_settings_silent(), False) or p
         if p:
             self._push_attribute("settings")
 
         # === MISC
-        self._update_attributes_from_dict({
+        await self._update_attributes_from_dict({
             "misc": self._PZADRV_PSU_read_misc()
         })
 
