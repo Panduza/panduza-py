@@ -8,8 +8,8 @@ import threading
 import paho.mqtt.client as mqtt
 import logging
 
+from fnmatch import fnmatch
 from .log.client import client_logger
-
 from .platform_worker import PlatformWorker
 
 # =============================================================================
@@ -22,91 +22,27 @@ from .platform_worker import PlatformWorker
 # =============================================================================
 # =============================================================================
 # =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
 
-class AsyncioHelper:
-    """Helper provided by paho to execute the client inside an event loop
-    """
-    def __init__(self, loop, client, log):
-        self.log = log
-        self.loop = loop
-        self.client = client
-        self.client.on_socket_open = self.on_socket_open
-        self.client.on_socket_close = self.on_socket_close
-        self.client.on_socket_register_write = self.on_socket_register_write
-        self.client.on_socket_unregister_write = self.on_socket_unregister_write
+class TopicListener:
 
-    def on_socket_open(self, client, userdata, sock):
-        self.log.debug("Socket opened")
-
-        def cb():
-            self.log.debug("Socket is readable, calling loop_read")
-            client.loop_read()
-
-        self.loop.add_reader(sock, cb)
-        self.misc = self.loop.create_task(self.misc_loop())
-
-    def on_socket_close(self, client, userdata, sock):
-        self.log.debug("Socket closed")
-        self.loop.remove_reader(sock)
-        self.misc.cancel()
-
-    def on_socket_register_write(self, client, userdata, sock):
-        self.log.debug("Watching socket for writability.")
-
-        def cb():
-            self.log.debug("Socket is writable, calling loop_write")
-            client.loop_write()
-
-        self.loop.add_writer(sock, cb)
-
-    def on_socket_unregister_write(self, client, userdata, sock):
-        self.log.debug("Stop watching socket for writability.")
-        self.loop.remove_writer(sock)
-
-    async def misc_loop(self):
-        self.log.debug("misc_loop started")
-        while self.client.loop_misc() == mqtt.MQTT_ERR_SUCCESS:
-            try:
-                await asyncio.sleep(1)
-            except asyncio.CancelledError:
-                break
-        self.log.debug("misc_loop finished")
-
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-
-class TopicCallbacks:
-
-    def __init__(self, wildcard) -> None:
+    def __init__(self, wildcard, topic) -> None:
+        """Constructor
+        """
+        self.subscribed = False
+        self.topic = topic
         self.wildcard = wildcard
         self.callbacks = []
 
     def append_callback(self, callback, **kwargs):
+        """Append a new callback
+        """
         # Check that callback is not already registered, and register
         if callback in self.callbacks:
             raise ValueError(
                 f"callback {callback} already registered for topic {self.wildcard}")
 
         # Append callback
-        self.callbacks.append({"cb": callback, "kwargs": kwargs})
+        self.callbacks.append(callback)
 
 # =============================================================================
 # =============================================================================
@@ -122,24 +58,37 @@ class TopicCallbacks:
 class TopicListeners:
 
     def __init__(self) -> None:
-        self.topic_listeners = []
-
-    def get_entry_from_topic(self, topic):
+        """Constructor
         """
+        self.entries = []
+
+    def register_entry_from_topic(self, topic):
+        """Get entry associated to this topic
         """
         # Compose the wildcard from the topic
         wildcard = topic.replace("/+", "/*").replace("/#", "/*")
 
         # Check that the new wildcard is not already in the store
-        for tl in self.topic_listeners:
+        for tl in self.entries:
             if tl.wildcard == wildcard:
-                return tl, False
+                return tl
 
         # Append a new topic listeners
-        entry = TopicCallbacks(wildcard)
-        self.topic_listeners.append(entry)
+        entry = TopicListener(wildcard, topic)
+        self.entries.append(entry)
 
-        return entry, True
+        # return
+        return entry
+
+    def trigger_callbacks(self, topic, payload):
+        """
+        """
+        # Check that the new wildcard is not already in the store
+        for entry in self.entries:
+            if fnmatch(topic, entry.wildcard):
+                for cb in entry.callbacks:
+                    cb(topic, payload)
+
 
 # =============================================================================
 # =============================================================================
@@ -161,31 +110,38 @@ class PlatformClient(PlatformWorker):
     def __init__(self, addr, port) -> None:
         """Constructor
         """
+        # Build parent
         super().__init__()
 
         # Save address and port
-        self.__addr = addr
-        self.__port = port
+        self.addr = addr
+        self.port = port
+
+        # Create the logger
         self.log = client_logger(str(addr) + ":" + str(port))
 
         # Mqtt connection
-        self.mqtt_client = mqtt.Client()
-        self.mqtt_client.on_message = self.__on_message
+        self.mqtt_client = None
 
-        # Initialize state
+        # Initialize state machine
         self.__state = "init"
         self.__state_prev = None
 
         # States
         self.__states = {
             'init': self.__state_init,
-            'run': self.__state_run,
-            'err': self.__state_err
+            'connecting': self.__state_connecting,
+            'running': self.__state_running,
+            'error': self.__state_error,
+            'disconnecting': self.__state_disconnecting
         }
 
         # Topic listeners will store callbacks that must be triggered when
         # a message for a given topic arrive.
-        self.__listeners_store = TopicListeners()
+        self.__listeners = TopicListeners()
+
+    # =============================================================================
+    # PUBLIC FUNCTIONS
 
     # ---
 
@@ -196,16 +152,14 @@ class PlatformClient(PlatformWorker):
         self.log.debug(f"Register listener for topic '{topic}'")
 
         # Create set if not existing for topics
-        entry, new_created = self.__listeners_store.get_entry_from_topic(topic)
-        if new_created:
-            self.mqtt_client.subscribe(topic)
+        entry = self.__listeners.register_entry_from_topic(topic)
 
         # Append callback to the listener
         entry.append_callback(callback, **kwargs)
 
     # ---
 
-    async def publish(self, topic, payload: bytes, qos=0, retain=False):
+    def publish(self, topic, payload: bytes, qos=0, retain=False):
         """Helper to publish raw messages
         """
         # Debug
@@ -233,21 +187,10 @@ class PlatformClient(PlatformWorker):
             retain=retain
         )
 
+    # =============================================================================
+    # WORKER FUNCTIONS
 
-
-
-    # ---
-
-    def PZA_WORKER_on_thread_attach(self, loop):
-        """Triggered when a thread is attached to this worker
-        """
-
-        # Create the async loop runner
-        self.mqtt_asynch = AsyncioHelper(loop, self.mqtt_client, self.log)
-
-    # ---
-
-    async def _PZA_WORKER_task(self, loop):
+    async def _PZA_WORKER_task(self, evloop):
         """
         """
         # Log state transition
@@ -258,12 +201,81 @@ class PlatformClient(PlatformWorker):
             self.log.debug(f"STATE CHANGE ::: {self.__state_prev} => {self.__state}")
             self.__state_prev = self.__state
 
-
         # Execute the correct callback
         if not (self.__state in self.__states):
             # error critique !
             pass
-        await self.__states[self.__state]()
+        await self.__states[self.__state](evloop)
+
+    # =============================================================================
+    # STATES FUNCTIONS
+
+    async def __state_init(self, evloop):
+        """Initialization state
+        """
+        # Set the new event loop
+        self.evloop = evloop
+
+        # Start connection
+        self.mqtt_client = mqtt.Client()
+        self.mqtt_client.on_message = self.__on_message
+        self.mqtt_client.on_connect = self.__on_connect
+        self.mqtt_client.on_socket_open = self.__on_socket_open
+        self.mqtt_client.on_socket_close = self.__on_socket_close
+        self.mqtt_client.on_socket_register_write = self.__on_socket_register_write
+        self.mqtt_client.on_socket_unregister_write = self.__on_socket_unregister_write
+        self.mqtt_client.connect(self.addr, self.port)
+
+        # Go connecting state
+        self.__state = 'connecting'
+        self.log.info("Connecting...")
+
+    # ---
+
+    async def __state_connecting(self, evloop):
+        """Running state
+        """
+        await asyncio.sleep(0.5)
+
+    # ---
+
+    async def __state_running(self, evloop):
+        """Running state
+        """
+        for entry in self.__listeners.entries:
+            if not entry.subscribed:
+                self.log.debug(f"subscribe topic {entry.topic}")
+                self.mqtt_client.subscribe(entry.topic)
+                entry.subscribed = True
+        await asyncio.sleep(0.5)
+
+    # ---
+
+    async def __state_error(self, evloop):
+        """
+        """
+        await asyncio.sleep(1)
+
+    # ---
+
+    async def __state_disconnecting(self, evloop):
+        """
+        """
+        await asyncio.sleep(1)
+
+    # =============================================================================
+    # CLIENT CALLBACKS
+
+    # ---
+
+    def __on_connect(self, client, userdata, flags, rc):
+        """On connect callback
+        """
+        if self.__state == 'connecting':
+            self.__state = 'running'
+            self.log.info(f"Connected ! ({str(rc)})")
+        else:
+            self.log.warning(f"Wierd connection status ? ({str(rc)})")
 
     # ---
 
@@ -279,73 +291,55 @@ class PlatformClient(PlatformWorker):
         topic_string = str(msg.topic)
 
         # Debug purpose
-        self.log.debug(f"MSG_IN < %{topic_string}% {msg.payload}")
+        self.log.info(f"MSG_IN < %{topic_string}% {msg.payload}")
 
-        # # Check if it is a discovery request
-        # if topic_string == "pza":
-        #     # If the request is for all interfaces '*'
-        #     if msg.payload == b'*':
-        #         self.log.info("scan request received !")
-        #         self._push_attribute("info", 0, False) # heartbeat_pulse
-        #     # Else check if it is specific, there is an array in the payload
-        #     else:
-        #         # TODO
-        #         pass
-        #         # try:
-        #         #     specifics = self.payload_to_dict(msg.payload)
-        #         # except:
-        #         #     pass
-        #     return
-
-        # # Route to the handle for the command set
-        # suffix = topic_string[self.topic_cmds_size:]
-        # if suffix == "set":
-        #     self._PZADRV_cmds_set(msg.payload)
+        self.__listeners.trigger_callbacks(topic_string, msg.payload)
 
     # ---
 
-    async def __state_init(self):
-        """
-        """
-
-        # Start connection
-        self.mqtt_client.connect(self.__addr, self.__port)
-        
-        # Paho recommend to run the client in a separate thread
-        # self.mqtt_client.loop_start()
-        
-        self._init_success()
-
-        # try:
-        #     self._PZA_DRV_loop_init(self._tree)
-        # except Exception as e:
-        #     self._pzadrv_error_detected(str(e) + " " + traceback.format_exc())
+    async def misc_loop(self):
+        self.log.debug("misc_loop started")
+        while self.client.loop_misc() == mqtt.MQTT_ERR_SUCCESS:
+            try:
+                await asyncio.sleep(1)
+            except asyncio.CancelledError:
+                break
+        self.log.debug("misc_loop finished")
 
     # ---
 
-    async def __state_run(self):
-        """
-        """
-        pass
-        
+    def __on_socket_open(self, client, userdata, sock):
+        self.log.debug("Socket opened")
 
-        # try:
-        #     self._PZADRV_loop_run()
-        # except Exception as e:
-        #     self._pzadrv_error_detected(str(e) + " " + traceback.format_exc())
+        def cb():
+            self.log.debug("Socket is readable, calling loop_read")
+            client.loop_read()
 
-    # ---
-
-    async def __state_err(self):
-        """
-        """
-        pass
-        # try:
-        #     self._PZADRV_loop_err()
-        # except Exception as e:
-        #     self.log.error(str(e))
+        self.evloop.add_reader(sock, cb)
+        self.misc = self.evloop.create_task(self.misc_loop())
 
     # ---
 
-    def _init_success(self):
-        self.__state = "run"
+    def __on_socket_close(self, client, userdata, sock):
+        self.log.debug("Socket closed")
+        self.evloop.remove_reader(sock)
+        self.misc.cancel()
+
+    # ---
+
+    def __on_socket_register_write(self, client, userdata, sock):
+        self.log.debug("Watching socket for writability.")
+
+        def cb():
+            self.log.debug("Socket is writable, calling loop_write")
+            client.loop_write()
+
+        self.evloop.add_writer(sock, cb)
+
+    # ---
+
+    def __on_socket_unregister_write(self, client, userdata, sock):
+        self.log.debug("Stop watching socket for writability.")
+        self.evloop.remove_writer(sock)
+
+    # ---

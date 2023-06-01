@@ -1,4 +1,5 @@
 import os
+import time
 import json
 import pkgutil
 import argparse
@@ -293,16 +294,16 @@ class Platform:
         Threads are started and worker are bring to life
         """
         try:
-            self.__load_tree()
+            # self.__load_tree()
             
             
-            self.__load_devices()
+            # self.__load_devices()
             
             
-            self.load_interface("server", "platforms", {
-                    "name": "py",
-                    "driver": "py.platform"
-                })
+            # self.load_interface("server", "platforms", {
+            #         "name": "py",
+            #         "driver": "py.platform"
+            #     })
 
 
             # modify interfaces with tree bench configs
@@ -316,13 +317,19 @@ class Platform:
             # attach clients   to thread
 
 
-            for interface in self.interfaces:
-                interface.attach_pclient(client)
+            # for interface in self.interfaces:
+            #     interface.attach_pclient(client)
 
             # Prepare interface internal data
-            for interface in self.interfaces:
-                interface.initialize()
+            # for interface in self.interfaces:
+            #     interface.initialize()
 
+            # client.publish("test", b"ttttt")
+
+
+            def __cbbb(topic, payload):
+                print("pooookkk")
+            client.subscribe("pza", __cbbb)
 
 
             # Create and start thread pool
@@ -331,9 +338,9 @@ class Platform:
             # attach clients to thread
             t.attach_worker(client)
 
-            # attach interfaces to thread
-            for interface in self.interfaces:
-                t.attach_worker(interface)
+            # # attach interfaces to thread
+            # for interface in self.interfaces:
+            #     t.attach_worker(interface)
 
 
             t.start()
