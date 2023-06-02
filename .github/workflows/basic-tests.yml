@@ -34,10 +34,14 @@ jobs:
       # ---
       - run: python3 ./platform/deploy/pza-py-platform-run.py ./tests/pza_platform/tree.json &
 
+      - uses: cardinalby/export-env-action@v1
+        with:
+          envFile: './envs/fake_bench.sh'
+
       # ---
       - name: Execute tests
         working-directory: tests
-        run: ./envs/fake_bench.sh && robot robot/*
+        run: robot robot/*
 
       # ---
       - name: Debug
