@@ -36,7 +36,7 @@ jobs:
 
       - uses: cardinalby/export-env-action@v1
         with:
-          envFile: './envs/fake_bench.sh'
+          envFile: './tests/envs/fake_bench.sh'
 
       # ---
       - name: Execute tests
