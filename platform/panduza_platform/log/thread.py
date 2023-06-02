@@ -64,7 +64,7 @@ class ThreadFormatter(logging.Formatter):
             t_name = record.threadName
 
         output = ""
-        output += Back.WHITE
+        output += Style.RESET_ALL + Back.RED + Fore.WHITE
         output += t_name.ljust(5, ' ')
         output += "| "
         output += record.levelname.ljust(8, ' ')

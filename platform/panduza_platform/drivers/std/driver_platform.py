@@ -26,36 +26,11 @@ class DriverPlatform(PlatformDriver):
         # self.log.debug(f"{tree}")
         # self.log.debug(f">>>>>>>>>{len(self._platform.interfaces)}")
 
-        
+
         # Update the number of managed interface
         self.number_of_interfaces = len(self._platform.interfaces)
         await self._update_attribute("info", "interfaces", self.number_of_interfaces)
 
         # Tell the platform that the init state end sucessfuly
         self._pzadrv_init_success()
-
-
-    ###########################################################################
-    ###########################################################################
-
-    async def _PZADRV_loop_run(self):
-        """
-        """
-        pass
-
-    ###########################################################################
-    ###########################################################################
-
-    async def _PZADRV_loop_err(self):
-        """
-        """
-        pass
-
-    ###########################################################################
-    ###########################################################################
-
-    async def _PZADRV_cmds_set(self, payload):
-        """From MetaDriver
-        """
-        pass
 

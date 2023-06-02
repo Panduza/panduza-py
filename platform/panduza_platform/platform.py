@@ -235,6 +235,13 @@ class Platform:
     #     self.drivers.append(driver)
 
 
+
+    def panic(self):
+        """
+        """
+        self.__alive = False
+
+
     ###########################################################################
     ###########################################################################
     ### PUBLIC
@@ -294,16 +301,16 @@ class Platform:
         Threads are started and worker are bring to life
         """
         try:
-            # self.__load_tree()
+            self.__load_tree()
             
             
-            # self.__load_devices()
+            self.__load_devices()
             
             
-            # self.load_interface("server", "platforms", {
-            #         "name": "py",
-            #         "driver": "py.platform"
-            #     })
+            self.load_interface("server", "platforms", {
+                    "name": "py",
+                    "driver": "py.platform"
+                })
 
 
             # modify interfaces with tree bench configs
@@ -317,38 +324,42 @@ class Platform:
             # attach clients   to thread
 
 
-            # for interface in self.interfaces:
-            #     interface.attach_pclient(client)
+            for interface in self.interfaces:
+                interface.attach_pclient(client)
 
             # Prepare interface internal data
-            # for interface in self.interfaces:
-            #     interface.initialize()
-
-            # client.publish("test", b"ttttt")
-
-
-            def __cbbb(topic, payload):
-                print("pooookkk")
-            client.subscribe("pza", __cbbb)
-
+            for interface in self.interfaces:
+                interface.initialize()
 
             # Create and start thread pool
-            t = PlatformThread()
+            t = PlatformThread(self)
 
             # attach clients to thread
             t.attach_worker(client)
 
-            # # attach interfaces to thread
-            # for interface in self.interfaces:
-            #     t.attach_worker(interface)
+            # attach interfaces to thread
+            for interface in self.interfaces:
+                t.attach_worker(interface)
 
 
             t.start()
 
+            self.__alive = True
+            while self.__alive:
+                time.sleep(0.1)
+
+            self.log.info("oooooooooo")
+
+            t.stop()
+            self.log.info("oooooooooo 222")
 
             # 
             t.join()
 
+            self.log.info("jjjoinnnn")
+
+
+            t.print_worker_stats()
 
     #             # Run all the interfaces on differents threads
     #             thread_id=0

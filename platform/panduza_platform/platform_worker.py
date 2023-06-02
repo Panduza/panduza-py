@@ -1,35 +1,67 @@
 import abc
-import time
+import asyncio
 
 class PlatformWorker(metaclass=abc.ABCMeta):
     """Mother class for all the python drivers
     """
 
     def __init__(self) -> None:
+        self.__alive = True
+        self.__thread = None
         self.reset_work_time()
+
+    def set_thread(self, thread):
+        self.__thread = thread
 
     def reset_work_time(self):
         self.work_time = 0
 
+    def worker_panic(self):
+        self.__thread.handle_worker_panic(self.PZA_WORKER_name())
 
-    async def work(self, loop):
+    def stop(self):
+        self.__alive = False
+
+    async def task(self, loop):
         """
         """
-        work_t0 = time.perf_counter()
-        await self._PZA_WORKER_task(loop)
-        self.work_time += (time.perf_counter() - work_t0)
+        while(self.__alive):
+            await asyncio.sleep(0.1)
+            await self.PZA_WORKER_task(loop)
+
+        self.PZA_WORKER_log().info("stopped")
+
+    # =============================================================================
+    # OVERRIDE REQUESTED FUNCTIONS
 
     # ---
 
-    def PZA_WORKER_on_thread_attach(self, loop):
-        """Triggered when a thread is attached to this worker
+    @abc.abstractmethod
+    def PZA_WORKER_name(self):
+        """
         """
         pass
 
     # ---
 
     @abc.abstractmethod
-    async def _PZA_WORKER_task(self, loop):
+    def PZA_WORKER_log(self):
+        """
+        """
+        pass
+
+    # ---
+
+    @abc.abstractmethod
+    def PZA_WORKER_stats(self):
+        """
+        """
+        pass
+
+    # ---
+
+    @abc.abstractmethod
+    async def PZA_WORKER_task(self, loop):
         """
         """
         pass

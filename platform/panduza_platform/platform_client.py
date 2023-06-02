@@ -119,6 +119,7 @@ class PlatformClient(PlatformWorker):
 
         # Create the logger
         self.log = client_logger(str(addr) + ":" + str(port))
+        self.worker_name = f"MQTT CLIENT: {str(addr)}:{str(port)})"
 
         # Mqtt connection
         self.mqtt_client = None
@@ -159,7 +160,7 @@ class PlatformClient(PlatformWorker):
 
     # ---
 
-    def publish(self, topic, payload: bytes, qos=0, retain=False):
+    async def publish(self, topic, payload: bytes, qos=0, retain=False):
         """Helper to publish raw messages
         """
         # Debug
@@ -170,7 +171,7 @@ class PlatformClient(PlatformWorker):
 
         # Wait for publish but async way
         while(not request.is_published):
-            asyncio.sleep(0.01)
+            await asyncio.sleep(0.01)
 
         # Debug
         self.log.debug(f"MSG_OUT OK")
@@ -190,7 +191,35 @@ class PlatformClient(PlatformWorker):
     # =============================================================================
     # WORKER FUNCTIONS
 
-    async def _PZA_WORKER_task(self, evloop):
+    def stop(self):
+        self.mqtt_client.disconnect()
+        super().stop()
+
+    # ---
+
+    def PZA_WORKER_name(self):
+        """
+        """
+        return self.worker_name
+
+    # ---
+
+    def PZA_WORKER_log(self):
+        """
+        """
+        return self.log
+
+    # ---
+
+    def PZA_WORKER_stats(self):
+        """
+        """
+        self.log.info(f"End state '{self.__state}'")
+        # self.log.info(f"Error : {self.__err_string}")
+
+    # ---
+
+    async def PZA_WORKER_task(self, evloop):
         """
         """
         # Log state transition
@@ -242,12 +271,13 @@ class PlatformClient(PlatformWorker):
     async def __state_running(self, evloop):
         """Running state
         """
+        # Make sure subscribes are done after the connection
         for entry in self.__listeners.entries:
             if not entry.subscribed:
-                self.log.debug(f"subscribe topic {entry.topic}")
+                self.log.debug(f"subscribe topic '{entry.topic}'")
                 self.mqtt_client.subscribe(entry.topic)
                 entry.subscribed = True
-        await asyncio.sleep(0.5)
+
 
     # ---
 

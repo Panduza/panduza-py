@@ -4,6 +4,54 @@ import threading
 
 from .log.thread import thread_logger
 
+
+
+
+class MeasuredEventLoop(asyncio.SelectorEventLoop):
+    def __init__(self, log, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._total_time = 0
+        self._select_time = 0
+
+        self._before_select = None
+        
+        self.log = log
+
+    # TOTAL TIME:
+    def run_forever(self):
+        self.ref_time = self.time()
+        try:
+            super().run_forever()
+        finally:
+            finished = self.time()
+            # self._total_time = finished - started
+
+    # SELECT TIME:
+    def _run_once(self):
+        # print("_run_once")
+        self._before_select = self.time()
+        super()._run_once()
+
+    def _process_events(self, *args, **kwargs):
+        after_select = self.time()
+        self._select_time += after_select - self._before_select
+
+        # print("_process_events", args, kwargs)
+        super()._process_events(*args, **kwargs)
+
+        cycle_time = self.time() - self.ref_time
+        if cycle_time >= PlatformThread.PERF_CYCLE_TIME:
+
+            work_time = cycle_time - self._select_time
+            self.load = round((work_time/PlatformThread.PERF_CYCLE_TIME) * 100.0, 3)
+            if self.load > 60:
+                self.log.info(f"loop load {self.load}% !!")
+            # else:
+            #     self.log.info(f"{load}%")
+            self._select_time = 0
+            self.ref_time = self.time()
+
+
 class PlatformThread:
 
     ID_COUNT = 0
@@ -12,11 +60,14 @@ class PlatformThread:
 
     # ---
 
-    def __init__(self) -> None:
+    def __init__(self, parent_platform) -> None:
         self.id = PlatformThread.ID_COUNT
         PlatformThread.ID_COUNT += 1
 
-        self.__log = thread_logger("_T_" + str(self.id))
+        self.platform = parent_platform
+
+        self.log = thread_logger("_T_" + str(self.id))
+
 
         self.__alive = True
 
@@ -25,13 +76,13 @@ class PlatformThread:
         # List of managed worker 
         self.__workers = []
 
-        self.evloop = asyncio.new_event_loop()
+        self.evloop = MeasuredEventLoop(log = self.log)
 
     # ---
 
     def attach_worker(self, worker):
         self.__mutex.acquire()
-        worker.PZA_WORKER_on_thread_attach(self.evloop)
+        worker.set_thread(self)
         self.__workers.append(worker)
         self.__mutex.release()
 
@@ -43,8 +94,27 @@ class PlatformThread:
 
     # ---
 
-    #   def stop(self):
-    #        self.__alive = False
+    def stop(self):
+        for w in self.__workers:
+            w.stop()
+
+        self.__alive = False
+
+        # self.evloop.call_soon_threadsafe(self.evloop.stop)
+
+    # ---
+
+    def print_worker_stats(self):
+        self.log.info( "=================================")
+        self.log.info(f"STATS THREAD {self.id}")
+        for w in self.__workers:
+            w.PZA_WORKER_stats()
+
+
+    # ---
+
+    def handle_worker_panic(self, worker_name):
+        self.platform.panic()
 
     # ---
 
@@ -55,26 +125,8 @@ class PlatformThread:
 
     def exec(self):
         # Create an event loop and start the driver
-
         self.evloop.run_until_complete(self.__async_exec())
-
-    # ---
-
-    async def __control_loop_load(self):
-        while(self.__alive):
-            await asyncio.sleep(3)
-            # Compute work time
-            work_time = 0
-            for w in self.__workers:
-                work_time += w.work_time
-                w.reset_work_time()
-
-            # Compute loop time
-            # loop_time = time.perf_counter() - loop_t0
-
-            # 
-            # self.__log.info(f"{work_time} - {loop_time}")
-            self.__log.info(f"{(work_time/PlatformThread.PERF_CYCLE_TIME) * 100.0} %")
+        self.log.info("THREAD OUT !")
 
     # ---
 
@@ -84,23 +136,11 @@ class PlatformThread:
         This function runs the worker and compute there load on the thread
         """
 
-        self.evloop.create_task(self.__control_loop_load())
+        for w in self.__workers:
+            self.evloop.create_task( w.task(self.evloop) )
 
         # Continue the thread while the thread is alive
         while(self.__alive):
+            await asyncio.sleep(1)
 
-            # Lock the worker mutex
-            self.__mutex.acquire()
-
-            # Run works during 1 time cycle
-            loop_t0 = time.perf_counter()
-            while(time.perf_counter() - loop_t0 < PlatformThread.PERF_CYCLE_TIME):
-                for w in self.__workers:
-                    await w.work(self.evloop)
-                await asyncio.sleep(0.01)
-
-            # 
-            self.__mutex.release()
-
-
-    #     def detach_worker(self, worker):
+        self.log.info("Task OUT !")

@@ -63,12 +63,12 @@ class DriverFormatter(logging.Formatter):
         if record.threadName != "MainThread":
             t_name = record.threadName
 
-        output = ""
+        output = "" + Style.RESET_ALL
         output += t_name.ljust(5, ' ')
         output += "| "
         output += level_highlighter(record.levelname.ljust(8, ' '), level_patterns)
         output += "| "
-        output += Style.BRIGHT + self.back + record.name + Style.RESET_ALL + "."
+        output += Style.BRIGHT + self.back + record.name + Style.RESET_ALL + " "
         output += debug + hmsg
 
         return output

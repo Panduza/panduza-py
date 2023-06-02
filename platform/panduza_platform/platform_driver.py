@@ -2,6 +2,7 @@ import abc
 import sys
 import time
 import json
+import queue
 import asyncio
 import traceback
 import threading
@@ -18,6 +19,13 @@ class PlatformDriver(PlatformWorker):
 
     # Time in error state before trying a restart of the interface
     ERROR_TIME_BEFORE_RETRY_S = 10
+
+    # ---
+
+    def __init__(self) -> None:
+        self._pclient = None
+        self.__err_string = ""
+        super().__init__()
 
     # ---
 
@@ -100,6 +108,9 @@ class PlatformDriver(PlatformWorker):
             'err': self.__drv_state_err
         }
 
+        self._events_pza = queue.Queue()
+        self._events_cmds = queue.Queue()
+
         self.log.info("Interface initialized")
 
 
@@ -107,34 +118,53 @@ class PlatformDriver(PlatformWorker):
     ###########################################################################
     ###########################################################################
 
-    def stop(self):
-        """Request to stop the driver thread
-        """
-        # log
-        self.log.info("Stop requested !")
-        # Keep alive flag
-        self.alive = False
+    # def stop(self):
+    #     """Request to stop the driver thread
+    #     """
+    #     # log
+    #     self.log.info("Stop requested !")
+    #     # Keep alive flag
+    #     self.alive = False
 
     ###########################################################################
     ###########################################################################
 
-    # ---
-
-    def PZA_WORKER_on_thread_attach(self, loop):
+    def PZA_WORKER_name(self):
         """
         """
-        self.log.info("Interface attached to thread")
-
-        #
-        self.__subscribe_topics()
+        return self._name
 
     # ---
 
-    async def _PZA_WORKER_task(self, loop):
+    def PZA_WORKER_log(self):
+        """
+        """
+        return self.log
+
+    # ---
+
+    def PZA_WORKER_stats(self):
+        """
+        """
+        self.log.info(f"End state '{self.__drv_state}'")
+        self.log.info(f"Error : {self.__err_string}")
+
+    # ---
+
+    async def PZA_WORKER_task(self, loop):
         """
         """
 
         try:
+            
+            # 
+            if not self._events_pza.empty():
+                event = self._events_pza.get()
+                # If the request is for all interfaces '*'
+                if event["payload"] == b'*':
+                    self.log.info("scan request received !")
+                    await self._push_attribute("info", 0, False) # heartbeat_pulse
+
 
             # Log state transition
             if self.__drv_state != self.__drv_state_prev:
@@ -146,7 +176,7 @@ class PlatformDriver(PlatformWorker):
 
                 # Manage the errstring
                 if self.__drv_state == "err":
-                    self.log.error(f"ERROR ::: {self.__err_string}")
+                    self.log.error(f"ERROR !!!")
                     await self._update_attribute("info", "error", self.__err_string, False)
                 else:
                     self._remove_attribute_field("info", "error", False)
@@ -161,22 +191,22 @@ class PlatformDriver(PlatformWorker):
                 pass
             await self.__states[self.__drv_state]()
 
-        except:
-            e = sys.exc_info()[0]
-            self.log.exception("Critical error on driver %s (%s)" % (self._name, e))
+        except Exception as e:
+            self._pzadrv_error_detected(str(e) + " " + traceback.format_exc())
 
 
 
-    ###########################################################################
-    ###########################################################################
+
+    # =============================================================================
+    # INTERNAL STATES FUNCTIONS
 
     async def __drv_state_init(self):
         """
         """
-        try:
-            await self._PZA_DRV_loop_init(self._tree)
-        except Exception as e:
-            self._pzadrv_error_detected(str(e) + " " + traceback.format_exc())
+        # while self._pclient.
+
+        self.__subscribe_topics()
+        await self._PZA_DRV_loop_init(self._tree)
 
     async def __drv_state_run(self):
         """
@@ -190,6 +220,7 @@ class PlatformDriver(PlatformWorker):
         """
         """
         try:
+            self.worker_panic()
             await self._PZADRV_loop_err()
         except Exception as e:
             self.log.error(str(e))
@@ -208,14 +239,18 @@ class PlatformDriver(PlatformWorker):
     ###########################################################################
     ###########################################################################
 
-    def __on_pza_message(self, client, userdata, msg):
-        # If the request is for all interfaces '*'
-        if msg.payload == b'*':
-            self.log.info("scan request received !")
-            self._push_attribute("info", 0, False) # heartbeat_pulse
+    def __on_pza_message(self, topic, payload):
+        
+        self._events_pza.put({
+            "topic":topic, "payload":payload
+        })
 
-    def __on_cmds_message(self, client, userdata, msg):
-        self._PZADRV_cmds_set(msg.payload)
+    def __on_cmds_message(self, topic, payload):
+        self._events_cmds.put({
+            "topic":topic, "payload":payload
+        })
+
+        # self._PZADRV_cmds_set(payload)
 
     # def __on_message(self, client, userdata, msg):
     #     """Callback to manage incomming mqtt messages
@@ -410,17 +445,15 @@ class PlatformDriver(PlatformWorker):
         """
         return []
 
-    @abc.abstractmethod
     async def _PZA_DRV_loop_init(self, tree):
         """
         """
-        pass
+        await asyncio.sleep(0.1)
 
-    @abc.abstractmethod
     async def _PZADRV_loop_run(self):
         """
         """
-        pass
+        await asyncio.sleep(0.1)
 
     async def _PZADRV_loop_err(self):
         """
@@ -429,10 +462,9 @@ class PlatformDriver(PlatformWorker):
         if elasped > PlatformDriver.ERROR_TIME_BEFORE_RETRY_S:
             self._pzadrv_restart()
         else:
-            time.sleep(1)
+            await asyncio.sleep(1)
             self.log.debug(f"restart in { int(PlatformDriver.ERROR_TIME_BEFORE_RETRY_S - elasped) }s")
 
-    @abc.abstractmethod
     def _PZADRV_cmds_set(self, payload):
         """Must apply the command on the driver
         """
