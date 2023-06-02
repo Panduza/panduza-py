@@ -37,9 +37,7 @@ jobs:
       # ---
       - name: Execute tests
         working-directory: tests
-        run: >
-          ./envs/fake_bench.sh
-          robot robot/*
+        run: ./envs/fake_bench.sh && robot robot/*
 
       # ---
       - name: Debug
@@ -51,13 +49,6 @@ jobs:
         with:
           name: tests-report
           path: tests/
-
-      # ---
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: hunt-results
-          path: /etc/panduza/platform
 
       # ---
       - run: echo "🎉 Basic Tests finished !"
