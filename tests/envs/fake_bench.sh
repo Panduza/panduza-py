@@ -10,3 +10,7 @@ export PZA_ALIASES='{
     }
 }'
 
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+echo PZA_ALIASES=$PZA_ALIASES > $SCRIPT_DIR/fake_bench.env
