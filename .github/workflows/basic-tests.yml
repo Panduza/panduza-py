@@ -32,7 +32,7 @@ jobs:
       - run: mosquitto -d
 
       # ---
-      - run: python3 ./platform/deploy/pza-py-platform-run.py ./tests/pza/tree.json &
+      - run: python3 ./platform/deploy/pza-py-platform-run.py ./tests/pza_platform/tree.json &
 
       # ---
       - name: Execute tests
