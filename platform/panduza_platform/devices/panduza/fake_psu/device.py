@@ -1,13 +1,5 @@
 
-from ...platform_device_model import PlatformDeviceModel
-
-
-class DevicePanduzaFakePsu(PlatformDeviceModel):
-
-    def __init__(self, config = None):
-        """ Constructor
-        """
-        pass
+class DevicePanduzaFakePsu:
 
     def _PZA_DEV_config(self):
         """
@@ -25,7 +17,4 @@ class DevicePanduzaFakePsu(PlatformDeviceModel):
                 "driver": "panduza.fake.psu"
             }
         ]
-
-
-
 

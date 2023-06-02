@@ -1,7 +1,7 @@
 import traceback
 
-from .inbuilt import PZA_DRIVERS_LIST as INBUILT_DRIVERS
 
+from .devices import PZA_DRIVERS_LIST as INBUILT_DRIVERS
 
 class PlatformDriverFactory:
     """Manage the factory of drivers

@@ -1,5 +1,5 @@
 
-from .inbuilt import PZA_DEVICES_LIST as INBUILT_DEVICES
+from .devices import PZA_DEVICES_LIST as INBUILT_DEVICES
 
 
 class PlatformDeviceFactory:

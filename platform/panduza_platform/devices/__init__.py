@@ -1,0 +1,18 @@
+from .hanmatek import PZA_DEVICES_LIST as HANMATEK_DEVICES
+from .panduza import PZA_DEVICES_LIST as PANDUZA_DEVICES
+
+PZA_DEVICES_LIST = [] \
+    + HANMATEK_DEVICES \
+    + PANDUZA_DEVICES
+
+
+from .std import PZA_DRIVERS_LIST as STD_DRIVERS
+from .hanmatek import PZA_DRIVERS_LIST as HANMATEK_DRIVERS
+from .panduza import PZA_DRIVERS_LIST as PANDUZA_DRIVERS
+
+PZA_DRIVERS_LIST = [] \
+    + STD_DRIVERS \
+    + HANMATEK_DRIVERS \
+    + PANDUZA_DRIVERS
+
+
