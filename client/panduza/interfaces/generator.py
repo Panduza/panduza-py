@@ -37,7 +37,7 @@ def GenerateAllInterfacesFromAliases(connections):
         typed_interfaces[name] = type_gen[t](interface=itf)
         # typed_interfaces[name] = Psu(interface=itf)
 
-        
+
     return typed_interfaces
 
 

@@ -79,7 +79,7 @@ class PlatformDriver(PlatformWorker):
         self._name = self._tree["name"]
 
         # Init logger
-        self.log = driver_logger(f"{self._bench_name}.{self._device_name}.{self._name}")
+        self.log = driver_logger(f"{self._bench_name}/{self._device_name}/{self._name}")
 
         # Check for name in the driver tree
         if not ("info" in self._PZA_DRV_config()):
@@ -165,6 +165,9 @@ class PlatformDriver(PlatformWorker):
                     self.log.info("scan request received !")
                     await self._push_attribute("info", 0, False) # heartbeat_pulse
 
+            if not self._events_cmds.empty():
+                event = self._events_cmds.get()
+                await self._PZADRV_cmds_set(event["payload"])
 
             # Log state transition
             if self.__drv_state != self.__drv_state_prev:
@@ -250,7 +253,7 @@ class PlatformDriver(PlatformWorker):
             "topic":topic, "payload":payload
         })
 
-        # self._PZADRV_cmds_set(payload)
+        # 
 
     # def __on_message(self, client, userdata, msg):
     #     """Callback to manage incomming mqtt messages
@@ -370,18 +373,18 @@ class PlatformDriver(PlatformWorker):
     ###########################################################################
     ###########################################################################
 
-    # def payload_to_dict(self, payload):
-    #     """ To parse json payload
-    #     """
-    #     return json.loads(payload.decode("utf-8"))
+    def payload_to_dict(self, payload):
+        """ To parse json payload
+        """
+        return json.loads(payload.decode("utf-8"))
 
     ###########################################################################
     ###########################################################################
 
-    # def payload_to_int(self, payload):
-    #     """
-    #     """
-    #     return int(payload.decode("utf-8"))
+    def payload_to_int(self, payload):
+        """
+        """
+        return int(payload.decode("utf-8"))
 
     ###########################################################################
     ###########################################################################
@@ -465,7 +468,7 @@ class PlatformDriver(PlatformWorker):
             await asyncio.sleep(1)
             self.log.debug(f"restart in { int(PlatformDriver.ERROR_TIME_BEFORE_RETRY_S - elasped) }s")
 
-    def _PZADRV_cmds_set(self, payload):
+    async def _PZADRV_cmds_set(self, payload):
         """Must apply the command on the driver
         """
         pass

@@ -37,7 +37,9 @@ jobs:
       # ---
       - name: Execute tests
         working-directory: tests
-        run: robot robot/*
+        run: >
+          source envs/fake_bench.sh
+          robot robot/*
 
       # ---
       - name: Debug

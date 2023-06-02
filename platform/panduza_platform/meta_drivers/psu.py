@@ -193,14 +193,14 @@ class MetaDriverPsu(PlatformDriver):
 
     # ---
 
-    def _PZADRV_cmds_set(self, payload):
+    async def _PZADRV_cmds_set(self, payload):
         """From MetaDriver
         """
         cmds = self.payload_to_dict(payload)
         # self.log.debug(f"cmds as json : {cmds}")
         for att in self.__cmd_handlers:
             if att in cmds:
-                self.__cmd_handlers[att](cmds[att])
+                await self.__cmd_handlers[att](cmds[att])
 
     ###########################################################################
     ###########################################################################
@@ -299,7 +299,7 @@ class MetaDriverPsu(PlatformDriver):
 
     # ---
 
-    def __handle_cmds_set_enable(self, cmd_att):
+    async def __handle_cmds_set_enable(self, cmd_att):
         """Manage output enable commands
         """
         if "value" in cmd_att:
@@ -310,13 +310,13 @@ class MetaDriverPsu(PlatformDriver):
             # Call driver implementations
             try:
                 self._PZADRV_PSU_write_enable_value(v)
-                self._update_attribute("enable", "value", v, push='always')
+                await self._update_attribute("enable", "value", v, push='always')
             except Exception as e:
                 raise Exception(f"Fail to set enable.value ({e})")
 
     # ---
 
-    def __handle_cmds_set_volts(self, cmd_att):
+    async def __handle_cmds_set_volts(self, cmd_att):
         """Manage voltage commands
         """
         # POLLING_CYCLE
@@ -326,7 +326,7 @@ class MetaDriverPsu(PlatformDriver):
                 raise Exception(f"Invalid type for volts.polling_cycle {type(v)}")
             if v < 0:
                 v = -1
-            self._update_attribute("volts", "polling_cycle", v, push='always')
+            await self._update_attribute("volts", "polling_cycle", v, push='always')
 
         # GOAL
         if "goal" in cmd_att:
@@ -336,7 +336,7 @@ class MetaDriverPsu(PlatformDriver):
             try:
                 if self._get_field("volts", "min") <= v <= self._get_field("volts", "max"):
                     self._PZADRV_PSU_write_volts_goal(v)
-                    self._update_attributes_from_dict(
+                    await self._update_attributes_from_dict(
                     {
                         "volts": {
                             "goal": self._PZADRV_PSU_read_volts_goal(),
@@ -352,7 +352,7 @@ class MetaDriverPsu(PlatformDriver):
 
     # ---
 
-    def __handle_cmds_set_amps(self, cmd_att):
+    async def __handle_cmds_set_amps(self, cmd_att):
         """Manage ampere commands
         """
         # POLLING_CYCLE
@@ -362,7 +362,7 @@ class MetaDriverPsu(PlatformDriver):
                 raise Exception(f"Invalid type for amps.polling_cycle {type(v)}")
             if v < 0:
                 v = -1
-            self._update_attribute("amps", "polling_cycle", v, push='always')
+            await self._update_attribute("amps", "polling_cycle", v, push='always')
 
         # GOAL
         if "goal" in cmd_att:
@@ -372,7 +372,7 @@ class MetaDriverPsu(PlatformDriver):
             try:
                 if self._get_field("amps", "min") <= v <= self._get_field("amps", "max"):
                     self._PZADRV_PSU_write_amps_goal(v)
-                    self._update_attributes_from_dict(
+                    await self._update_attributes_from_dict(
                     {
                         "amps": {
                             "goal": self._PZADRV_PSU_read_amps_goal(),
@@ -387,22 +387,22 @@ class MetaDriverPsu(PlatformDriver):
 
     # ---
 
-    def __handle_cmds_set_settings(self, cmd_att):
+    async def __handle_cmds_set_settings(self, cmd_att):
         if "ovp" in cmd_att:
             v = cmd_att["ovp"]
             self._PZADRV_PSU_write_settings_ovp(v)
-            self._update_attribute("settings", "ovp", self._PZADRV_PSU_read_settings_ovp())
+            await self._update_attribute("settings", "ovp", self._PZADRV_PSU_read_settings_ovp())
         if "ocp" in cmd_att:
             v = cmd_att["ocp"]
             self._PZADRV_PSU_write_settings_ocp(v)
-            self._update_attribute("settings", "ocp", self._PZADRV_PSU_read_settings_ocp())
+            await self._update_attribute("settings", "ocp", self._PZADRV_PSU_read_settings_ocp())
         if "silent" in cmd_att:
             v = cmd_att["silent"]
             self._PZADRV_PSU_write_settings_silent(v)
-            self._update_attribute("settings", "silent", self._PZADRV_PSU_read_settings_silent())
+            await self._update_attribute("settings", "silent", self._PZADRV_PSU_read_settings_silent())
 
     # ---
 
-    def __handle_cmds_set_misc(self, cmd_att):
+    async def __handle_cmds_set_misc(self, cmd_att):
         pass
 

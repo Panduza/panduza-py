@@ -8,4 +8,5 @@ Resource            ../rsc/fake_bench.resource
 
 Scan interfaces of the platform
     ${INTERFACES}     Panduza Scan Server    localhost    1883
+    Log    ${INTERFACES}
 

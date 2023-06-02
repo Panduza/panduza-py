@@ -5,12 +5,13 @@ Library      panduza.robof.Keywords
 
 
 *** Variables ***
-# ${URL}      %{WEBSITE_URL}
+${pza_aliases}      %{PZA_ALIASES}
 
 
 
 *** Keywords ***
 
-# Setup Bench Config
-#     Set Log Level    DEBUG
-#     Load Pza Interfaces From Aliases    ${pza_aliases}
+Setup Bench Config
+    Set Log Level    DEBUG
+    Log     ${pza_aliases}
+    Load Pza Interfaces From Aliases    ${pza_aliases}
