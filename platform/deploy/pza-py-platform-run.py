@@ -18,9 +18,7 @@ args = parser.parse_args()
 
 
 srv = Platform()
-# srv.force_log = True
-# srv.register_driver_plugin_discovery()
-# if args.tree != None:
-#     srv.load_tree_overide(args.tree)
+if args.tree != None:
+    srv.load_tree_overide(args.tree)
 srv.run()
 logging.warning("Platform stopped !")

@@ -73,11 +73,11 @@ class Platform:
     # ###########################################################################
     # ###########################################################################
 
-    # def load_tree_overide(self, tree_filepath):
-    #     """platform will use the given tree filepath
-    #     """
-    #     self.tree_filepath = tree_filepath
-    #     self.log.debug(f"force tree:{self.tree_filepath}")
+    def load_tree_overide(self, tree_filepath):
+        """platform will use the given tree filepath
+        """
+        self.tree_filepath = tree_filepath
+        self.log.debug(f"force tree:{self.tree_filepath}")
 
     # ###########################################################################
     # ###########################################################################
