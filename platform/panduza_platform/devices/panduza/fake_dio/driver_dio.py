@@ -2,7 +2,7 @@ import time
 import threading
 from ....meta_drivers.dio import MetaDriverDio
 
-class DriverIoFake(MetaDriverDio):
+class DriverFakeDio(MetaDriverDio):
 
     ###########################################################################
     ###########################################################################
@@ -11,17 +11,8 @@ class DriverIoFake(MetaDriverDio):
         """ From MetaDriver
         """
         return {
-            "name": "FakeIO",
-            "description": "Virtual IO",
-            "compatible": [
-                "io_fake",
-                "py.io_fake"
-            ],
-            "info": { "type": "io", "version": "1.0" },
-            "settings": {
-                "behaviour": { "type": "str", "desc": "fake behaviour of the io [static|auto_toggle]" },
-                "loopback": { "type": "str", "desc": "to internaly loopback the value to an other fake_io interface" }
-            }
+            "name": "panduza.fake.dio",
+            "description": "Virtual DIO"
         }
 
     ###########################################################################

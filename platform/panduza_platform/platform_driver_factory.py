@@ -1,6 +1,5 @@
 import traceback
-
-
+from .platform_errors import InitializationError
 from .devices import PZA_DRIVERS_LIST as INBUILT_DRIVERS
 
 class PlatformDriverFactory:
@@ -24,6 +23,10 @@ class PlatformDriverFactory:
         try:
             name = interface_config["name"]
             driver_name = interface_config["driver"]
+
+            # Control the driver exists in the database
+            if not driver_name in self.__drivers:
+                raise InitializationError(f"\"{driver_name}\" is not found in this platform (required by \"{bench_name}/{device_name}\")")
 
             driver_obj = self.__drivers[driver_name] 
 
@@ -56,6 +59,14 @@ class PlatformDriverFactory:
     def register_driver(self, dev):
         """Register a new driver
         """
+        # Extract config
+        dev_config = dev()._PZA_DRV_config()
+
+        # Control
+        if not 'name' in dev_config:
+            raise InitializationError(f"'name' field is not found in config of driver {dev}")
+
+
         name = dev()._PZA_DRV_config()['name']
         self.__log.info(f"Register driver: '{name}'")
         self.__drivers[name] = dev

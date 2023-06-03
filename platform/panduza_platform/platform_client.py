@@ -174,7 +174,7 @@ class PlatformClient(PlatformWorker):
             await asyncio.sleep(0.01)
 
         # Debug
-        self.log.debug(f"MSG_OUT OK")
+        # self.log.debug(f"MSG_OUT OK")
 
     # ---
 
@@ -342,7 +342,8 @@ class PlatformClient(PlatformWorker):
         self.log.debug("Socket opened")
 
         def cb():
-            self.log.debug("Socket is readable, calling loop_read")
+            # Debug
+            # self.log.debug("Socket is readable, calling loop_read")
             client.loop_read()
 
         self.evloop.add_reader(sock, cb)
@@ -358,10 +359,12 @@ class PlatformClient(PlatformWorker):
     # ---
 
     def __on_socket_register_write(self, client, userdata, sock):
-        self.log.debug("Watching socket for writability.")
+        # Debug
+        # self.log.debug("Watching socket for writability.")
 
         def cb():
-            self.log.debug("Socket is writable, calling loop_write")
+            # Debug
+            # self.log.debug("Socket is writable, calling loop_write")
             client.loop_write()
 
         self.evloop.add_writer(sock, cb)
@@ -369,7 +372,8 @@ class PlatformClient(PlatformWorker):
     # ---
 
     def __on_socket_unregister_write(self, client, userdata, sock):
-        self.log.debug("Stop watching socket for writability.")
+        # Debug
+        # self.log.debug("Stop watching socket for writability.")
         self.evloop.remove_writer(sock)
 
     # ---

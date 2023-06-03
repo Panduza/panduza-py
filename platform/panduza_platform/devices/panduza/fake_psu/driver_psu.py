@@ -2,7 +2,7 @@ import time
 from collections import ChainMap
 from ....meta_drivers.psu import MetaDriverPsu
 
-class DriverPsuFake(MetaDriverPsu):
+class DriverFakePsu(MetaDriverPsu):
     """Fake PSU driver
     """
 

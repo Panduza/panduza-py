@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import json
 import pkgutil
@@ -13,8 +14,8 @@ from .conf import PLATFORM_VERSION
 from .log.platform import platform_logger
 
 from .platform_thread import PlatformThread
-
 from .platform_client import PlatformClient
+from .platform_errors import InitializationError
 
 from .platform_driver_factory import PlatformDriverFactory
 from .platform_device_factory import PlatformDeviceFactory
@@ -253,9 +254,14 @@ class Platform:
     def run(self):
         """Starting point of the platform
         """
-        # First go into factories initialization
-        self.driver_factory.discover()
-        self.device_factory.discover()
+        try:
+            # First go into factories initialization
+            self.driver_factory.discover()
+            self.device_factory.discover()
+
+        except InitializationError as e:
+            self.log.critical(f"Error during platform initialization: {e}")
+            sys.exit(-1)
 
         # Check if the hunt mode is enabled
         if self.__hunt_mode_requested():
@@ -379,6 +385,8 @@ class Platform:
     #             for thread in self.threads:
     #                 thread.join()
 
+        except InitializationError as e:
+            self.log.critical(f"Error during platform initialization: {e}")
         except KeyboardInterrupt:
             self.log.warning("ctrl+c => user stop requested")
             self.__stop()
@@ -454,6 +462,7 @@ class Platform:
     def __load_devices(self):
         """Load interfaces from device configurations
         """
+        # Example
         # device_cfg =
         # {
         #    "model": "Panduza.FakePsu"

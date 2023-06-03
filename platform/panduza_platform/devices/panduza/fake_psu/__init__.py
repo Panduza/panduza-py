@@ -5,11 +5,10 @@ PZA_DEVICES_LIST= [
 ]
 
 
-from .driver_psu import DriverPsuFake
+from .driver_psu import DriverFakePsu
 
-# DriverIoFake,
 PZA_DRIVERS_LIST=[
-    DriverPsuFake
+    DriverFakePsu
 ]
 
 

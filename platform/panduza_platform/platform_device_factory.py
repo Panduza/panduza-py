@@ -1,6 +1,5 @@
-
+from .platform_errors import InitializationError
 from .devices import PZA_DEVICES_LIST as INBUILT_DEVICES
-
 
 class PlatformDeviceFactory:
     """Manage the factory of devices
@@ -18,7 +17,18 @@ class PlatformDeviceFactory:
     # ---
 
     def produce_device(self, config):
+        """Try to produce the given device model
+        """
+        # Get model name and control it exists in the config provided by the user
+        if not "model" in config:
+            raise InitializationError(f"\"model\" field is not provided in the config {config}")
         model = config["model"]
+
+        # Control the model exists in the database
+        if not model in self.__devices:
+            raise InitializationError(f"\"{model}\" is not found in this platform")
+
+        # Produce the device
         return self.__devices[model]()
 
     # ---

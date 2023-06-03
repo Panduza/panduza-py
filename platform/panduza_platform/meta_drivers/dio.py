@@ -1,8 +1,8 @@
 import json
 import time
-from ..meta_driver import MetaDriver
+from ..platform_driver import PlatformDriver
 
-class MetaDriverDio(MetaDriver):
+class MetaDriverDio(PlatformDriver):
 
     ###########################################################################
     ###########################################################################
