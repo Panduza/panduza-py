@@ -59,6 +59,8 @@ class PlatformDriver(PlatformWorker):
         """
         # Keep alive flag
         self.alive = True
+        # Flag to know if the topics have been subscribed
+        self.__topics_subscribed = False
 
         # Store attribute representation
         # Contains all the attributes and fields of the driver class in dict
@@ -109,6 +111,7 @@ class PlatformDriver(PlatformWorker):
             'err': self.__drv_state_err
         }
 
+        # Init event queues
         self._events_pza = queue.Queue()
         self._events_cmds = queue.Queue()
 
@@ -211,8 +214,6 @@ class PlatformDriver(PlatformWorker):
     async def __drv_state_init(self):
         """
         """
-        # while self._pclient.
-
         self.__subscribe_topics()
         await self._PZA_DRV_loop_init(self._tree)
 
@@ -239,10 +240,13 @@ class PlatformDriver(PlatformWorker):
     def __subscribe_topics(self):
         """Subscribe to the required topics
         """
-        # Register the common discovery topic 'pza'
-        self._pclient.subscribe("pza", self.__on_pza_message)
-        # Register to all commands
-        self._pclient.subscribe(self.topic_cmds + "#", self.__on_cmds_message)
+        if not self.__topics_subscribed:
+            # Register the common discovery topic 'pza'
+            self._pclient.subscribe("pza", self.__on_pza_message)
+            # Register to all commands
+            self._pclient.subscribe(self.topic_cmds + "#", self.__on_cmds_message)
+            # Valid the flag
+            self.__topics_subscribed = True
 
     ###########################################################################
     ###########################################################################
@@ -459,7 +463,7 @@ class PlatformDriver(PlatformWorker):
     async def _PZA_DRV_loop_init(self, tree):
         """
         """
-        await asyncio.sleep(0.1)
+        pass
 
     async def _PZADRV_loop_run(self):
         """

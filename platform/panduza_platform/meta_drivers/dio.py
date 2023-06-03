@@ -23,7 +23,7 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    async def _PZA_DRV_loop_init(self, tree):
+    # async def _PZA_DRV_loop_init(self, tree):
 
         # self.__cmd_handlers = {
         #     "direction" : self.__handle_cmd_set_direction_dio,
@@ -43,7 +43,7 @@ class MetaDriverDio(PlatformDriver):
 
         # self._pzadrv_init_success()
         
-        pass
+        # pass
 
     # =============================================================================
     # TO OVERRIDE IN DRIVER

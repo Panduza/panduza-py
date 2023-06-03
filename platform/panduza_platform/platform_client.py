@@ -38,7 +38,7 @@ class TopicListener:
         """
         # Check that callback is not already registered, and register
         if callback in self.callbacks:
-            raise ValueError(
+            raise Exception(
                 f"callback {callback} already registered for topic {self.wildcard}")
 
         # Append callback
