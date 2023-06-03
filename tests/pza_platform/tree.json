@@ -2,6 +2,12 @@
     "devices": [
         {
             "model": "Panduza.FakePsu"
+        },
+        {
+            "model": "Panduza.FakeDio",
+            "settings": {
+                
+            }
         }
     ]
 }

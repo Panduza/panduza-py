@@ -1,9 +1,9 @@
 import time
 import threading
-from ...meta_drivers.io import MetaDriverIo
+from ....meta_drivers.dio import MetaDriverDio
 
-class DriverIoFake(MetaDriverIo):
-    
+class DriverIoFake(MetaDriverDio):
+
     ###########################################################################
     ###########################################################################
 
@@ -23,7 +23,7 @@ class DriverIoFake(MetaDriverIo):
                 "loopback": { "type": "str", "desc": "to internaly loopback the value to an other fake_io interface" }
             }
         }
-    
+
     ###########################################################################
     ###########################################################################
 
@@ -49,12 +49,12 @@ class DriverIoFake(MetaDriverIo):
                 if target_behaviour in ["static", "auto_toggle"]:
                     self.behaviour = target_behaviour
                 else:
-                    logger.error("unknown behaviour '{}' fallback to 'static'", target_behaviour)
+                    self.log.error("unknown behaviour '{}' fallback to 'static'", target_behaviour)
 
             # 
             if "loopback" in settings:
                 self.loopback = self.get_interface_instance_from_name(settings["loopback"])
-                logger.info(f"loopback enabled : {self.loopback}")
+                self.log.info(f"loopback enabled : {self.loopback}")
 
         # Register commands
         self.register_command("value/set", self.__value_set)
@@ -95,7 +95,7 @@ class DriverIoFake(MetaDriverIo):
         self.value=value
         self.push_io_value(self.value)
         self.mutex.release()
-        logger.info(f"force value : {self.value}")
+        self.log.info(f"force value : {self.value}")
 
     ###########################################################################
     ###########################################################################
@@ -113,7 +113,7 @@ class DriverIoFake(MetaDriverIo):
         if self.loopback:
             self.loopback.force_value_set(self.value)
         # log
-        logger.info(f"new value : {self.value}")
+        self.log.info(f"new value : {self.value}")
 
     ###########################################################################
     ###########################################################################
@@ -128,4 +128,5 @@ class DriverIoFake(MetaDriverIo):
         self.direction=req_direction
         self.push_io_direction(self.direction)
         # log
-        logger.info(f"new direction : {self.direction}")
+        self.log.info(f"new direction : {self.direction}")
+
