@@ -53,8 +53,9 @@ class PlatformWorker(metaclass=abc.ABCMeta):
     # ---
 
     @abc.abstractmethod
-    def PZA_WORKER_stats(self):
-        """
+    def PZA_WORKER_report(self):
+        """Return a state report of the worker
+        To be able to indicate to administrator why the platform stopped
         """
         pass
 

@@ -119,7 +119,7 @@ class PlatformClient(PlatformWorker):
 
         # Create the logger
         self.log = client_logger(str(addr) + ":" + str(port))
-        self.worker_name = f"MQTT CLIENT: {str(addr)}:{str(port)})"
+        self.worker_name = f"MQTT CLIENT: {str(addr)}:{str(port)}"
 
         # Mqtt connection
         self.mqtt_client = None
@@ -198,24 +198,27 @@ class PlatformClient(PlatformWorker):
     # ---
 
     def PZA_WORKER_name(self):
-        """
+        """From Worker
         """
         return self.worker_name
 
     # ---
 
     def PZA_WORKER_log(self):
-        """
+        """From Worker
         """
         return self.log
 
     # ---
 
-    def PZA_WORKER_stats(self):
+    def PZA_WORKER_report(self):
+        """From Worker
         """
+        report =f"""
+    + {self.PZA_WORKER_name()}
+        - End state '{self.__state}'
         """
-        self.log.info(f"End state '{self.__state}'")
-        # self.log.info(f"Error : {self.__err_string}")
+        return report
 
     # ---
 

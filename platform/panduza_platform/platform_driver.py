@@ -79,7 +79,8 @@ class PlatformDriver(PlatformWorker):
         self._name = self._tree["name"]
 
         # Init logger
-        self.log = driver_logger(f"{self._bench_name}/{self._device_name}/{self._name}")
+        self.worker_name = f"{self._bench_name}/{self._device_name}/{self._name}"
+        self.log = driver_logger(self.worker_name)
 
         # Check for name in the driver tree
         if not ("info" in self._PZA_DRV_config()):
@@ -132,7 +133,7 @@ class PlatformDriver(PlatformWorker):
     def PZA_WORKER_name(self):
         """
         """
-        return self._name
+        return self.worker_name
 
     # ---
 
@@ -143,11 +144,15 @@ class PlatformDriver(PlatformWorker):
 
     # ---
 
-    def PZA_WORKER_stats(self):
+    def PZA_WORKER_report(self):
+        """Return a stats report of the worker
         """
+        report =f"""
+    + {self.PZA_WORKER_name()}
+        - End state '{self.__drv_state}'
+        - Error : {self.__err_string}
         """
-        self.log.info(f"End state '{self.__drv_state}'")
-        self.log.info(f"Error : {self.__err_string}")
+        return report
 
     # ---
 
@@ -243,12 +248,15 @@ class PlatformDriver(PlatformWorker):
     ###########################################################################
 
     def __on_pza_message(self, topic, payload):
-        
+        """
+        """
         self._events_pza.put({
             "topic":topic, "payload":payload
         })
 
     def __on_cmds_message(self, topic, payload):
+        """
+        """
         self._events_cmds.put({
             "topic":topic, "payload":payload
         })

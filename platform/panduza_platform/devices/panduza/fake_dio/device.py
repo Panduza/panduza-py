@@ -14,7 +14,7 @@ class DevicePanduzaFakeDio:
         """
         return [
             {
-                "name": "psu_1",
+                "name": "dio_1",
                 "driver": "panduza.fake.dio"
             }
         ]

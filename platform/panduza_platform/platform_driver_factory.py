@@ -52,22 +52,28 @@ class PlatformDriverFactory:
         self.__log.info(f"=")
         for drv in INBUILT_DRIVERS:
             self.register_driver(drv)
-        self.__log.info(f"=")
 
     # ---
 
     def register_driver(self, dev):
         """Register a new driver
         """
-        # Extract config
-        dev_config = dev()._PZA_DRV_config()
+        try:
 
-        # Control
-        if not 'name' in dev_config:
-            raise InitializationError(f"'name' field is not found in config of driver {dev}")
+            # Debug
+            # self.__log.debug(f"Try to register driver: '{dev}'")
 
+            # Extract config
+            dev_config = dev()._PZA_DRV_config()
 
-        name = dev()._PZA_DRV_config()['name']
-        self.__log.info(f"Register driver: '{name}'")
-        self.__drivers[name] = dev
+            # Control
+            if not 'name' in dev_config:
+                raise InitializationError(f"'name' field is not found in config of driver {dev}")
 
+            # Register driver
+            name = dev()._PZA_DRV_config()['name']
+            self.__drivers[name] = dev
+            self.__log.info(f"Register driver: '{name}'")
+
+        except NotImplementedError as e:
+            raise InitializationError(f"Driver {dev} bad implementation: {e}")

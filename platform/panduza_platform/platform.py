@@ -365,7 +365,10 @@ class Platform:
             self.log.info("jjjoinnnn")
 
 
-            t.print_worker_stats()
+            thread_final_report  = "\n"
+            thread_final_report += t.get_worker_stats()
+            self.log.info(thread_final_report)
+
 
     #             # Run all the interfaces on differents threads
     #             thread_id=0

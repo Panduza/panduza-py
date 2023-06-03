@@ -104,12 +104,14 @@ class PlatformThread:
 
     # ---
 
-    def print_worker_stats(self):
-        self.log.info( "=================================")
-        self.log.info(f"STATS THREAD {self.id}")
+    def get_worker_stats(self):
+        report  = ""
+        report += "=================================\n"
+        report +=f"== STATS THREAD {self.id}\n"
+        report += "=================================\n"
         for w in self.__workers:
-            w.PZA_WORKER_stats()
-
+            report += w.PZA_WORKER_report()
+        return report
 
     # ---
 
