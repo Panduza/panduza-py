@@ -1,3 +1,4 @@
+import traceback
 from .platform_errors import InitializationError
 from .devices import PZA_DEVICES_LIST as INBUILT_DEVICES
 
@@ -29,7 +30,10 @@ class PlatformDeviceFactory:
             raise InitializationError(f"\"{model}\" is not found in this platform")
 
         # Produce the device
-        return self.__devices[model]()
+        try:
+            return self.__devices[model](config.get("settings", {}))
+        except Exception as e:
+            raise InitializationError(f"{traceback.format_exc()}")
 
     # ---
 

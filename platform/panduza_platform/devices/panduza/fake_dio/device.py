@@ -1,6 +1,7 @@
 
+from ....platform_device_model import PlatformDeviceModel
 
-class DevicePanduzaFakeDio:
+class DevicePanduzaFakeDio(PlatformDeviceModel):
 
     def _PZA_DEV_config(self):
         """
@@ -12,6 +13,8 @@ class DevicePanduzaFakeDio:
     def _PZA_DEV_interfaces(self):
         """
         """
+        
+        
         return [
             {
                 "name": "dio_1",

@@ -1,7 +1,10 @@
 {
     "devices": [
         {
-            "model": "Panduza.FakePsu"
+            "model": "Panduza.FakePsu",
+            "settings": {
+                "number_of_channel": 4
+            }
         },
         {
             "model": "Panduza.FakeDio",

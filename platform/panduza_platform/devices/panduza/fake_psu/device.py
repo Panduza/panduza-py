@@ -1,5 +1,6 @@
+from ....platform_device_model import PlatformDeviceModel
 
-class DevicePanduzaFakePsu:
+class DevicePanduzaFakePsu(PlatformDeviceModel):
 
     def _PZA_DEV_config(self):
         """
@@ -11,10 +12,17 @@ class DevicePanduzaFakePsu:
     def _PZA_DEV_interfaces(self):
         """
         """
-        return [
-            {
-                "name": "psu_1",
-                "driver": "panduza.fake.psu"
-            }
-        ]
+
+        number_of_channel = self._initial_settings.get("number_fo_channel", 1)
+
+        interfaces = []
+        for chan in range(number_of_channel):
+            interfaces.append(
+                {
+                    "name": f"channel_{chan}",
+                    "driver": "panduza.fake.psu"
+                }
+            )
+
+        return interfaces
 
