@@ -175,7 +175,7 @@ class PlatformDriver(PlatformWorker):
 
             if not self._events_cmds.empty():
                 event = self._events_cmds.get()
-                await self._PZADRV_cmds_set(loop, event["payload"])
+                await self._PZA_DRV_cmds_set(loop, event["payload"])
 
             # Log state transition
             if self.__drv_state != self.__drv_state_prev:
@@ -466,7 +466,7 @@ class PlatformDriver(PlatformWorker):
             await asyncio.sleep(1)
             self.log.debug(f"restart in { int(PlatformDriver.ERROR_TIME_BEFORE_RETRY_S - elasped) }s")
 
-    async def _PZADRV_cmds_set(self, loop, payload):
+    async def _PZA_DRV_cmds_set(self, loop, payload):
         """Must apply the command on the driver
         """
         pass

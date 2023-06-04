@@ -62,7 +62,7 @@ class MetaDriverSpiMaster(MetaDriver):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_cmds_set(self, loop, payload):
+    def _PZA_DRV_cmds_set(self, loop, payload):
         """From MetaDriver"""
         cmds = self.payload_to_dict(payload)
         for att in self.__cmd_handlers:

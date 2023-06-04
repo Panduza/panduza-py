@@ -27,10 +27,10 @@ class MetaDriverDio(PlatformDriver):
         """From PlatformDriver
         """
         # Set handers
-        # self.__cmd_handlers = {
-        #     "direction" : self.__handle_cmd_set_direction_dio,
-        #     "state" : self.__handle_cmd_set_state_dio,
-        # }
+        self.__cmd_handlers = {
+            "direction" : self.__handle_cmds_set_direction,
+            "state" : self.__handle_cmds_set_state,
+        }
 
 
         # # first update
@@ -45,6 +45,25 @@ class MetaDriverDio(PlatformDriver):
 
         # Init Success
         self._PZA_DRV_loop_init(loop, tree)
+
+    # ---
+
+    # def _PZADRV_loop_run(self, loop):
+    #     # polls
+    #     # self.__poll_att_direction()
+    #     # self.__poll_att_state()
+    #     # time.sleep(0.1)
+    #     pass
+
+    # ---
+
+    def _PZA_DRV_cmds_set(self, loop, payload):
+        cmds = self.payload_to_dict(payload)
+        self.log.debug(f"cmds as json : {cmds}")
+        for att in self.__cmd_handlers:
+            if att in cmds:
+                self.__cmd_handlers[att](cmds[att])
+        pass
 
     # =============================================================================
     # TO OVERRIDE IN DRIVER
@@ -132,23 +151,100 @@ class MetaDriverDio(PlatformDriver):
         raise NotImplementedError("Must be implemented !")
 
     # =============================================================================
-    #
+    # LOCAL STATE HANDLERS
+
+    # update the direction attribut field
+    def __handle_cmds_set_direction(self, cmd_att):
+        pass
+    #     # POLLING_CYCLE
+    #     if "polling_cycle" in cmd_att:
+    #         v = cmd_att["polling_cycle"]
+    #         if not isinstance(v, int) and not isinstance(v, float):
+    #             raise Exception(f"Invalid type for volts.polling_cycle {type(v)}")
+    #         if v < 0:
+    #             v = -1
+    #         self._update_attribute("direction", "polling_cycle", v, push='always')
+    #     # VALUE
+    #     if "value" in cmd_att:
+    #         v = cmd_att["value"]
+    #         if not isinstance(v, int) and not isinstance(v, str):
+    #             raise Exception(f"Invalid type for direction.value {type(v)}")
+    #         try:
+    #             self._PZADRV_DIO_set_direction_value(v)
+    #             self._update_attributes_from_dict(
+    #                 {
+    #                     "direction": {
+    #                         "value": self._PZADRV_DIO_get_direction_value()
+    #                     }
+    #                 })
+    #         except Exception as e:
+    #             self.log.error(f"{e}")
+
+    #     if "pull" in cmd_att:
+    #         v = cmd_att["pull"]
+    #         if not isinstance(v, int) and not isinstance(v, str):
+    #             raise Exception(f"Invalid type for direction.pull {type(v)}")
+    #         try:
+    #             self._PZADRV_DIO_set_direction_pull(v)
+    #             self._update_attributes_from_dict(
+    #                 {
+    #                     "direction": {
+    #                         "pull": self._PZADRV_DIO_get_direction_pull()
+    #                     }
+    #                 })
+    #         except Exception as e:
+    #             self.log.error(f"{e}")
 
 
-    # def _PZADRV_loop_run(self, loop):
-    #     # polls
-    #     # self.__poll_att_direction()
-    #     # self.__poll_att_state()
-    #     # time.sleep(0.1)
-    #     pass
+    # update the state attribut field
+    def __handle_cmds_set_state(elf, cmd_att):
+        pass
+    #     if "polling_cycle" in cmd_att:
+    #         v = cmd_att["polling_cycle"]
+    #         if not isinstance(v, int) and not isinstance(v, float):
+    #             raise Exception(f"Invalid type for volts.polling_cycle {type(v)}")
+    #         if v < 0:
+    #             v = -1
+    #         elf._update_attribute("state", "polling_cycle", v, push='always')
+    #     # VALUE
+    #     if "active" in cmd_att:
+    #         v = cmd_att["active"]
+    #         elf.log.debug("test active state")
+    #         if not isinstance(v, int) and not isinstance(v, str):
+    #             raise Exception(f"Invalid type for state.active {type(v)}")
+    #         try:
+    #             elf._PZADRV_DIO_set_state_active(v)
+    #             elf._update_attributes_from_dict(
+    #                 {
+    #                     "state": {
+    #                         "active": elf._PZADRV_DIO_get_state_active()
+    #                     }
+    #                 })
+    #         except Exception as e:
+    #             elf.log.error(f"{e}")
 
-    # def _PZADRV_cmds_set(self, loop, payload):
-    #     cmds = self.payload_to_dict(payload)
-    #     self.log.debug(f"cmds as json : {cmds}")
-    #     for att in self.__cmd_handlers:
-    #         if att in cmds:
-    #             self.__cmd_handlers[att](cmds[att])
-    #     pass
+    #     if "active_low" in cmd_att:
+    #         v = cmd_att["active_low"]
+    #         if not isinstance(v, int) and not isinstance(v, str):
+    #             raise Exception(f"Invalid type for state.active low {type(v)}")
+    #         try:
+    #             elf._PZADRV_DIO_set_state_activeLow(v)
+    #             elf._update_attributes_from_dict(
+    #                 {
+    #                     "state": {
+    #                         "active_low": elf._PZADRV_DIO_get_state_activeLow()
+    #                     }
+    #                 })
+    #         except Exception as e:
+    #             elf.log.error(f"{e}")
+
+    # =============================================================================
+    # PRIVATE FUNCTIONS
+
+
+
+
+
 
 
 
@@ -203,88 +299,4 @@ class MetaDriverDio(PlatformDriver):
     #         self._push_attribute("state")
 
 
-
-    # # update the direction attribut field
-    # def __handle_cmd_set_direction_dio(self, cmd_att):
-    #     # POLLING_CYCLE
-    #     if "polling_cycle" in cmd_att:
-    #         v = cmd_att["polling_cycle"]
-    #         if not isinstance(v, int) and not isinstance(v, float):
-    #             raise Exception(f"Invalid type for volts.polling_cycle {type(v)}")
-    #         if v < 0:
-    #             v = -1
-    #         self._update_attribute("direction", "polling_cycle", v, push='always')
-    #     # VALUE
-    #     if "value" in cmd_att:
-    #         v = cmd_att["value"]
-    #         if not isinstance(v, int) and not isinstance(v, str):
-    #             raise Exception(f"Invalid type for direction.value {type(v)}")
-    #         try:
-    #             self._PZADRV_DIO_set_direction_value(v)
-    #             self._update_attributes_from_dict(
-    #                 {
-    #                     "direction": {
-    #                         "value": self._PZADRV_DIO_get_direction_value()
-    #                     }
-    #                 })
-    #         except Exception as e:
-    #             self.log.error(f"{e}")
-
-    #     if "pull" in cmd_att:
-    #         v = cmd_att["pull"]
-    #         if not isinstance(v, int) and not isinstance(v, str):
-    #             raise Exception(f"Invalid type for direction.pull {type(v)}")
-    #         try:
-    #             self._PZADRV_DIO_set_direction_pull(v)
-    #             self._update_attributes_from_dict(
-    #                 {
-    #                     "direction": {
-    #                         "pull": self._PZADRV_DIO_get_direction_pull()
-    #                     }
-    #                 })
-    #         except Exception as e:
-    #             self.log.error(f"{e}")
-
-
-    # # update the state attribut field
-    # def __handle_cmd_set_state_dio(elf, cmd_att):
-    #     if "polling_cycle" in cmd_att:
-    #         v = cmd_att["polling_cycle"]
-    #         if not isinstance(v, int) and not isinstance(v, float):
-    #             raise Exception(f"Invalid type for volts.polling_cycle {type(v)}")
-    #         if v < 0:
-    #             v = -1
-    #         elf._update_attribute("state", "polling_cycle", v, push='always')
-    #     # VALUE
-    #     if "active" in cmd_att:
-    #         v = cmd_att["active"]
-    #         elf.log.debug("test active state")
-    #         if not isinstance(v, int) and not isinstance(v, str):
-    #             raise Exception(f"Invalid type for state.active {type(v)}")
-    #         try:
-    #             elf._PZADRV_DIO_set_state_active(v)
-    #             elf._update_attributes_from_dict(
-    #                 {
-    #                     "state": {
-    #                         "active": elf._PZADRV_DIO_get_state_active()
-    #                     }
-    #                 })
-    #         except Exception as e:
-    #             elf.log.error(f"{e}")
-
-    #     if "active_low" in cmd_att:
-    #         v = cmd_att["active_low"]
-    #         if not isinstance(v, int) and not isinstance(v, str):
-    #             raise Exception(f"Invalid type for state.active low {type(v)}")
-    #         try:
-    #             elf._PZADRV_DIO_set_state_activeLow(v)
-    #             elf._update_attributes_from_dict(
-    #                 {
-    #                     "state": {
-    #                         "active_low": elf._PZADRV_DIO_get_state_activeLow()
-    #                     }
-    #                 })
-    #         except Exception as e:
-    #             elf.log.error(f"{e}")
-                
 
