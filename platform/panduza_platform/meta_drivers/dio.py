@@ -23,8 +23,10 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    # async def _PZA_DRV_loop_init(self, tree):
-
+    async def _PZA_DRV_loop_init(self, loop, tree):
+        """From PlatformDriver
+        """
+        # Set handers
         # self.__cmd_handlers = {
         #     "direction" : self.__handle_cmd_set_direction_dio,
         #     "state" : self.__handle_cmd_set_state_dio,
@@ -41,12 +43,13 @@ class MetaDriverDio(PlatformDriver):
         #     "state"  : start_time,
         # }
 
-        # self._pzadrv_init_success()
-        
-        # pass
+        # Init Success
+        self._PZA_DRV_loop_init(loop, tree)
 
     # =============================================================================
     # TO OVERRIDE IN DRIVER
+
+    # ---
 
     def _PZA_DRV_DIO_config(self):
         """Driver base configuration
@@ -55,93 +58,91 @@ class MetaDriverDio(PlatformDriver):
         function_name = inspect.stack()[0][3]
         raise NotImplementedError(f"Function not implemented ! '{function_name}' => %{file_name}%")
 
+    # ---
+
+    def _PZADRV_DIO_get_direction_value(self):
+        """ get value of direction value
+        """
+        file_name = inspect.stack()[0][1]
+        function_name = inspect.stack()[0][3]
+        raise NotImplementedError(f"Function not implemented ! '{function_name}' => %{file_name}%")
+
+    # ---
+
+    def _PZADRV_DIO_set_direction_value(self, value):
+        """ set value of direction value
+
+        -  Args
+            value : value to be set : in or out
+        """
+        file_name = inspect.stack()[0][1]
+        function_name = inspect.stack()[0][3]
+        raise NotImplementedError(f"Function not implemented ! '{function_name}' => %{file_name}%")
+
+    # ---
+
+    def _PZADRV_DIO_get_direction_pull(self):
+        """ get direction pull
+        """
+        file_name = inspect.stack()[0][1]
+        function_name = inspect.stack()[0][3]
+        raise NotImplementedError(f"Function not implemented ! '{function_name}' => %{file_name}%")
+
+    # ---
+
+    def _PZADRV_DIO_set_direction_pull(self, v):
+        """ set the pull direction
+        -Args
+        value : value to be set : up, down or open
+        """
+        file_name = inspect.stack()[0][1]
+        function_name = inspect.stack()[0][3]
+        raise NotImplementedError(f"Function not implemented ! '{function_name}' => %{file_name}%")
+
+    # ---
+
+    def _PZADRV_DIO_get_state_active(self):
+        """ get the active state
+        """
+        raise NotImplementedError("Must be implemented !")
+
+    # ---
+
+    def _PZADRV_DIO_set_state_active(self,v):
+        """ get the active state
+        -Args
+        value : value to be set : True or False
+        """
+        raise NotImplementedError("Must be implemented !")
+
+    # ---
+
+    def _PZADRV_DIO_get_state_activeLow(self):
+        """ get the active low state
+        """
+        raise NotImplementedError("Must be implemented !")
+
+    # ---
+
+    def _PZADRV_DIO_set_state_activeLow(self,v):
+        """ set the active low state
+            -Args
+            value : value to be set : True or False
+        """
+        raise NotImplementedError("Must be implemented !")
+
+    # =============================================================================
+    #
 
 
-    # def _PZADRV_DIO_get_direction_value(self):
-    #     """ get value of direction value
-    #     """
-    #     raise NotImplementedError("Must be implemented !")
-
-    # def _PZADRV_DIO_set_direction_value(self, v):
-    #     """ set value of direction value
-    #     -Args
-    #     value : value to be set : in or out
-    #     """
-    #     raise NotImplementedError("Must be implemented !")
-    
-    # def _PZADRV_DIO_get_direction_pull(self):
-    #     """ get direction pull
-    #     """
-    #     raise NotImplementedError("Must be implemented !")
-    
-    # def _PZADRV_DIO_set_direction_pull(self, v):
-    #     """ set the pull direction
-    #     -Args
-    #     value : value to be set : up, down or open
-    #     """
-    #     raise NotImplementedError("Must be implemented !")
-    
-    # def _PZADRV_DIO_get_state_active(self):
-    #     """ get the active state
-    #     """
-    #     raise NotImplementedError("Must be implemented !")
-    
-    # def _PZADRV_DIO_set_state_active(self,v):
-    #     """ get the active state
-    #     -Args
-    #     value : value to be set : True or False
-    #     """
-    #     raise NotImplementedError("Must be implemented !")
-    
-    # def _PZADRV_DIO_get_state_activeLow(self):
-    #     """ get the active low state
-    #     """
-    #     raise NotImplementedError("Must be implemented !")
-    
-    # def _PZADRV_DIO_set_state_activeLow(self,v):
-    #     """ set the active low state
-    #         -Args
-    #         value : value to be set : True or False
-    #     """
-    #     raise NotImplementedError("Must be implemented !")
-    
-    # def _PZADRV_DIO_get_state_polling_cycle(self,v):
-    #     """ get polling state
-    #     -Args
-    #         none   
-    #     """
-    #     raise NotImplementedError("Must be implemented !")
-    
-    # def _PZADRV_DIO_set_state_polling_cycle(self,v):
-    #     """ set polling state
-    #         -Args
-    #         value : value to be set : integer > 0
-    #     """
-    #     raise NotImplementedError("Must be implemented !")
-    
-    # def _PZADRV_DIO_get_direction_polling_cycle(self,v):
-    #     """ get polling direction
-    #     """
-    #     raise NotImplementedError("Must be implemented !")
-    
-    # def _PZADRV_DIO_set_direction_polling_cycle(self,v):
-    #     """ set the polling direction
-    #         -Args
-    #         value : value to be set : integer > 0
-    #     """
-    #     raise NotImplementedError("Must be implemented !")
-
-
-    
-
-    # def _PZADRV_loop_run(self):
+    # def _PZADRV_loop_run(self, loop):
     #     # polls
     #     # self.__poll_att_direction()
     #     # self.__poll_att_state()
     #     # time.sleep(0.1)
     #     pass
 
-    # def _PZADRV_cmds_set(self, payload):
+    # def _PZADRV_cmds_set(self, loop, payload):
     #     cmds = self.payload_to_dict(payload)
     #     self.log.debug(f"cmds as json : {cmds}")
     #     for att in self.__cmd_handlers:

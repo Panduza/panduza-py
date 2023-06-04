@@ -20,12 +20,14 @@ class PlatformDriver(PlatformWorker):
     # Time in error state before trying a restart of the interface
     ERROR_TIME_BEFORE_RETRY_S = 10
 
-    # ---
 
     def __init__(self) -> None:
         self._pclient = None
         self.__err_string = ""
         super().__init__()
+
+    # =============================================================================
+    # PUBLIC FUNCTIONS
 
     # ---
 
@@ -117,8 +119,6 @@ class PlatformDriver(PlatformWorker):
 
         self.log.info("Interface initialized")
 
-
-
     ###########################################################################
     ###########################################################################
 
@@ -130,8 +130,8 @@ class PlatformDriver(PlatformWorker):
     #     # Keep alive flag
     #     self.alive = False
 
-    ###########################################################################
-    ###########################################################################
+    # =============================================================================
+    # WORKER FUNCTIONS
 
     def PZA_WORKER_name(self):
         """
@@ -175,7 +175,7 @@ class PlatformDriver(PlatformWorker):
 
             if not self._events_cmds.empty():
                 event = self._events_cmds.get()
-                await self._PZADRV_cmds_set(event["payload"])
+                await self._PZADRV_cmds_set(loop, event["payload"])
 
             # Log state transition
             if self.__drv_state != self.__drv_state_prev:
@@ -200,7 +200,7 @@ class PlatformDriver(PlatformWorker):
             if not (self.__drv_state in self.__states):
                 # error critique !
                 pass
-            await self.__states[self.__drv_state]()
+            await self.__states[self.__drv_state](loop)
 
         except Exception as e:
             self._pzadrv_error_detected(str(e) + " " + traceback.format_exc())
@@ -211,31 +211,41 @@ class PlatformDriver(PlatformWorker):
     # =============================================================================
     # INTERNAL STATES FUNCTIONS
 
-    async def __drv_state_init(self):
+    # ---
+
+    async def __drv_state_init(self, loop):
         """
         """
         self.__subscribe_topics()
-        await self._PZA_DRV_loop_init(self._tree)
+        await self._PZA_DRV_loop_init(loop, self._tree)
 
-    async def __drv_state_run(self):
+    # ---
+
+    async def __drv_state_run(self, loop):
         """
         """
         try:
-            await self._PZADRV_loop_run()
+            await self._PZADRV_loop_run(loop)
         except Exception as e:
             self._pzadrv_error_detected(str(e) + " " + traceback.format_exc())
 
-    async def __drv_state_err(self):
+    # ---
+
+    async def __drv_state_err(self, loop):
         """
         """
         try:
             self.worker_panic()
-            await self._PZADRV_loop_err()
+            await self._PZADRV_loop_err(loop)
         except Exception as e:
             self.log.error(str(e))
 
-    ###########################################################################
-    ###########################################################################
+    # ---
+
+    # =============================================================================
+    # EVENT HANDLERS
+
+    # ---
 
     def __subscribe_topics(self):
         """Subscribe to the required topics
@@ -248,43 +258,19 @@ class PlatformDriver(PlatformWorker):
             # Valid the flag
             self.__topics_subscribed = True
 
-    ###########################################################################
-    ###########################################################################
-
     def __on_pza_message(self, topic, payload):
-        """
+        """On scan message callback
         """
         self._events_pza.put({
             "topic":topic, "payload":payload
         })
 
     def __on_cmds_message(self, topic, payload):
-        """
+        """On cmds message callback
         """
         self._events_cmds.put({
             "topic":topic, "payload":payload
         })
-
-        # 
-
-    # def __on_message(self, client, userdata, msg):
-    #     """Callback to manage incomming mqtt messages
-
-    #     Args:
-    #         - client: from paho.mqtt.client
-    #         - userdata: from paho.mqtt.client
-    #         - msg: from paho.mqtt.client
-    #     """
-    #     # Get the topix string
-    #     topic_string = str(msg.topic)
-
-    #     # Debug purpose
-    #     self.log.debug(f"MSG_IN < %{topic_string}% {msg.payload}")
-
-        
-    #     # Route to the handle for the command set
-    #     suffix = topic_string[self.topic_cmds_size:]
-    #     if suffix == "set":
 
     ###########################################################################
     ###########################################################################
@@ -460,17 +446,17 @@ class PlatformDriver(PlatformWorker):
         """
         return []
 
-    async def _PZA_DRV_loop_init(self, tree):
+    async def _PZA_DRV_loop_init(self, loop, tree):
         """
         """
-        pass
+        self._pzadrv_init_success()
 
-    async def _PZADRV_loop_run(self):
+    async def _PZADRV_loop_run(self, loop):
         """
         """
         await asyncio.sleep(0.1)
 
-    async def _PZADRV_loop_err(self):
+    async def _PZADRV_loop_err(self, loop):
         """
         """
         elasped = time.time() - self._state_started_time
@@ -480,7 +466,7 @@ class PlatformDriver(PlatformWorker):
             await asyncio.sleep(1)
             self.log.debug(f"restart in { int(PlatformDriver.ERROR_TIME_BEFORE_RETRY_S - elasped) }s")
 
-    async def _PZADRV_cmds_set(self, payload):
+    async def _PZADRV_cmds_set(self, loop, payload):
         """Must apply the command on the driver
         """
         pass

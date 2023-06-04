@@ -22,7 +22,7 @@ class MetaDriverSerial(MetaDriver):
             },
         }
 
-    def _PZA_DRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, loop, tree):
 
         self.__cmd_handlers = {
             "data": self.__handle_cmds_set_data
@@ -33,10 +33,10 @@ class MetaDriverSerial(MetaDriver):
 
         self._pzadrv_init_success()
 
-    def _PZADRV_loop_run(self):
+    def _PZADRV_loop_run(self, loop):
         pass
 
-    def _PZADRV_cmds_set(self, payload):
+    def _PZADRV_cmds_set(self, loop, payload):
         """From MetaDriver
         """
         cmds = self.payload_to_dict(payload)

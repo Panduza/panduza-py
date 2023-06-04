@@ -59,7 +59,7 @@ class DriverHM310tAmpermeter(MetaDriverAmpermt):
 
     # ---
 
-    def _PZA_DRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, loop, tree):
         """Driver initialization
         """
         # Load settings

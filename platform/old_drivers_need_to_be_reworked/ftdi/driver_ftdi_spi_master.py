@@ -26,7 +26,7 @@ class DriverFtdiSpiMaster(MetaDriverSpiMaster):
     ###########################################################################
     ###########################################################################
 
-    def _PZA_DRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, loop, tree):
         # self.log.debug(f"{tree}")
         settings = tree["settings"]
 
@@ -64,7 +64,7 @@ class DriverFtdiSpiMaster(MetaDriverSpiMaster):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_loop_run(self):
+    def _PZADRV_loop_run(self, loop):
         """ """
         pass
 

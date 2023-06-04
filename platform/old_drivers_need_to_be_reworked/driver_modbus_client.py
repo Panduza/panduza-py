@@ -80,7 +80,7 @@ class DriverModbusClient(MetaDriver):
     ###########################################################################
     ###########################################################################
 
-    def _PZA_DRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, loop, tree):
 
         # self.log.debug(f"{tree}")
 
@@ -103,7 +103,7 @@ class DriverModbusClient(MetaDriver):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_loop_run(self):
+    def _PZADRV_loop_run(self, loop):
         """
         """
         
@@ -135,7 +135,7 @@ class DriverModbusClient(MetaDriver):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_cmds_set(self, payload):
+    def _PZADRV_cmds_set(self, loop, payload):
         """From MetaDriver
         """
         cmds = self.payload_to_dict(payload)

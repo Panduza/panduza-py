@@ -38,7 +38,7 @@ class MetaDriverAmpermt(MetaDriver):
 
     # ---
 
-    def _PZA_DRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, loop, tree):
         # Set command handlers
         self.__cmd_handlers = {
             "measure": self.__handle_cmds_set_measure,
@@ -58,7 +58,7 @@ class MetaDriverAmpermt(MetaDriver):
 
     # ---
 
-    def _PZADRV_loop_run(self):
+    def _PZADRV_loop_run(self, loop):
 
         self.__poll_att_measure()
         # Limit on python platform
@@ -66,7 +66,7 @@ class MetaDriverAmpermt(MetaDriver):
 
     # ---
 
-    def _PZADRV_cmds_set(self, payload):
+    def _PZADRV_cmds_set(self, loop, payload):
         """From MetaDriver
         """
         cmds = self.payload_to_dict(payload)

@@ -21,7 +21,7 @@ class DriverPlatform(PlatformDriver):
     ###########################################################################
     ###########################################################################
 
-    async def _PZA_DRV_loop_init(self, tree):
+    async def _PZA_DRV_loop_init(self, loop, tree):
 
         # self.log.debug(f"{tree}")
         # self.log.debug(f">>>>>>>>>{len(self._platform.interfaces)}")

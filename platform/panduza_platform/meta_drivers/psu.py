@@ -159,7 +159,7 @@ class MetaDriverPsu(PlatformDriver):
 
     # ---
 
-    async def _PZA_DRV_loop_init(self, tree):
+    async def _PZA_DRV_loop_init(self, loop, tree):
         # Set command handlers
         self.__cmd_handlers = {
             "enable": self.__handle_cmds_set_enable,
@@ -185,7 +185,7 @@ class MetaDriverPsu(PlatformDriver):
 
     # ---
 
-    async def _PZADRV_loop_run(self):
+    async def _PZADRV_loop_run(self, loop):
         # Polls
         await self.__poll_att_enable()
         await self.__poll_att_volts()
@@ -193,7 +193,7 @@ class MetaDriverPsu(PlatformDriver):
 
     # ---
 
-    async def _PZADRV_cmds_set(self, payload):
+    async def _PZADRV_cmds_set(self, loop, payload):
         """From MetaDriver
         """
         cmds = self.payload_to_dict(payload)

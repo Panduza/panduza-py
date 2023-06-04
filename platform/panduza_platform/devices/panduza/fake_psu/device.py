@@ -13,10 +13,10 @@ class DevicePanduzaFakePsu(PlatformDeviceModel):
         """
         """
 
-        number_of_channel = self._initial_settings.get("number_fo_channel", 1)
+        number_of_channel = self._initial_settings.get("number_of_channel", 1)
 
         interfaces = []
-        for chan in range(number_of_channel):
+        for chan in range(0, number_of_channel):
             interfaces.append(
                 {
                     "name": f"channel_{chan}",

@@ -62,7 +62,7 @@ class DriverIPS4303S(MetaDriverPsu):
     ###########################################################################
     ###########################################################################
 
-    def _PZA_DRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, loop, tree):
 
         # Get settings from tree and append constant settings for this device
         settings = dict() if "settings" not in tree else tree["settings"]

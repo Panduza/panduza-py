@@ -477,7 +477,9 @@ class Platform:
 
             device_name = device_cfg["model"].replace(".", "_")
 
-            for interface_config in device._PZA_DEV_interfaces():
+            interfaces = device._PZA_DEV_interfaces()
+            self.log.info(f"{device_name} => {interfaces}")
+            for interface_config in interfaces:
                 self.load_interface("default", device_name, interface_config)
 
 

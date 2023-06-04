@@ -5,7 +5,8 @@ export PZA_ALIASES='{
         "url": "localhost",
         "port": 1883,
         "interfaces": {
-            "psu_1": "pza/default/Panduza_FakePsu/channel_0"
+            "fake_psu_0": "pza/default/Panduza_FakePsu/channel_0",
+            "fake_psu_1": "pza/default/Panduza_FakePsu/channel_1"
         }
     }
 }'

@@ -69,7 +69,7 @@ class DriverSerial(MetaDriverSerial):
     ###########################################################################
     ###########################################################################
 
-    def _PZA_DRV_loop_init(self, tree):
+    def _PZA_DRV_loop_init(self, loop, tree):
 
         # Get settings from tree and append constant settings for this device
         settings = dict() if "settings" not in tree else tree["settings"]
@@ -85,7 +85,7 @@ class DriverSerial(MetaDriverSerial):
 
 
 
-    def _PZADRV_loop_run(self):
+    def _PZADRV_loop_run(self, loop):
         """
         """
         # Check if there is data waiting to be read
