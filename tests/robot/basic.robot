@@ -10,3 +10,6 @@ Resource            ../rsc/fake_bench.resource
 Scan interfaces of the platform
     ${INTERFACES}     Panduza Scan Server    localhost    1883
     Log    ${INTERFACES}
+
+Test fake dio interfaces
+    Test Basic Access Of Dio Interface     fake_dio_0

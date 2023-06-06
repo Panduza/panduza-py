@@ -10,5 +10,5 @@ bstr_map = {
 }
 
 def boolean_str_to_boolean(bstr):
-    assert_that(bstr_map, has_key(bstr) )
+    assert_that( bstr_map, has_key(bstr) )
     return bstr_map[bstr]
