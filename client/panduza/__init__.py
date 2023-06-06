@@ -5,7 +5,4 @@ from .core import EnsureError
 
 from .interfaces import Dio
 from .interfaces import Psu
-from .interfaces import Serial
-from .interfaces import ModbusClient
-from .interfaces import Ftdi_Spi
 

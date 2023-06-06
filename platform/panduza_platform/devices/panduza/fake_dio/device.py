@@ -2,6 +2,8 @@
 from ....platform_device_model import PlatformDeviceModel
 
 class DevicePanduzaFakeDio(PlatformDeviceModel):
+    
+    # FakeDioController ??
 
     def _PZA_DEV_config(self):
         """

@@ -1,9 +1,7 @@
-import json
-import logging
-from ..core import Interface
-from ..core import Interface, Attribute, EnsureError, RoField, RwField
+from dataclasses import dataclass
+from ..core import Interface, Attribute, RwField
 
-
+@dataclass
 class Dio(Interface):
     """Interface to manage DIO
     """
@@ -45,3 +43,6 @@ class Dio(Interface):
         ).add_field(
             RwField( name = "polling_cycle" )
         )
+
+        if self.ensure:
+            self.ensure_init()

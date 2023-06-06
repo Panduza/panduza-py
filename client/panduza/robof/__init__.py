@@ -28,5 +28,4 @@ class Keywords(DynamicCore):
         # print(interfaces)
 
         BuiltIn().set_suite_variable("${__pza__}", interfaces)
-        # BuiltIn().set_test_variable("${pza}", aliases)
 

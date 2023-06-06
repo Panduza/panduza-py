@@ -3,7 +3,7 @@
         {
             "model": "Panduza.FakePsu",
             "settings": {
-                "number_of_channel": 4
+                "number_of_channel": 8
             }
         },
         {

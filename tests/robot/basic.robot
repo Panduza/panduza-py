@@ -1,8 +1,9 @@
 *** Settings ***
-Documentation       Test of the Power Supply API
+Documentation        Basic test for panduza interfaces
 
 Resource            ../rsc/fake_bench.resource
 
+Suite Setup         Setup Bench Config
 
 
 *** Test Cases ***

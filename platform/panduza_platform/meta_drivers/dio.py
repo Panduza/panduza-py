@@ -32,16 +32,8 @@ class MetaDriverDio(PlatformDriver):
             "state" : self.__handle_cmds_set_state,
         }
 
-
-        # # first update
-        # self.__update_attribute_initial()
-        
-        # # polling cycle reset
-        # start_time = time.perf_counter()
-        # self.polling_ref = {
-        #     "direction" : start_time,
-        #     "state"  : start_time,
-        # }
+        # first update
+        await self.__update_attribute_initial()
 
         # Init Success
         self._PZA_DRV_loop_init(loop, tree)
@@ -57,13 +49,13 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    def _PZA_DRV_cmds_set(self, loop, payload):
+    async def _PZA_DRV_cmds_set(self, loop, payload):
         cmds = self.payload_to_dict(payload)
         self.log.debug(f"cmds as json : {cmds}")
         for att in self.__cmd_handlers:
             if att in cmds:
-                self.__cmd_handlers[att](cmds[att])
-        pass
+                await self.__cmd_handlers[att](cmds[att])
+
 
     # =============================================================================
     # TO OVERRIDE IN DRIVER
@@ -79,7 +71,7 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    def _PZADRV_DIO_get_direction_value(self):
+    def _PZA_DRV_DIO_get_direction_value(self):
         """ get value of direction value
         """
         file_name = inspect.stack()[0][1]
@@ -88,7 +80,7 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    def _PZADRV_DIO_set_direction_value(self, value):
+    def _PZA_DRV_DIO_set_direction_value(self, value):
         """ set value of direction value
 
         -  Args
@@ -100,7 +92,7 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    def _PZADRV_DIO_get_direction_pull(self):
+    def _PZA_DRV_DIO_get_direction_pull(self):
         """ get direction pull
         """
         file_name = inspect.stack()[0][1]
@@ -109,7 +101,7 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    def _PZADRV_DIO_set_direction_pull(self, v):
+    def _PZA_DRV_DIO_set_direction_pull(self, v):
         """ set the pull direction
         -Args
         value : value to be set : up, down or open
@@ -120,14 +112,14 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    def _PZADRV_DIO_get_state_active(self):
+    def _PZA_DRV_DIO_get_state_active(self):
         """ get the active state
         """
         raise NotImplementedError("Must be implemented !")
 
     # ---
 
-    def _PZADRV_DIO_set_state_active(self,v):
+    def _PZA_DRV_DIO_set_state_active(self,v):
         """ get the active state
         -Args
         value : value to be set : True or False
@@ -136,14 +128,14 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    def _PZADRV_DIO_get_state_activeLow(self):
+    def _PZA_DRV_DIO_get_state_activeLow(self):
         """ get the active low state
         """
         raise NotImplementedError("Must be implemented !")
 
     # ---
 
-    def _PZADRV_DIO_set_state_activeLow(self,v):
+    def _PZA_DRV_DIO_set_state_activeLow(self,v):
         """ set the active low state
             -Args
             value : value to be set : True or False
@@ -154,7 +146,7 @@ class MetaDriverDio(PlatformDriver):
     # LOCAL STATE HANDLERS
 
     # update the direction attribut field
-    def __handle_cmds_set_direction(self, cmd_att):
+    async def __handle_cmds_set_direction(self, cmd_att):
         pass
     #     # POLLING_CYCLE
     #     if "polling_cycle" in cmd_att:
@@ -163,18 +155,18 @@ class MetaDriverDio(PlatformDriver):
     #             raise Exception(f"Invalid type for volts.polling_cycle {type(v)}")
     #         if v < 0:
     #             v = -1
-    #         self._update_attribute("direction", "polling_cycle", v, push='always')
+    #         await self._update_attribute("direction", "polling_cycle", v, push='always')
     #     # VALUE
     #     if "value" in cmd_att:
     #         v = cmd_att["value"]
     #         if not isinstance(v, int) and not isinstance(v, str):
     #             raise Exception(f"Invalid type for direction.value {type(v)}")
     #         try:
-    #             self._PZADRV_DIO_set_direction_value(v)
-    #             self._update_attributes_from_dict(
+    #             self._PZA_DRV_DIO_set_direction_value(v)
+    #             await self._update_attributes_from_dict(
     #                 {
     #                     "direction": {
-    #                         "value": self._PZADRV_DIO_get_direction_value()
+    #                         "value": self._PZA_DRV_DIO_get_direction_value()
     #                     }
     #                 })
     #         except Exception as e:
@@ -185,11 +177,11 @@ class MetaDriverDio(PlatformDriver):
     #         if not isinstance(v, int) and not isinstance(v, str):
     #             raise Exception(f"Invalid type for direction.pull {type(v)}")
     #         try:
-    #             self._PZADRV_DIO_set_direction_pull(v)
-    #             self._update_attributes_from_dict(
+    #             self._PZA_DRV_DIO_set_direction_pull(v)
+    #             await self._update_attributes_from_dict(
     #                 {
     #                     "direction": {
-    #                         "pull": self._PZADRV_DIO_get_direction_pull()
+    #                         "pull": self._PZA_DRV_DIO_get_direction_pull()
     #                     }
     #                 })
     #         except Exception as e:
@@ -197,7 +189,7 @@ class MetaDriverDio(PlatformDriver):
 
 
     # update the state attribut field
-    def __handle_cmds_set_state(elf, cmd_att):
+    async def __handle_cmds_set_state(elf, cmd_att):
         pass
     #     if "polling_cycle" in cmd_att:
     #         v = cmd_att["polling_cycle"]
@@ -213,11 +205,11 @@ class MetaDriverDio(PlatformDriver):
     #         if not isinstance(v, int) and not isinstance(v, str):
     #             raise Exception(f"Invalid type for state.active {type(v)}")
     #         try:
-    #             elf._PZADRV_DIO_set_state_active(v)
+    #             elf._PZA_DRV_DIO_set_state_active(v)
     #             elf._update_attributes_from_dict(
     #                 {
     #                     "state": {
-    #                         "active": elf._PZADRV_DIO_get_state_active()
+    #                         "active": elf._PZA_DRV_DIO_get_state_active()
     #                     }
     #                 })
     #         except Exception as e:
@@ -228,11 +220,11 @@ class MetaDriverDio(PlatformDriver):
     #         if not isinstance(v, int) and not isinstance(v, str):
     #             raise Exception(f"Invalid type for state.active low {type(v)}")
     #         try:
-    #             elf._PZADRV_DIO_set_state_activeLow(v)
+    #             elf._PZA_DRV_DIO_set_state_activeLow(v)
     #             elf._update_attributes_from_dict(
     #                 {
     #                     "state": {
-    #                         "active_low": elf._PZADRV_DIO_get_state_activeLow()
+    #                         "active_low": elf._PZA_DRV_DIO_get_state_activeLow()
     #                     }
     #                 })
     #         except Exception as e:
@@ -240,6 +232,27 @@ class MetaDriverDio(PlatformDriver):
 
     # =============================================================================
     # PRIVATE FUNCTIONS
+
+    async def __update_attribute_initial(self):
+        """Function to perform the initial init
+        """
+
+        # === direction
+        d = False
+        # /!\ 'or p' must be at the end
+        d = await self._update_attribute("direction", "value", self._PZA_DRV_DIO_get_direction_value(), False) or d
+        d = await self._update_attribute("direction", "pull", self._PZA_DRV_DIO_get_direction_pull(), False) or d
+        d = await self._update_attribute("direction", "polling_cycle", 1, False) or d
+        if d:
+            await self._push_attribute("direction")
+
+        # === state
+        s = False
+        s = await self._update_attribute("state", "active", self._PZA_DRV_DIO_get_state_active(), False) or s
+        s = await self._update_attribute("state", "active_low", self._PZA_DRV_DIO_get_state_activeLow(), False) or s
+        s = await self._update_attribute("state", "polling_cycle", 1, False) or s
+        if s:
+            await self._push_attribute("state")
 
 
 
@@ -256,8 +269,8 @@ class MetaDriverDio(PlatformDriver):
     #         return
     #     if (time.perf_counter() - self.polling_ref["direction"]) > polling_cycle:
     #         p = False
-    #         p = self._update_attribute("direction", "pull", self._PZADRV_DIO_get_direction_pull(), False) or p
-    #         p = self._update_attribute("direction", "value", self._PZADRV_DIO_get_direction_value(), False) or p
+    #         p = await self._update_attribute("direction", "pull", self._PZA_DRV_DIO_get_direction_pull(), False) or p
+    #         p = await self._update_attribute("direction", "value", self._PZA_DRV_DIO_get_direction_value(), False) or p
     #         if p:
     #             self._push_attribute("direction")
     #         self.polling_ref["direction"] = time.perf_counter()
@@ -271,32 +284,12 @@ class MetaDriverDio(PlatformDriver):
     #         return
     #     if (time.perf_counter() - self.polling_ref["state"]) > polling_cycle:
     #         p = False
-    #         p = self._update_attribute("state", "active", self._PZADRV_DIO_get_state_active(), False) or p
-    #         p = self._update_attribute("state", "active_low", self._PZADRV_DIO_get_state_activeLow(), False) or p
+    #         p = await self._update_attribute("state", "active", self._PZA_DRV_DIO_get_state_active(), False) or p
+    #         p = await self._update_attribute("state", "active_low", self._PZA_DRV_DIO_get_state_activeLow(), False) or p
     #         if p:
     #             self._push_attribute("state")
     #         self.polling_ref["state"] = time.perf_counter()
 
-
-    # # first update
-    # def __update_attribute_initial(self):
-
-    #     # === direction
-    #     d = False
-    #     # /!\ 'or p' must be at the end
-    #     d = self._update_attribute("direction", "value", self._PZADRV_DIO_get_direction_value(), False) or d
-    #     d = self._update_attribute("direction", "pull", self._PZADRV_DIO_get_direction_pull(), False) or d
-    #     d = self._update_attribute("direction", "polling_cycle", self._PZADRV_DIO_get_direction_polling_cycle(), False) or d
-    #     if d:
-    #         self._push_attribute("direction")
-
-    #     # === state
-    #     s = False
-    #     s = self._update_attribute("state", "active", self._PZADRV_DIO_get_state_active(), False) or s
-    #     s = self._update_attribute("state", "active_low", self._PZADRV_DIO_get_state_activeLow(), False) or s
-    #     s = self._update_attribute("state", "polling_cycle", self._PZADRV_DIO_get_state_polling_cycle(), False) or s
-    #     if s:
-    #         self._push_attribute("state")
 
 
 
