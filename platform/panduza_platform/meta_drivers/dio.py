@@ -133,10 +133,17 @@ class MetaDriverDio(MetaDriver):
 
 
 
-    def __poll_att_direction(self):
+    ###########################################################################
+    ###########################################################################
+    #
+    # Manages Polling cycle
+    #
+    ###########################################################################
+    ###########################################################################
 
-        polling_cycle = float(self._get_field("direction", "polling_cycle"))
+    def __poll_att_direction(self):
         
+        polling_cycle = float(self._get_field("direction", "polling_cycle"))
         if polling_cycle < 0:
             return
         if (time.perf_counter() - self.polling_ref["direction"]) > polling_cycle:
@@ -151,7 +158,6 @@ class MetaDriverDio(MetaDriver):
     def __poll_att_state(self):
         
         polling_cycle = float(self._get_field("state", "polling_cycle"))
-        value = bool(self._get_field("state", "active"))
         if polling_cycle < 0:
             return
         if (time.perf_counter() - self.polling_ref["state"]) > polling_cycle:
@@ -163,7 +169,14 @@ class MetaDriverDio(MetaDriver):
             self.polling_ref["state"] = time.perf_counter()
 
 
-    # first update
+
+    ###########################################################################
+    ###########################################################################
+    #
+    # First update when plateform is launche
+    #
+    ###########################################################################
+    ###########################################################################
     def __update_attribute_initial(self):
 
         # === direction
@@ -185,10 +198,18 @@ class MetaDriverDio(MetaDriver):
 
 
 
-    # update the direction attribut field
+    ###########################################################################
+    ###########################################################################
+    #
+    #   Update the fields
+    #
+    ###########################################################################
+    ###########################################################################
+    
     def __handle_cmd_set_direction_dio(self, cmd_att):
         # POLLING_CYCLE
         if "polling_cycle" in cmd_att:
+            self.log.info("setting up polling cycle of direction")
             v = cmd_att["polling_cycle"]
             if not isinstance(v, int) and not isinstance(v, float):
                 raise Exception(f"Invalid type for volts.polling_cycle {type(v)}")
@@ -198,6 +219,7 @@ class MetaDriverDio(MetaDriver):
         # VALUE
         if "value" in cmd_att:
             v = cmd_att["value"]
+            self.log.info("setting up value of direction")
             if not isinstance(v, int) and not isinstance(v, str):
                 raise Exception(f"Invalid type for direction.value {type(v)}")
             try:
@@ -213,6 +235,7 @@ class MetaDriverDio(MetaDriver):
 
         if "pull" in cmd_att:
             v = cmd_att["pull"]
+            self.log.info("setting up pull of direction")
             if not isinstance(v, int) and not isinstance(v, str):
                 raise Exception(f"Invalid type for direction.pull {type(v)}")
             try:
@@ -228,42 +251,44 @@ class MetaDriverDio(MetaDriver):
 
 
     # update the state attribut field
-    def __handle_cmd_set_state_dio(elf, cmd_att):
+    def __handle_cmd_set_state_dio(self, cmd_att):
         if "polling_cycle" in cmd_att:
             v = cmd_att["polling_cycle"]
+            self.log.info("setting up polling cycle of state")
             if not isinstance(v, int) and not isinstance(v, float):
                 raise Exception(f"Invalid type for volts.polling_cycle {type(v)}")
             if v < 0:
                 v = -1
-            elf._update_attribute("state", "polling_cycle", v, push='always')
+            self._update_attribute("state", "polling_cycle", v, push='always')
         # VALUE
         if "active" in cmd_att:
             v = cmd_att["active"]
-            elf.log.debug("test active state")
+            self.log.info("setting up active of state")
             if not isinstance(v, int) and not isinstance(v, str):
                 raise Exception(f"Invalid type for state.active {type(v)}")
             try:
-                elf._PZADRV_DIO_set_state_active(v)
-                elf._update_attributes_from_dict(
+                self._PZADRV_DIO_set_state_active(v)
+                self._update_attributes_from_dict(
                     {
                         "state": {
-                            "active": elf._PZADRV_DIO_get_state_active()
+                            "active": self._PZADRV_DIO_get_state_active()
                         }
                     })
             except Exception as e:
-                elf.log.error(f"{e}")
+                self.log.error(f"{e}")
 
         if "active_low" in cmd_att:
             v = cmd_att["active_low"]
+            self.log.info("setting up active low of state")
             if not isinstance(v, int) and not isinstance(v, str):
                 raise Exception(f"Invalid type for state.active low {type(v)}")
             try:
-                elf._PZADRV_DIO_set_state_activeLow(v)
-                elf._update_attributes_from_dict(
+                self._PZADRV_DIO_set_state_activeLow(v)
+                self._update_attributes_from_dict(
                     {
                         "state": {
-                            "active_low": elf._PZADRV_DIO_get_state_activeLow()
+                            "active_low": self._PZADRV_DIO_get_state_activeLow()
                         }
                     })
             except Exception as e:
-                elf.log.error(f"{e}")
+                self.log.error(f"{e}")
