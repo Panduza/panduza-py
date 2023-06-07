@@ -1,26 +1,27 @@
 
 from ....platform_device_model import PlatformDeviceModel
 
-class DevicePanduzaFakeDio(PlatformDeviceModel):
+class DevicePanduzaFakeDioController(PlatformDeviceModel):
     
-    # FakeDioController ??
-
     def _PZA_DEV_config(self):
         """
         """
         return {
-            "model": "Panduza.FakeDio",
+            "model": "Panduza.FakeDioController",
         }
 
     def _PZA_DEV_interfaces(self):
         """
         """
-        
-        
-        return [
-            {
-                "name": "dio_1",
-                "driver": "panduza.fake.dio"
-            }
-        ]
+        number_of_dio = self._initial_settings.get("number_of_dio", 1)
+        interfaces = []
+        for id in range(0, number_of_dio):
+            interfaces.append(
+                {
+                    "name": f"dio_{id}",
+                    "driver": "panduza.fake.dio"
+                }
+            )
+        return interfaces
+
 

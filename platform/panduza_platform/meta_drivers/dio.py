@@ -36,7 +36,7 @@ class MetaDriverDio(PlatformDriver):
         await self.__update_attribute_initial()
 
         # Init Success
-        self._PZA_DRV_loop_init(loop, tree)
+        await super()._PZA_DRV_loop_init(loop, tree)
 
     # ---
 
@@ -115,7 +115,9 @@ class MetaDriverDio(PlatformDriver):
     def _PZA_DRV_DIO_get_state_active(self):
         """ get the active state
         """
-        raise NotImplementedError("Must be implemented !")
+        file_name = inspect.stack()[0][1]
+        function_name = inspect.stack()[0][3]
+        raise NotImplementedError(f"Function not implemented ! '{function_name}' => %{file_name}%")
 
     # ---
 
@@ -124,14 +126,18 @@ class MetaDriverDio(PlatformDriver):
         -Args
         value : value to be set : True or False
         """
-        raise NotImplementedError("Must be implemented !")
+        file_name = inspect.stack()[0][1]
+        function_name = inspect.stack()[0][3]
+        raise NotImplementedError(f"Function not implemented ! '{function_name}' => %{file_name}%")
 
     # ---
 
     def _PZA_DRV_DIO_get_state_activeLow(self):
         """ get the active low state
         """
-        raise NotImplementedError("Must be implemented !")
+        file_name = inspect.stack()[0][1]
+        function_name = inspect.stack()[0][3]
+        raise NotImplementedError(f"Function not implemented ! '{function_name}' => %{file_name}%")
 
     # ---
 
@@ -140,125 +146,83 @@ class MetaDriverDio(PlatformDriver):
             -Args
             value : value to be set : True or False
         """
-        raise NotImplementedError("Must be implemented !")
-
-    # =============================================================================
-    # LOCAL STATE HANDLERS
-
-    # update the direction attribut field
-    async def __handle_cmds_set_direction(self, cmd_att):
-        pass
-    #     # POLLING_CYCLE
-    #     if "polling_cycle" in cmd_att:
-    #         v = cmd_att["polling_cycle"]
-    #         if not isinstance(v, int) and not isinstance(v, float):
-    #             raise Exception(f"Invalid type for volts.polling_cycle {type(v)}")
-    #         if v < 0:
-    #             v = -1
-    #         await self._update_attribute("direction", "polling_cycle", v, push='always')
-    #     # VALUE
-    #     if "value" in cmd_att:
-    #         v = cmd_att["value"]
-    #         if not isinstance(v, int) and not isinstance(v, str):
-    #             raise Exception(f"Invalid type for direction.value {type(v)}")
-    #         try:
-    #             self._PZA_DRV_DIO_set_direction_value(v)
-    #             await self._update_attributes_from_dict(
-    #                 {
-    #                     "direction": {
-    #                         "value": self._PZA_DRV_DIO_get_direction_value()
-    #                     }
-    #                 })
-    #         except Exception as e:
-    #             self.log.error(f"{e}")
-
-    #     if "pull" in cmd_att:
-    #         v = cmd_att["pull"]
-    #         if not isinstance(v, int) and not isinstance(v, str):
-    #             raise Exception(f"Invalid type for direction.pull {type(v)}")
-    #         try:
-    #             self._PZA_DRV_DIO_set_direction_pull(v)
-    #             await self._update_attributes_from_dict(
-    #                 {
-    #                     "direction": {
-    #                         "pull": self._PZA_DRV_DIO_get_direction_pull()
-    #                     }
-    #                 })
-    #         except Exception as e:
-    #             self.log.error(f"{e}")
-
-
-    # update the state attribut field
-    async def __handle_cmds_set_state(elf, cmd_att):
-        pass
-    #     if "polling_cycle" in cmd_att:
-    #         v = cmd_att["polling_cycle"]
-    #         if not isinstance(v, int) and not isinstance(v, float):
-    #             raise Exception(f"Invalid type for volts.polling_cycle {type(v)}")
-    #         if v < 0:
-    #             v = -1
-    #         elf._update_attribute("state", "polling_cycle", v, push='always')
-    #     # VALUE
-    #     if "active" in cmd_att:
-    #         v = cmd_att["active"]
-    #         elf.log.debug("test active state")
-    #         if not isinstance(v, int) and not isinstance(v, str):
-    #             raise Exception(f"Invalid type for state.active {type(v)}")
-    #         try:
-    #             elf._PZA_DRV_DIO_set_state_active(v)
-    #             elf._update_attributes_from_dict(
-    #                 {
-    #                     "state": {
-    #                         "active": elf._PZA_DRV_DIO_get_state_active()
-    #                     }
-    #                 })
-    #         except Exception as e:
-    #             elf.log.error(f"{e}")
-
-    #     if "active_low" in cmd_att:
-    #         v = cmd_att["active_low"]
-    #         if not isinstance(v, int) and not isinstance(v, str):
-    #             raise Exception(f"Invalid type for state.active low {type(v)}")
-    #         try:
-    #             elf._PZA_DRV_DIO_set_state_activeLow(v)
-    #             elf._update_attributes_from_dict(
-    #                 {
-    #                     "state": {
-    #                         "active_low": elf._PZA_DRV_DIO_get_state_activeLow()
-    #                     }
-    #                 })
-    #         except Exception as e:
-    #             elf.log.error(f"{e}")
+        file_name = inspect.stack()[0][1]
+        function_name = inspect.stack()[0][3]
+        raise NotImplementedError(f"Function not implemented ! '{function_name}' => %{file_name}%")
 
     # =============================================================================
     # PRIVATE FUNCTIONS
 
+    # ---
+
     async def __update_attribute_initial(self):
         """Function to perform the initial init
         """
-
-        # === direction
-        d = False
-        # /!\ 'or p' must be at the end
-        d = await self._update_attribute("direction", "value", self._PZA_DRV_DIO_get_direction_value(), False) or d
-        d = await self._update_attribute("direction", "pull", self._PZA_DRV_DIO_get_direction_pull(), False) or d
-        d = await self._update_attribute("direction", "polling_cycle", 1, False) or d
-        if d:
-            await self._push_attribute("direction")
-
-        # === state
-        s = False
-        s = await self._update_attribute("state", "active", self._PZA_DRV_DIO_get_state_active(), False) or s
-        s = await self._update_attribute("state", "active_low", self._PZA_DRV_DIO_get_state_activeLow(), False) or s
-        s = await self._update_attribute("state", "polling_cycle", 1, False) or s
-        if s:
-            await self._push_attribute("state")
+        await self.__att_direction_full_update()
+        await self.__att_state_full_update()
 
 
+    # ---
 
+    async def __handle_cmds_set_direction(self, cmd_att):
+        """
+        """
+        update_obj = {}
+        self._prepare_update(update_obj, 
+                            "direction", cmd_att,
+                            "value", [str]
+                            , self._PZA_DRV_DIO_set_direction_value
+                            , self._PZA_DRV_DIO_get_direction_value)
+        self._prepare_update(update_obj, 
+                            "direction", cmd_att,
+                            "pull", [str]
+                            , self._PZA_DRV_DIO_set_direction_pull
+                            , self._PZA_DRV_DIO_get_direction_pull)
+        await self._update_attributes_from_dict(update_obj)
 
+    # ---
 
+    async def __handle_cmds_set_state(self, cmd_att):
+        """
+        """
+        update_obj = {}
+        self._prepare_update(update_obj, 
+                            "state", cmd_att,
+                            "active", [bool]
+                            , self._PZA_DRV_DIO_set_state_active
+                            , self._PZA_DRV_DIO_get_state_active)
+        self._prepare_update(update_obj, 
+                            "state", cmd_att,
+                            "active_low", [bool]
+                            , self._PZA_DRV_DIO_set_state_activeLow
+                            , self._PZA_DRV_DIO_get_state_activeLow)
+        await self._update_attributes_from_dict(update_obj)
 
+    # ---
+
+    async def __att_direction_full_update(self):
+        """Just update all field of direction
+        """
+        await self._update_attributes_from_dict({
+            "direction": {
+                "value": self._PZA_DRV_DIO_get_direction_value(),
+                "pull": self._PZA_DRV_DIO_get_direction_pull(),
+                "polling_cycle": 1
+            }
+        })
+
+    # ---
+
+    async def __att_state_full_update(self):
+        """Just update all field of direction
+        """
+        await self._update_attributes_from_dict({
+            "state": {
+                "active": self._PZA_DRV_DIO_get_state_active(),
+                "active_low": self._PZA_DRV_DIO_get_state_activeLow(),
+                "polling_cycle": 1
+            }
+        })
 
 
     # def __poll_att_direction(self):

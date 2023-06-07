@@ -7,7 +7,8 @@ export PZA_ALIASES='{
         "interfaces": {
             "fake_psu_0": "pza/default/Panduza_FakePsu/channel_0",
             "fake_psu_1": "pza/default/Panduza_FakePsu/channel_1",
-            "fake_dio_0": "pza/default/Panduza_FakeDio/dio_1"
+            "fake_dio_0": "pza/default/Panduza_FakeDioController/dio_0",
+            "fake_dio_1": "pza/default/Panduza_FakeDioController/dio_1"
         }
     }
 }'

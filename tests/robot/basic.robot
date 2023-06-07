@@ -1,10 +1,9 @@
 *** Settings ***
-Documentation        Basic test for panduza interfaces
+Documentation        Basic tests for panduza interfaces
 
 Resource            ../rsc/fake_bench.resource
 
 Suite Setup         Setup Bench Config
-
 
 *** Test Cases ***
 
@@ -12,5 +11,9 @@ Scan interfaces of the platform
     ${INTERFACES}     Panduza Scan Server    localhost    1883
     Log    ${INTERFACES}
 
-Test fake dio interfaces
+Test Fake DIO interfaces
     Test Basic Access Of Dio Interface     fake_dio_0
+
+Test Fake PSU interfaces
+    Interface Psu Basic Controls    fake_psu_0
+    Interface Psu Basic Controls    fake_psu_1

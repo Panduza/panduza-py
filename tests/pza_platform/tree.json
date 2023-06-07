@@ -3,13 +3,13 @@
         {
             "model": "Panduza.FakePsu",
             "settings": {
-                "number_of_channel": 8
+                "number_of_channel": 2
             }
         },
         {
-            "model": "Panduza.FakeDio",
+            "model": "Panduza.FakeDioController",
             "settings": {
-                
+                "number_of_dio": 2
             }
         }
     ]
