@@ -13,10 +13,35 @@ class DriverFakeDio(MetaDriverDio):
 
     # ---
 
+    async def _PZA_DRV_loop_init(self, loop, tree):
+        """Init function
+        Reset fake parameters
+        """
+        self.__fakes = {
+            "direction": {
+                "value": "in",
+                "pull": "open"
+            },
+            "state": {
+                "active": False,
+                "active_low": False
+            },
+            "settings_capabilities": {
+                "ovp": False,       # Over Voltage Protection
+                "ocp": False,       # Over Current Protection
+                "silent": False,    # Silent mode
+            },
+        }
+
+        # Call meta class PSU ini
+        await super()._PZA_DRV_loop_init(loop, tree)
+
+    # ---
+
     def _PZA_DRV_DIO_get_direction_value(self):
         """From MetaDriverDio
         """
-        return 'in'
+        return self.__fakes["direction"]["value"]
 
     # ---
 
@@ -26,14 +51,14 @@ class DriverFakeDio(MetaDriverDio):
         -  Args
             value : value to be set : in or out
         """
-        pass
+        self.__fakes["direction"]["value"] = value
 
     # ---
 
     def _PZA_DRV_DIO_get_direction_pull(self):
         """ get direction pull
         """
-        return 'open'
+        return self.__fakes["direction"]["pull"]
 
     # ---
 
@@ -42,14 +67,14 @@ class DriverFakeDio(MetaDriverDio):
         -Args
         value : value to be set : up, down or open
         """
-        pass
+        self.__fakes["direction"]["pull"] = v
 
     # ---
 
     def _PZA_DRV_DIO_get_state_active(self):
         """ get the active state
         """
-        return True
+        return self.__fakes["state"]["active"]
 
     # ---
 
@@ -58,18 +83,20 @@ class DriverFakeDio(MetaDriverDio):
         -Args
         value : value to be set : True or False
         """
-        pass
+        self.__fakes["state"]["active"] = v
 
     # ---
 
     def _PZA_DRV_DIO_get_state_activeLow(self):
         """ get the active low state
         """
-        return False
+        return self.__fakes["state"]["active_low"]
 
     # ---
 
     def _PZA_DRV_DIO_set_state_activeLow(self,v):
         """
         """
-        pass
+        self.__fakes["state"]["active_low"] = v
+
+

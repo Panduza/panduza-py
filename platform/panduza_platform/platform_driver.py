@@ -313,12 +313,37 @@ class PlatformDriver(PlatformWorker):
     async def _update_attributes_from_dict(self, change_dict, push=True, retain = True):
         """Function that update multiple attribute and field at the same time
         """
-        for attribute in change_dict:
+        for attribute, fields in change_dict.items():
             modification = False
-            for field, value in change_dict[attribute].items():
-                modification = await self._update_attribute(attribute, field, value, False) or modification
+            # self.log.debug(f"attribute={attribute}, fields={fields}")
+            for field, value in fields.items():
+                is_updated = await self._update_attribute(attribute, field, value, False)
+                modification = is_updated or modification
             if push and modification:
                 await self._push_attribute(attribute, retain=retain)
+
+    # ---
+
+    def _prepare_update(self, update_obj, att, cmd_att, field, 
+                        valid_types, set_callback, get_callback):
+        """
+        """
+        if field in cmd_att:
+            v = cmd_att[field]
+
+            # 
+            if not type(v) in valid_types:
+                raise Exception(f"Invalid type for direction.value {type(v)}")
+
+            # 
+            set_callback(v)
+
+            # 
+            update_obj.update({
+                att: {
+                    field: get_callback()
+                }
+            })
 
     # ---
 
