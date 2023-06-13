@@ -326,14 +326,23 @@ class PlatformClient(PlatformWorker):
     
     # ---
 
-    def __on_subscribe(self, client, userdata, flags, rc):
+    def __on_subscribe(self, client, userdata, mid, granted_qos):
         self.log.warning(f"__on_subscribe")
-    def __on_unsubscribe(self, client, userdata, flags, rc):
+    
+    # ---
+    
+    def __on_unsubscribe(self, userdata, mid):
         self.log.warning(f"__on_unsubscribe")
-    def __on_publish(self, client, userdata, flags, rc):
-        self.log.warning(f"__on_publish")
-    def __on_log(self, client, userdata, flags, rc):
-        self.log.warning(f"__on_log")
+    
+    # ---
+
+    def __on_publish(self, client, userdata, result):
+        self.log.warning(f"__on_publish({result})")
+
+    # ---
+
+    def __on_log(self, client, userdata, level, buff):
+        self.log.warning(f"__on_log({level}, {buff})")
 
     # ---
 
