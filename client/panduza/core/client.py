@@ -318,7 +318,7 @@ class Client:
 
         # Trigger error when timeout
         if time.perf_counter() - start_scan_time >= 5:
-            raise Exception("Scan timeout")
+            raise Exception(f"Scan timeout found={self.__scan_count_interfaces}/expected={self.__scan_count_platform}")
 
         return self.__scan_results
 

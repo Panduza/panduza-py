@@ -251,7 +251,16 @@ class PlatformClient(PlatformWorker):
         # Start connection
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.on_message = self.__on_message
+
         self.mqtt_client.on_connect = self.__on_connect
+        self.mqtt_client.on_disconnect = self.__on_disconnect
+
+        self.mqtt_client.on_subscribe = self.__on_subscribe
+        self.mqtt_client.on_unsubscribe = self.__on_unsubscribe
+
+        self.mqtt_client.on_publish = self.__on_publish
+        self.mqtt_client.on_log = self.__on_log
+
         self.mqtt_client.on_socket_open = self.__on_socket_open
         self.mqtt_client.on_socket_close = self.__on_socket_close
         self.mqtt_client.on_socket_register_write = self.__on_socket_register_write
@@ -309,6 +318,22 @@ class PlatformClient(PlatformWorker):
             self.log.info(f"Connected ! ({str(rc)})")
         else:
             self.log.warning(f"Wierd connection status ? ({str(rc)})")
+
+    # ---
+
+    def __on_disconnect(self, client, userdata, flags, rc):
+        self.log.warning(f"Disconnected !")
+    
+    # ---
+
+    def __on_subscribe(self, client, userdata, flags, rc):
+        self.log.warning(f"__on_subscribe")
+    def __on_unsubscribe(self, client, userdata, flags, rc):
+        self.log.warning(f"__on_unsubscribe")
+    def __on_publish(self, client, userdata, flags, rc):
+        self.log.warning(f"__on_publish")
+    def __on_log(self, client, userdata, flags, rc):
+        self.log.warning(f"__on_log")
 
     # ---
 
