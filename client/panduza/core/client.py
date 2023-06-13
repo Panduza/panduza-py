@@ -264,10 +264,15 @@ class Client:
         else:
             self.__scan_count_interfaces += 1
 
+        # Debug log
+        # self.log.debug(f"{self.__scan_count_interfaces}/{self.__scan_count_platform}")
+
         if base_topic not in self.__scan_results and fnmatch(info["info"]["type"], self.__scan_type_filter):
             self.__scan_results[base_topic] = info["info"]
 
         self.__scan_mutex.release()
+
+    # ---
 
     def scan_interfaces(self, type_filter="*"):
         """Scan broker panduza interfaces and return them
@@ -290,22 +295,30 @@ class Client:
         self.__scan_count_interfaces = 0
         self.__scan_type_filter = type_filter
 
+        # Debug log
+        self.log.info("Start Interface Scanning...")
+
         # Subscribe to interfaces info responses
         self.subscribe("pza/+/+/+/atts/info", self.__store_scan_result)
 
         # Send the global discovery request and wait for answers
         self.publish("pza", u"*", qos=0)
-        
-
+    
+        # Scanning wait with a 5 secondes timeout
+        start_scan_time = time.perf_counter()
         continue_scan = True
-        while continue_scan:
+        while continue_scan and (time.perf_counter() - start_scan_time < 5):
             time.sleep(0.25)
             self.__scan_mutex.acquire()
             continue_scan = (self.__scan_count_platform == 0) or (self.__scan_count_platform != self.__scan_count_interfaces)
             self.__scan_mutex.release()
 
-
         # cleanup and return
         self.unsubscribe("pza/+/+/+/atts/info")
+
+        # Trigger error when timeout
+        if time.perf_counter() - start_scan_time >= 5:
+            raise Exception("Scan timeout")
+
         return self.__scan_results
 

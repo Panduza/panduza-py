@@ -62,7 +62,7 @@ class DriverFakePsu(MetaDriverPsu):
     ###########################################################################
 
     def _PZADRV_PSU_read_enable_value(self):
-        self.log.info(f"read enable !")
+        # self.log.debug(f"read enable !")
         return self.__fakes["enable"]["value"]
 
     # ---
@@ -74,7 +74,7 @@ class DriverFakePsu(MetaDriverPsu):
     ###########################################################################
 
     def _PZADRV_PSU_read_volts_goal(self):
-        self.log.info(f"read volts goal !")
+        # self.log.debug(f"read volts goal !")
         return self.__fakes["volts"]["goal"]
 
     # ---
@@ -95,7 +95,7 @@ class DriverFakePsu(MetaDriverPsu):
     # ---
 
     def _PZADRV_PSU_read_volts_real(self):
-        self.log.info(f"read volts real !")
+        # self.log.debug(f"read volts real !")
         return self.__fakes["volts"]["real"]
 
     # ---
@@ -106,7 +106,7 @@ class DriverFakePsu(MetaDriverPsu):
     ###########################################################################
 
     def _PZADRV_PSU_read_amps_goal(self):
-        self.log.info(f"read amps goal !")
+        # self.log.debug(f"read amps goal !")
         return self.__fakes["amps"]["goal"]
 
     # ---
@@ -127,7 +127,7 @@ class DriverFakePsu(MetaDriverPsu):
     # ---
 
     def _PZADRV_PSU_read_amps_real(self):
-        self.log.info(f"read amps real !")
+        # self.log.debug(f"read amps real !")
         return self.__fakes["amps"]["real"]
 
     # ---
