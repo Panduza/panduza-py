@@ -13,6 +13,7 @@ import threading
 import traceback
 
 import json
+import queue
 import paho.mqtt.client as mqtt
 
 from .core import Core
@@ -264,8 +265,12 @@ class Client:
         else:
             self.__scan_count_interfaces += 1
 
+
+        self.__scan_messages_logs.put(info)
+
+
         # Debug log
-        # self.log.debug(f"{self.__scan_count_interfaces}/{self.__scan_count_platform}")
+        self.log.debug(f"{self.__scan_count_interfaces}/{self.__scan_count_platform}")
 
         if base_topic not in self.__scan_results and fnmatch(info["info"]["type"], self.__scan_type_filter):
             self.__scan_results[base_topic] = info["info"]
@@ -281,7 +286,7 @@ class Client:
         special interface with type *platform*. In the *info* topic of this
         interface there is a special *interfaces* field, it contains the number
         of interface managed by the platfrom. 
-        
+
         So when you start a scan with * in pza, you create 2 counters
         - one that is incremented (+1) for each interface that respond
         - one that is incremented (+info/interfaces) when an interface *platform* respond
@@ -291,6 +296,7 @@ class Client:
         # Init
         self.__scan_mutex = threading.Lock()
         self.__scan_results = {}
+        self.__scan_messages_logs = queue.Queue()
         self.__scan_count_platform = 0
         self.__scan_count_interfaces = 0
         self.__scan_type_filter = type_filter
@@ -303,7 +309,7 @@ class Client:
 
         # Send the global discovery request and wait for answers
         self.publish("pza", u"*", qos=0)
-    
+
         # Scanning wait with a 5 secondes timeout
         start_scan_time = time.perf_counter()
         continue_scan = True
@@ -313,12 +319,21 @@ class Client:
             continue_scan = (self.__scan_count_platform == 0) or (self.__scan_count_platform != self.__scan_count_interfaces)
             self.__scan_mutex.release()
 
+
+        while not self.__scan_messages_logs.empty():
+            msg = self.__scan_messages_logs.get()
+            self.log.info(msg)
+
+
         # cleanup and return
         self.unsubscribe("pza/+/+/+/atts/info")
 
         # Trigger error when timeout
         if time.perf_counter() - start_scan_time >= 5:
             raise Exception(f"Scan timeout found={self.__scan_count_interfaces}/expected={self.__scan_count_platform}\n\nreceived {self.__scan_results}")
+
+
+        self.log.info(f"Scan ok found={self.__scan_count_interfaces}/expected={self.__scan_count_platform}")
 
         return self.__scan_results
 

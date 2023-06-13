@@ -388,9 +388,11 @@ class PlatformClient(PlatformWorker):
     # ---
 
     def __on_socket_close(self, client, userdata, sock):
-        self.log.debug("Socket closed")
         self.evloop.remove_reader(sock)
         self.misc.cancel()
+
+        self.log.debug("Socket closed")
+        raise Exception("Socket closed")
 
     # ---
 
