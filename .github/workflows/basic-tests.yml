@@ -32,9 +32,13 @@ jobs:
       - run: mosquitto -d
 
       # ---
-      - run: python3 ./platform/deploy/pza-py-platform-run.py ./tests/pza_platform/tree.json &
+      - name: Start the platform
+        run: >
+          python3 ./platform/deploy/pza-py-platform-run.py ./tests/pza_platform/tree.json &
+          sleep 1
 
-      - uses: cardinalby/export-env-action@v1
+      - name: Export test env variables
+        uses: cardinalby/export-env-action@v1
         with:
           envFile: './tests/envs/fake_bench.env'
 

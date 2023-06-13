@@ -253,13 +253,12 @@ class PlatformClient(PlatformWorker):
         self.mqtt_client.on_message = self.__on_message
 
         self.mqtt_client.on_connect = self.__on_connect
-        self.mqtt_client.on_disconnect = self.__on_disconnect
 
-        self.mqtt_client.on_subscribe = self.__on_subscribe
-        self.mqtt_client.on_unsubscribe = self.__on_unsubscribe
-
-        self.mqtt_client.on_publish = self.__on_publish
-        self.mqtt_client.on_log = self.__on_log
+        # self.mqtt_client.on_disconnect = self.__on_disconnect
+        # self.mqtt_client.on_subscribe = self.__on_subscribe
+        # self.mqtt_client.on_unsubscribe = self.__on_unsubscribe
+        # self.mqtt_client.on_publish = self.__on_publish
+        # self.mqtt_client.on_log = self.__on_log
 
         self.mqtt_client.on_socket_open = self.__on_socket_open
         self.mqtt_client.on_socket_close = self.__on_socket_close
