@@ -247,6 +247,13 @@ class Platform:
 
     # --
 
+    def get_interface_number(self):
+        """
+        """
+        return len(self.interfaces)
+
+    # --
+
     def get_interface_instance(self, bench, device, name):
         """
         """

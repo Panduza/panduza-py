@@ -9,6 +9,8 @@ class DriverPlatform(PlatformDriver):
     ###########################################################################
 
     def _PZA_DRV_config(self):
+        """From PlatformDriver
+        """
         return {
             "name": "py.platform",
             "description": "Platform driver for python platform",
@@ -22,14 +24,10 @@ class DriverPlatform(PlatformDriver):
     ###########################################################################
 
     async def _PZA_DRV_loop_init(self, loop, tree):
-
-        # self.log.debug(f"{tree}")
-        # self.log.debug(f">>>>>>>>>{len(self._platform.interfaces)}")
-
-
+        """From PlatformDriver
+        """
         # Update the number of managed interface
-        self.number_of_interfaces = len(self._platform.interfaces)
-        await self._update_attribute("info", "interfaces", self.number_of_interfaces)
+        await self._update_attribute("info", "interfaces", self._platform.get_interface_number())
 
         # Tell the platform that the init state end sucessfuly
         self._pzadrv_init_success()
