@@ -12,7 +12,10 @@ Scan interfaces of the platform
     Log    ${INTERFACES}
 
 Test Fake DIO interfaces
-    Test Basic Access Of Dio Interface     fake_dio_0
+    Test Basic Access Of Dio Interface         fake_dio_0
+
+Test Fake AmpereMeter interfaces
+    Test Basic Access Of Ammeter Interface        fake_ammeter_0
 
 Test Fake PSU interfaces
     Interface Psu Basic Controls    fake_psu_0

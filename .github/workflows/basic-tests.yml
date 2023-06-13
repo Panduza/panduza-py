@@ -41,7 +41,7 @@ jobs:
       # ---
       - name: Execute tests
         working-directory: tests
-        run: robot robot/*
+        run: robot virtual_tests/*
 
       # ---
       - name: Debug

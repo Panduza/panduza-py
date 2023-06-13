@@ -5,6 +5,7 @@ from ..core.interface import Interface
 
 from .dio import Dio
 from .psu import Psu
+from .ammeter import Ammeter
 from ..core.log import create_logger
 
 def GenerateAllInterfacesFromAliases(connections):
@@ -15,7 +16,8 @@ def GenerateAllInterfacesFromAliases(connections):
     # 
     type_gen = {
         "dio": Dio,
-        "psu": Psu
+        "psu": Psu,
+        "ammeter": Ammeter
     }
 
     # Load aliases

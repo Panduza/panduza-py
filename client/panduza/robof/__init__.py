@@ -4,9 +4,11 @@ from robot.libraries.BuiltIn import BuiltIn
 
 from ..core.core import Core
 
+from .ammeter import KeywordsAmmeter
 from .client import KeywordsClient
 from .psu import KeywordsPsu
 from .dio import KeywordsDio
+
 
 from ..interfaces.generator import GenerateAllInterfacesFromAliases
 
@@ -14,6 +16,7 @@ class Keywords(DynamicCore):
 
     def __init__(self):
         libraries = [
+            KeywordsAmmeter(),
             KeywordsClient(),
             KeywordsDio(),
             KeywordsPsu()

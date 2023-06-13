@@ -1,0 +1,7 @@
+
+from .ammeters import PZA_DRIVERS_LIST as AMMETERS_DRIVERS
+
+PZA_DRIVERS_LIST= [] \
+    + AMMETERS_DRIVERS
+
+

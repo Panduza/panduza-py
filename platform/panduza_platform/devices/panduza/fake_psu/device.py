@@ -23,6 +23,12 @@ class DevicePanduzaFakePsu(PlatformDeviceModel):
                     "driver": "panduza.fake.psu"
                 }
             )
-
+            interfaces.append(
+                {
+                    "name": f"channel_{chan}_am",
+                    "driver": "panduza.fake.ammeter"
+                }
+            )
+                
         return interfaces
 
