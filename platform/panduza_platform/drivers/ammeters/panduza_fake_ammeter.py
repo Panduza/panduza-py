@@ -20,6 +20,7 @@ class DriverFakeAmmeter(MetaDriverAmmeter):
         """Init function
         Reset fake parameters
         """
+
         self.__fakes = {
             "measure": {
                 "value": 0

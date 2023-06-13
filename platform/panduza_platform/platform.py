@@ -20,25 +20,11 @@ from .platform_errors import InitializationError
 from .platform_driver_factory import PlatformDriverFactory
 from .platform_device_factory import PlatformDeviceFactory
 
-# from .broker import Broker
-
-
-
-# from .drivers.std import PZA_DRIVERS_LIST as STD_DRIVERS
-# from .drivers.fake import PZA_DRIVERS_LIST as FAKE_DRIVERS
-# from .drivers.ftdi import PZA_DRIVERS_LIST as FTDI_DRIVERS
-# from .drivers.aardvark import PZA_DRIVERS_LIST as AARDVARK_DRIVERS
-
-
 class Platform:
     """ Main class to manage the platform
-
-    **Execution order**
-
     """
 
-    ###########################################################################
-    ###########################################################################
+    # ---
 
     def __init__(self, run_dir="/etc"):
         """ Constructor
@@ -215,25 +201,7 @@ class Platform:
     #     for drv in AARDVARK_DRIVERS:
     #         self.register_driver(drv)
 
-    # ###########################################################################
-    # ###########################################################################
 
-    # def get_interface_instance_from_name(self, name):
-    #     """
-    #     """
-    #     for interface in self.interfaces:
-    #         if interface["name"] == name:
-    #             return interface["instance"]
-    #     raise Exception("interface not found")
-
-    # ###########################################################################
-    # ###########################################################################
-
-    # def register_driver(self, driver):
-    #     """
-    #     """
-    #     self.log.info(f"Register driver: {driver()._PZA_DRV_config()['compatible']}")
-    #     self.drivers.append(driver)
 
 
 
@@ -276,6 +244,23 @@ class Platform:
         """
         instance = self.driver_factory.produce_interface(bench_name, device_name, interface_config)
         self.interfaces.append(instance)
+
+    # --
+
+    def get_interface_instance_from_pointer(self, ptr):
+        """
+        """
+
+        # ptr is formated like this:
+        #   !bench/device/interface
+        #   !../interface               relatif
+        #   
+        pass
+
+        # for interface in self.interfaces:
+        #     if interface["name"] == name:
+        #         return interface["instance"]
+        # raise Exception("interface not found")
 
     ###########################################################################
     ###########################################################################
