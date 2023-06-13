@@ -56,6 +56,34 @@ class PlatformDriver(PlatformWorker):
 
     # ---
 
+    def get_interface_instance_from_pointer(self, ptr):
+        """Return the interface object designed by the ptr
+        """
+        # Remove the '!'
+        ptr = ptr[1:]
+
+        # Split ptr
+        ptr_split = ptr.split("/")
+        self.log.info(ptr_split)
+
+        # Extract bench name
+        target_bench = ptr_split[0]
+        if not target_bench:
+            target_bench = self._bench_name
+
+        # Extract device name
+        target_device = ptr_split[1]
+        if not target_device:
+            target_device = self._device_name
+
+        # Target name
+        target_name = ptr_split[2]
+
+        # 
+        return self._platform.get_interface_instance(target_bench, target_device, target_name)
+
+    # ---
+
     def initialize(self):
         """Post initialization
         """

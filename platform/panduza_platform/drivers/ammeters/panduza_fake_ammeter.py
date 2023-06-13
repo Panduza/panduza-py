@@ -21,6 +21,16 @@ class DriverFakeAmmeter(MetaDriverAmmeter):
         Reset fake parameters
         """
 
+
+        settings = tree.get("settings", {})
+        self.log.info(settings)
+
+        work_with_fake_psu = settings.get("work_with_fake_psu", None)
+
+        # psu_obj = self._platform.get_interface_instance_from_pointer(work_with_fake_psu)
+        psu_obj = self.get_interface_instance_from_pointer(work_with_fake_psu)
+
+
         self.__fakes = {
             "measure": {
                 "value": 0

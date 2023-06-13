@@ -247,9 +247,11 @@ class Platform:
 
     # --
 
-    def get_interface_instance_from_pointer(self, ptr):
+    def get_interface_instance(self, bench, device, name):
         """
         """
+
+    
 
         # ptr is formated like this:
         #   !bench/device/interface
