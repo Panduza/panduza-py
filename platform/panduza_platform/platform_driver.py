@@ -20,6 +20,7 @@ class PlatformDriver(PlatformWorker):
     # Time in error state before trying a restart of the interface
     ERROR_TIME_BEFORE_RETRY_S = 10
 
+    # ---
 
     def __init__(self) -> None:
         self._pclient = None
@@ -32,22 +33,22 @@ class PlatformDriver(PlatformWorker):
     # ---
 
     def set_platform(self, platform):
-        self._platform = platform
+        self.platform = platform
 
     # ---
 
     def set_bench_name(self, name):
-        self._bench_name = name
+        self.bench_name = name
 
     # ---
 
     def set_device_name(self, name):
-        self._device_name = name
+        self.device_name = name
 
     # ---
 
     def set_tree(self, tree):
-        self._tree = tree
+        self.tree = tree
 
     # ---
 
@@ -69,18 +70,18 @@ class PlatformDriver(PlatformWorker):
         # Extract bench name
         target_bench = ptr_split[0]
         if not target_bench:
-            target_bench = self._bench_name
+            target_bench = self.bench_name
 
         # Extract device name
         target_device = ptr_split[1]
         if not target_device:
-            target_device = self._device_name
+            target_device = self.device_name
 
         # Target name
         target_name = ptr_split[2]
 
         # 
-        return self._platform.get_interface_instance(target_bench, target_device, target_name)
+        return self.platform.get_interface_instance(target_bench, target_device, target_name)
 
     # ---
 
@@ -104,14 +105,14 @@ class PlatformDriver(PlatformWorker):
         # self._state_started_time = 0
 
         # # Check for name in the driver tree
-        # if not ("name" in self._tree):
+        # if not ("name" in self.tree):
         #     raise Exception("Name of the interface is required !")
 
         # Get name
-        self._name = self._tree["name"]
+        self.name = self.tree["name"]
 
         # Init logger
-        self.worker_name = f"{self._bench_name}/{self._device_name}/{self._name}"
+        self.worker_name = f"{self.bench_name}/{self.device_name}/{self.name}"
         self.log = driver_logger(self.worker_name)
 
         # Check for name in the driver tree
@@ -122,7 +123,7 @@ class PlatformDriver(PlatformWorker):
         self.__drv_atts["info"] = self._PZA_DRV_config()["info"]
 
         # Topic base
-        self.topic = "pza/" + self._bench_name + "/" + self._device_name + "/" + self._name
+        self.topic = "pza/" + self.bench_name + "/" + self.device_name + "/" + self.name
         self.topic_size = len(self.topic)
 
         # cmds
@@ -245,7 +246,7 @@ class PlatformDriver(PlatformWorker):
         """
         """
         self.__subscribe_topics()
-        await self._PZA_DRV_loop_init(loop, self._tree)
+        await self._PZA_DRV_loop_init(loop, self.tree)
 
     # ---
 
@@ -451,7 +452,7 @@ class PlatformDriver(PlatformWorker):
     def get_interface_instance_from_name(self, name):
         """
         """
-        return self._platform.get_interface_instance_from_name(name)
+        return self.platform.get_interface_instance_from_name(name)
 
     ###########################################################################
     ###########################################################################

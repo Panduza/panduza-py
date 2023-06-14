@@ -1,4 +1,5 @@
 import time
+import asyncio
 import inspect
 from collections import ChainMap
 from ..platform_driver import PlatformDriver
@@ -37,6 +38,9 @@ class MetaDriverAmmeter(PlatformDriver):
         # first update
         await self.__update_attribute_initial()
 
+        # Start polling task
+        self.__task_polling = loop.create_task(self.__polling_task())
+
         # Init Success
         await super()._PZA_DRV_loop_init(loop, tree)
 
@@ -72,6 +76,19 @@ class MetaDriverAmmeter(PlatformDriver):
 
     # =============================================================================
     # PRIVATE FUNCTIONS
+
+    # ---
+
+    async def __polling_task(self):
+        """Task to poll the value
+        """
+        while self.alive:
+            await asyncio.sleep(self.__polling_cycle)
+            await self._update_attributes_from_dict({
+                "measure": {
+                    "value": self._PZADRV_AMMETER_read_measure_value()
+                }
+            })
 
     # ---
 

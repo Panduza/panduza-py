@@ -255,21 +255,18 @@ class Platform:
     # --
 
     def get_interface_instance(self, bench, device, name):
+        """Find the interface corresponding the given parameters
+
+        Return the found interface obj, None if not found
         """
-        """
-
-    
-
-        # ptr is formated like this:
-        #   !bench/device/interface
-        #   !../interface               relatif
-        #   
-        pass
-
-        # for interface in self.interfaces:
-        #     if interface["name"] == name:
-        #         return interface["instance"]
-        # raise Exception("interface not found")
+        # Go through all interfaces and search for a match
+        for itf in self.interfaces:
+            same_bench = (itf.bench_name == bench)
+            same_device = (itf.device_name == device)
+            same_name = (itf.name == name)
+            if same_bench and same_device and same_name:
+                return itf
+        return None
 
     ###########################################################################
     ###########################################################################
@@ -348,16 +345,12 @@ class Platform:
             while self.__alive:
                 time.sleep(0.1)
 
-            self.log.info("oooooooooo")
 
+            self.log.warning("Platform stopping...")
             t.stop()
-            self.log.info("oooooooooo 222")
 
             # 
             t.join()
-
-            self.log.info("jjjoinnnn")
-
 
             thread_final_report  = "\n"
             thread_final_report += t.get_worker_stats()
@@ -395,6 +388,9 @@ class Platform:
     def __stop(self):
         """To stop the entire platform
         """
+
+        self.__alive = False
+
         pass
     #     # Request a stop for each driver
     #     for interface in self.interfaces:

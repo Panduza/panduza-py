@@ -249,33 +249,36 @@ class Client:
     ###########################################################################
 
     def __store_scan_result(self, topic, payload):
+        """Callback to store scan results piece by piece
         """
-        """
-        self.__scan_mutex.acquire()
+        # lock
+        with self.__scan_mutex:
 
-        if topic == None:
-            return
+            # Check if topic is valid
+            if topic == None:
+                return
 
-        base_topic = topic[:-len("/atts/info")]
-        info = json.loads(payload.decode("utf-8"))
+            # Extract the base topic
+            base_topic = topic[:-len("/atts/info")]
 
-        if info["info"]["type"] == "platform":
-            self.__scan_count_platform += info["info"]["interfaces"]
-            self.__scan_count_interfaces += 1
-        else:
-            self.__scan_count_interfaces += 1
+            # Check for duplicate
+            if base_topic in self.__scan_results:
+                return
 
+            # Process the payload
+            info = json.loads(payload.decode("utf-8"))
+            if info["info"]["type"] == "platform":
+                self.__scan_count_platform += info["info"]["interfaces"]
+                self.__scan_count_interfaces += 1
+            else:
+                self.__scan_count_interfaces += 1
 
-        self.__scan_messages_logs.put(info)
+            # Push debug logs
+            self.__scan_messages_logs.put(info)
 
-
-        # Debug log
-        self.log.debug(f"{self.__scan_count_interfaces}/{self.__scan_count_platform}")
-
-        if base_topic not in self.__scan_results and fnmatch(info["info"]["type"], self.__scan_type_filter):
-            self.__scan_results[base_topic] = info["info"]
-
-        self.__scan_mutex.release()
+            # Store result
+            if base_topic not in self.__scan_results and fnmatch(info["info"]["type"], self.__scan_type_filter):
+                self.__scan_results[base_topic] = info["info"]
 
     # ---
 
@@ -315,15 +318,13 @@ class Client:
         continue_scan = True
         while continue_scan and (time.perf_counter() - start_scan_time < 5):
             time.sleep(0.25)
-            self.__scan_mutex.acquire()
-            continue_scan = (self.__scan_count_platform == 0) or (self.__scan_count_platform != self.__scan_count_interfaces)
-            self.__scan_mutex.release()
+            with self.__scan_mutex:
+                continue_scan = (self.__scan_count_platform == 0) or (self.__scan_count_platform != self.__scan_count_interfaces)
 
-
+        # Debug logs from the mqtt client thread
         while not self.__scan_messages_logs.empty():
             msg = self.__scan_messages_logs.get()
             self.log.info(msg)
-
 
         # cleanup and return
         self.unsubscribe("pza/+/+/+/atts/info")
@@ -332,7 +333,7 @@ class Client:
         if time.perf_counter() - start_scan_time >= 5:
             raise Exception(f"Scan timeout found={self.__scan_count_interfaces}/expected={self.__scan_count_platform}\n\nreceived {self.__scan_results}")
 
-
+        # 
         self.log.info(f"Scan ok found={self.__scan_count_interfaces}/expected={self.__scan_count_platform}")
 
         return self.__scan_results
