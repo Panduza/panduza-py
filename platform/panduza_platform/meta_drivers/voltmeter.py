@@ -5,8 +5,8 @@ import inspect
 from collections import ChainMap
 from ..platform_driver import PlatformDriver
 
-class MetaDriverAmmeter(PlatformDriver):
-    """Abstract Driver with helper class to manage AmeperMeter interface
+class MetaDriverVoltmeter(PlatformDriver):
+    """Abstract Driver with helper class to manage VoltMeter interface
     """
 
     # =============================================================================
@@ -17,11 +17,11 @@ class MetaDriverAmmeter(PlatformDriver):
         """
         base = {
             "info": {
-                "type": "ammeter",
+                "type": "voltmeter",
                 "version": "0.0"
             }
         }
-        return ChainMap(base, self._PZA_DRV_AMMETER_config())
+        return ChainMap(base, self._PZA_DRV_VOLTMETER_config())
 
     # ---
 
@@ -60,14 +60,14 @@ class MetaDriverAmmeter(PlatformDriver):
     # ---
 
     @abc.abstractmethod
-    def _PZA_DRV_AMMETER_config(self):
+    def _PZA_DRV_VOLTMETER_config(self):
         """Driver base configuration
         """
         pass
 
     # ---
 
-    def _PZADRV_AMMETER_read_measure_value(self):
+    def _PZADRV_VOLTMETER_read_measure_value(self):
         """
         """
         file_name = inspect.stack()[0][1]
@@ -86,7 +86,7 @@ class MetaDriverAmmeter(PlatformDriver):
             await asyncio.sleep(self.__polling_cycle)
             await self._update_attributes_from_dict({
                 "measure": {
-                    "value": self._PZADRV_AMMETER_read_measure_value()
+                    "value": self._PZADRV_VOLTMETER_read_measure_value()
                 }
             })
 
@@ -127,7 +127,7 @@ class MetaDriverAmmeter(PlatformDriver):
         """
         await self._update_attributes_from_dict({
             "measure": {
-                "value": self._PZADRV_AMMETER_read_measure_value(),
+                "value": self._PZADRV_VOLTMETER_read_measure_value(),
                 "polling_cycle": self.__get_poll_cycle()
             }
         })

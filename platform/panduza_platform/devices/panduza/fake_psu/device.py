@@ -32,6 +32,12 @@ class DevicePanduzaFakePsu(PlatformDeviceModel):
                     }
                 }
             )
+            interfaces.append(
+                {
+                    "name": f"channel_{chan}_vl",
+                    "driver": "panduza.fake.voltmeter",
+                }
+            )
 
         return interfaces
 
