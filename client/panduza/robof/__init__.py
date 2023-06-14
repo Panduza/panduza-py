@@ -8,6 +8,7 @@ from .ammeter import KeywordsAmmeter
 from .client import KeywordsClient
 from .psu import KeywordsPsu
 from .dio import KeywordsDio
+from .voltmeter import KeywordsVoltmeter
 
 
 from ..interfaces.generator import GenerateAllInterfacesFromAliases
@@ -19,7 +20,8 @@ class Keywords(DynamicCore):
             KeywordsAmmeter(),
             KeywordsClient(),
             KeywordsDio(),
-            KeywordsPsu()
+            KeywordsPsu(),
+            KeywordsVoltmeter()
         ]
         DynamicCore.__init__(self, libraries)
 

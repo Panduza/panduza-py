@@ -17,6 +17,9 @@ Test Fake DIO interfaces
 Test Fake AmpereMeter interfaces
     Test Basic Access Of Ammeter Interface        fake_ammeter_0
 
+Test Fake VoltMeter interfaces
+    Test Basic Access Of VoltMeter Interface        fake_voltmeter_0
+
 Test Fake PSU interfaces
     Interface Psu Basic Controls    fake_psu_0
     Interface Psu Basic Controls    fake_psu_1
