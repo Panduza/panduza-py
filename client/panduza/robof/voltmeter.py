@@ -13,7 +13,7 @@ class KeywordsVoltmeter(object):
         """
         """
         pza = BuiltIn().get_variable_value("${__pza__}")
-        pza[vlm_alias].measure.value.get()
+        return pza[vlm_alias].measure.value.get()
 
     # ---
 

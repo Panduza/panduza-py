@@ -23,3 +23,10 @@ Test Fake VoltMeter interfaces
 Test Fake PSU interfaces
     Interface Psu Basic Controls    fake_psu_0
     Interface Psu Basic Controls    fake_psu_1
+
+
+
+# power_supply_resistor_test
+
+
+
