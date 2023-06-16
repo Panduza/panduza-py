@@ -1,15 +1,7 @@
-from .fake_psu import PZA_DEVICES_LIST as FAKE_PSU_DEVICE
-from .fake_dio import PZA_DEVICES_LIST as FAKE_DIO_DEVICE
+from .fake_dio_controller import DevicePanduzaFakeDioController
+from .fake_psu_controller import DevicePanduzaFakePsu
 
-PZA_DEVICES_LIST= [] \
-    + FAKE_PSU_DEVICE \
-    + FAKE_DIO_DEVICE
-
-
-from .fake_psu import PZA_DRIVERS_LIST as FAKE_PSU_DRIVERS
-from .fake_dio import PZA_DRIVERS_LIST as FAKE_DIO_DRIVERS
-
-PZA_DRIVERS_LIST= [] \
-    + FAKE_PSU_DRIVERS \
-    + FAKE_DIO_DRIVERS
-
+PZA_DEVICES_LIST= [ 
+    DevicePanduzaFakeDioController,
+    DevicePanduzaFakePsu
+]

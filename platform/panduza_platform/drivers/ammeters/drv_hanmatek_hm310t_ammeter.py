@@ -1,5 +1,5 @@
 from collections import ChainMap
-from panduza_platform.meta_drivers.ampermt import MetaDriverAmpermt
+from panduza_platform.meta_drivers.ammeter import MetaDriverAmmeter
 from panduza_platform.connectors.modbus_client_serial import ConnectorModbusClientSerial
 from panduza_platform.connectors.udev_tty import HuntUsbDevs
 

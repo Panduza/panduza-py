@@ -1,8 +1,5 @@
-from .hm310t import PZA_DEVICES_LIST as HM310T_DEVICE
+from .hm310t import DeviceHanmatekHm310t
 
-
-PZA_DEVICES_LIST= [] + HM310T_DEVICE
-
-
-PZA_DRIVERS_LIST= []
-
+PZA_DEVICES_LIST= [ 
+    DeviceHanmatekHm310t
+]

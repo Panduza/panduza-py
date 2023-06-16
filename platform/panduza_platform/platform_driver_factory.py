@@ -2,7 +2,6 @@ import traceback
 from .platform_errors import InitializationError
 
 from .drivers import PZA_DRIVERS_LIST as INBUILT_DRIVERS
-from .devices import PZA_DRIVERS_LIST as INBUILT_DRIVERS_bis
 
 class PlatformDriverFactory:
     """Manage the factory of drivers
@@ -53,9 +52,6 @@ class PlatformDriverFactory:
         """
         self.__log.info(f"=")
         for drv in INBUILT_DRIVERS:
-            self.register_driver(drv)
-
-        for drv in INBUILT_DRIVERS_bis:
             self.register_driver(drv)
 
     # ---
