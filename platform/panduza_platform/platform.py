@@ -330,32 +330,24 @@ class Platform:
 
             # Create and start thread pool
             t = PlatformThread(self)
+            self.threads.append(t)
 
             # attach clients to thread
-            t.attach_worker(client)
+            self.threads[0].attach_worker(client)
 
             # attach interfaces to thread
             for interface in self.interfaces:
-                t.attach_worker(interface)
+                self.threads[0].attach_worker(interface)
 
-
-            t.start()
+            # 
+            for thr in self.threads:
+                thr.start()
 
             self.__alive = True
             while self.__alive:
                 time.sleep(0.1)
 
-
-            self.log.warning("Platform stopping...")
-            t.stop()
-
-            # 
-            t.join()
-
-            thread_final_report  = "\n"
-            thread_final_report += t.get_worker_stats()
-            self.log.info(thread_final_report)
-
+            self.__stop()
 
     #             # Run all the interfaces on differents threads
     #             thread_id=0
@@ -388,17 +380,24 @@ class Platform:
     def __stop(self):
         """To stop the entire platform
         """
-
         self.__alive = False
 
-        pass
-    #     # Request a stop for each driver
-    #     for interface in self.interfaces:
-    #         interface["instance"].stop()
+        # 
+        self.log.warning("Platform stopping...")
+        for thr in self.threads:
+            thr.stop()
 
-    #     # Join them all !
-    #     for thread in self.threads:
-    #         thread.join()
+        # 
+        for thr in self.threads:
+            thr.join()
+
+
+        thread_final_report  = "\n"
+        for thr in self.threads:
+            thread_final_report += thr.get_worker_stats()
+        self.log.info(thread_final_report)
+
+
 
     # --
 

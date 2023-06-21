@@ -91,11 +91,11 @@ class DriverIPS4303S(MetaDriverPsu):
         self.amps = 0
 
         # Constants Fields settings
-        self._pzadrv_psu_update_volts_min_max(VOLTS_BOUNDS["min"], VOLTS_BOUNDS["max"])
-        self._pzadrv_psu_update_amps_min_max(AMPS_BOUNDS["min"], AMPS_BOUNDS["max"])
+        self._PZA_DRV_PSU_update_volts_min_max(VOLTS_BOUNDS["min"], VOLTS_BOUNDS["max"])
+        self._PZA_DRV_PSU_update_amps_min_max(AMPS_BOUNDS["min"], AMPS_BOUNDS["max"])
 
         # Misc
-        self._pzadrv_psu_update_misc("model", "IPS4303S (RS Pro)")
+        self._PZA_DRV_PSU_update_misc("model", "IPS4303S (RS Pro)")
 
         # Call meta class PSU ini
         super()._PZA_DRV_loop_init(tree)
@@ -115,25 +115,25 @@ class DriverIPS4303S(MetaDriverPsu):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_PSU_read_enable_value(self):
+    def _PZA_DRV_PSU_read_enable_value(self):
         return self.state
 
-    def _PZADRV_PSU_write_enable_value(self, v):
+    def _PZA_DRV_PSU_write_enable_value(self, v):
         self.state = v
         cmd = STATE_VALUE_ENUM[v]
         self.__write(f"OUT{int(cmd)}")
 
-    def _PZADRV_PSU_read_volts_goal(self):
+    def _PZA_DRV_PSU_read_volts_goal(self):
         return self.volts
 
-    def _PZADRV_PSU_write_volts_goal(self, v):
+    def _PZA_DRV_PSU_write_volts_goal(self, v):
         self.volts = v
         self.__write(f"VSET1:{v:.3f}")
 
-    def _PZADRV_PSU_read_amps_goal(self):
+    def _PZA_DRV_PSU_read_amps_goal(self):
         return self.amps
     
-    def _PZADRV_PSU_write_amps_goal(self, v):
+    def _PZA_DRV_PSU_write_amps_goal(self, v):
         self.amps = v
         self.__write(f"ISET1:{v:.3f}")
 

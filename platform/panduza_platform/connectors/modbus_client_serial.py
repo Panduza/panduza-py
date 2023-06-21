@@ -1,6 +1,3 @@
-import time
-import serial
-# import logging
 
 from pymodbus.client import ModbusSerialClient 
 import logging
@@ -26,7 +23,7 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
     ###########################################################################
 
     @staticmethod
-    def GetV2(**kwargs):
+    def Get(**kwargs):
         """Singleton main getter
 
         
@@ -66,40 +63,6 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
                 new_instance = ConnectorModbusClientSerial(**kwargs)
                 ConnectorModbusClientSerial.__instances[port_name] = new_instance
                 ConnectorModbusClientSerial.log.info("connector created")
-            except Exception as e:
-                ConnectorModbusClientSerial.__instances.pop(port_name)
-                raise Exception('Error during initialization').with_traceback(e.__traceback__)
-
-        # Return the previously created
-        return ConnectorModbusClientSerial.__instances[port_name]
-
-    # ---
-
-    @staticmethod
-    def Get(usb_vendor_id: str = None, usb_product_id: str = None, usb_serial_id: str = None, usb_base_dev_tty: str ="/dev/ttyACM",
-        port: str = None, baudrate: int = 19200, bytesize: int = 8, parity: chr = 'N', stopbits: int = 1,
-        validator=None):
-        """Singleton main getter
-        """
-
-        # Warning DEPRECATED !!!
-        logging.warning("ConnectorModbusClientSerial::Get() deprecated use GetV2()")
-
-        # Get the serial port key
-        port_name = None
-        if port != None:
-            port_name = port
-        elif usb_vendor_id != None and usb_product_id != None:
-            port_name = TTYPortFromUsbInfo(usb_vendor_id, usb_product_id, usb_serial_id, usb_base_dev_tty)
-        else:
-            raise Exception("no way to identify the modbus serial port")
-
-        # Create the new connector
-        if not (port_name in ConnectorModbusClientSerial.__instances):
-            ConnectorModbusClientSerial.__instances[port_name] = None
-            try:
-                new_instance = ConnectorModbusClientSerial(port_name=port_name, baudrate=baudrate, bytesize=bytesize, parity=parity, stopbits=stopbits, validator=validator)
-                ConnectorModbusClientSerial.__instances[port_name] = new_instance
             except Exception as e:
                 ConnectorModbusClientSerial.__instances.pop(port_name)
                 raise Exception('Error during initialization').with_traceback(e.__traceback__)
@@ -225,3 +188,4 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
             return response.bits[0]
         else:
             raise Exception(f'Error message: {response}')
+

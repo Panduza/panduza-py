@@ -87,11 +87,11 @@ class DriverQL355P(MetaDriverPsu):
         self.amps = 0
 
         # Constants Fields settings
-        self._pzadrv_psu_update_volts_min_max(VOLTS_BOUNDS["min"], VOLTS_BOUNDS["max"])
-        self._pzadrv_psu_update_amps_min_max(AMPS_BOUNDS["min"], AMPS_BOUNDS["max"])
+        self._PZA_DRV_PSU_update_volts_min_max(VOLTS_BOUNDS["min"], VOLTS_BOUNDS["max"])
+        self._PZA_DRV_PSU_update_amps_min_max(AMPS_BOUNDS["min"], AMPS_BOUNDS["max"])
 
         # Misc
-        self._pzadrv_psu_update_misc("model", "QL355P (AIM-TTI)")
+        self._PZA_DRV_PSU_update_misc("model", "QL355P (AIM-TTI)")
 
         # Call meta class PSU ini
         super()._PZA_DRV_loop_init(tree)
@@ -113,70 +113,70 @@ class DriverQL355P(MetaDriverPsu):
 
     # STATE #
 
-    def _PZADRV_PSU_read_enable_value(self):
+    def _PZA_DRV_PSU_read_enable_value(self):
         return self.state
 
     # ---
 
-    def _PZADRV_PSU_write_enable_value(self, v):
+    def _PZA_DRV_PSU_write_enable_value(self, v):
         self.state = v
         cmd = STATE_VALUE_ENUM[v]
         self.__write(f"OP1 {int(cmd)}")
 
     # VOLTS #
 
-    def _PZADRV_PSU_read_volts_goal(self):
+    def _PZA_DRV_PSU_read_volts_goal(self):
         return self.volts
 
     # ---
 
-    def _PZADRV_PSU_read_volts_real(self):
+    def _PZA_DRV_PSU_read_volts_real(self):
         return 0
     
     # ---
 
-    def _PZADRV_PSU_write_volts_goal(self, v):
+    def _PZA_DRV_PSU_write_volts_goal(self, v):
         self.volts = v
         self.__write(f"V1 {v:.3f}")
 
     # ---
 
-    def _PZADRV_PSU_volts_goal_min_max(self):
+    def _PZA_DRV_PSU_volts_goal_min_max(self):
         return VOLTS_BOUNDS
     # ---
 
-    def _PZADRV_PSU_read_volts_decimals(self):
+    def _PZA_DRV_PSU_read_volts_decimals(self):
         return 2
 
     # AMPS #
     
-    def _PZADRV_PSU_read_amps_goal(self):
+    def _PZA_DRV_PSU_read_amps_goal(self):
         return self.amps
 
     # ---
 
-    def _PZADRV_PSU_write_amps_goal(self, v):
+    def _PZA_DRV_PSU_write_amps_goal(self, v):
         self.amps = v
         self.__write(f"I1 {v:.3f}")
 
     # ---
     
-    def _PZADRV_PSU_amps_goal_min_max(self):
+    def _PZA_DRV_PSU_amps_goal_min_max(self):
         return AMPS_BOUNDS
     
     # ---
 
-    def _PZADRV_PSU_read_amps_real(self):
+    def _PZA_DRV_PSU_read_amps_real(self):
         return 0
 
     # ---
 
-    def _PZADRV_PSU_read_amps_decimals(self):
+    def _PZA_DRV_PSU_read_amps_decimals(self):
         return 3
     
     # SETTINGS #
 
-    def _PZADRV_PSU_settings_capabilities(self):
+    def _PZA_DRV_PSU_settings_capabilities(self):
         return  {
             "ovp": False,
             "ocp": False,

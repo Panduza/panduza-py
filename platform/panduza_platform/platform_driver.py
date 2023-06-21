@@ -1,16 +1,11 @@
 import abc
-import sys
 import time
 import json
 import queue
 import asyncio
 import traceback
-import threading
-import paho.mqtt.client as mqtt
-import logging
 
 from .log.driver import driver_logger
-
 from .platform_worker import PlatformWorker
 
 class PlatformDriver(PlatformWorker):
@@ -182,8 +177,10 @@ class PlatformDriver(PlatformWorker):
         report =f"""
     + {self.PZA_WORKER_name()}
         - End state '{self.__drv_state}'
-        - Error : {self.__err_string}
         """
+
+        if self.__err_string:
+            report +=f"""- Error : {self.__err_string}"""
         return report
 
     # ---

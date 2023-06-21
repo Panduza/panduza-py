@@ -162,7 +162,7 @@ class KeywordsPsu(object):
     # ---
 
     @keyword
-    def power_supply_resistor_test(self, psu_al, ammeter_al, voltmeter_al, voltage_value, resistor_value, error_margin):
+    def power_supply_simple_dummy_load_test(self, psu_al, ammeter_al, voltmeter_al, voltage_value, resistor_value, error_margin):
         """
         """
 

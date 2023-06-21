@@ -2,22 +2,24 @@ import time
 from collections import ChainMap
 from ...meta_drivers.psu import MetaDriverPsu
 
-class DriverFakePsu(MetaDriverPsu):
+class DrvPanduzaFakePsu(MetaDriverPsu):
     """Fake PSU driver
     """
 
-    ###########################################################################
-    ###########################################################################
+    # =============================================================================
+    # FROM MetaDriverPsu
 
-    def _PZA_DRV_config(self):
-        # Extend the common psu config
-        return ChainMap(super()._PZA_DRV_config(), {
+    # ---
+
+    def _PZA_DRV_PSU_config(self):
+        """
+        """
+        return {
             "name": "panduza.fake.psu",
             "description": "Virtual PSU"
-        })
+        }
 
-    ###########################################################################
-    ###########################################################################
+    # ---
 
     async def _PZA_DRV_loop_init(self, loop, tree):
         """Init function
@@ -61,32 +63,32 @@ class DriverFakePsu(MetaDriverPsu):
 
     ###########################################################################
 
-    def _PZADRV_PSU_read_enable_value(self):
+    def _PZA_DRV_PSU_read_enable_value(self):
         # self.log.debug(f"read enable !")
         return self.__fakes["enable"]["value"]
 
     # ---
 
-    def _PZADRV_PSU_write_enable_value(self, v):
+    def _PZA_DRV_PSU_write_enable_value(self, v):
         self.log.info(f"write enable : {v}")
         self.__fakes["enable"]["value"] = v
 
     ###########################################################################
 
-    def _PZADRV_PSU_read_volts_goal(self):
+    def _PZA_DRV_PSU_read_volts_goal(self):
         # self.log.debug(f"read volts goal !")
         return self.__fakes["volts"]["goal"]
 
     # ---
 
-    def _PZADRV_PSU_write_volts_goal(self, v):
+    def _PZA_DRV_PSU_write_volts_goal(self, v):
         self.log.info(f"write volts : {v}")
         self.__fakes["volts"]["goal"] = v
         self.__fakes["volts"]["real"] = v
     
     # ---
 
-    def _PZADRV_PSU_volts_goal_min_max(self):
+    def _PZA_DRV_PSU_volts_goal_min_max(self):
         return {
             "min": self.__fakes["volts"]["min"],
             "max": self.__fakes["volts"]["max"] 
@@ -94,31 +96,31 @@ class DriverFakePsu(MetaDriverPsu):
 
     # ---
 
-    def _PZADRV_PSU_read_volts_real(self):
+    def _PZA_DRV_PSU_read_volts_real(self):
         # self.log.debug(f"read volts real !")
         return self.__fakes["volts"]["real"]
 
     # ---
 
-    def _PZADRV_PSU_read_volts_decimals(self):
+    def _PZA_DRV_PSU_read_volts_decimals(self):
         return self.__fakes["volts"]["decimals"]
 
     ###########################################################################
 
-    def _PZADRV_PSU_read_amps_goal(self):
+    def _PZA_DRV_PSU_read_amps_goal(self):
         # self.log.debug(f"read amps goal !")
         return self.__fakes["amps"]["goal"]
 
     # ---
 
-    def _PZADRV_PSU_write_amps_goal(self, v):
+    def _PZA_DRV_PSU_write_amps_goal(self, v):
         self.log.info(f"write amps : {v}")
         self.__fakes["amps"]["goal"] = v
         self.__fakes["amps"]["real"] = v
 
     # ---
 
-    def _PZADRV_PSU_amps_goal_min_max(self):
+    def _PZA_DRV_PSU_amps_goal_min_max(self):
         return {
             "min": self.__fakes["amps"]["min"],
             "max": self.__fakes["amps"]["max"] 
@@ -126,52 +128,52 @@ class DriverFakePsu(MetaDriverPsu):
 
     # ---
 
-    def _PZADRV_PSU_read_amps_real(self):
+    def _PZA_DRV_PSU_read_amps_real(self):
         # self.log.debug(f"read amps real !")
         return self.__fakes["amps"]["real"]
 
     # ---
 
-    def _PZADRV_PSU_read_amps_decimals(self):
+    def _PZA_DRV_PSU_read_amps_decimals(self):
         return self.__fakes["amps"]["decimals"]
 
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_PSU_settings_capabilities(self):
+    def _PZA_DRV_PSU_settings_capabilities(self):
         return self.__fakes["settings_capabilities"]
 
     # ---
 
-    def _PZADRV_PSU_read_settings_ovp(self):
+    def _PZA_DRV_PSU_read_settings_ovp(self):
         return self.__fakes["settings"]["ovp"]
 
-    def _PZADRV_PSU_write_settings_ovp(self, v):
+    def _PZA_DRV_PSU_write_settings_ovp(self, v):
         self.__fakes["settings"]["ovp"] = v
 
     # ---
 
-    def _PZADRV_PSU_read_settings_ocp(self):
+    def _PZA_DRV_PSU_read_settings_ocp(self):
         return self.__fakes["settings"]["ocp"]
 
-    def _PZADRV_PSU_write_settings_ocp(self, v):
+    def _PZA_DRV_PSU_write_settings_ocp(self, v):
         self.__fakes["settings"]["ocp"] = v
 
     # ---
 
-    def _PZADRV_PSU_read_settings_silent(self):
+    def _PZA_DRV_PSU_read_settings_silent(self):
         return self.__fakes["settings"]["silent"]
 
-    def _PZADRV_PSU_write_settings_silent(self, v):
+    def _PZA_DRV_PSU_write_settings_silent(self, v):
         self.__fakes["settings"]["silent"] = v
 
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_PSU_read_misc(self):
+    def _PZA_DRV_PSU_read_misc(self):
         return self.__fakes["misc"]
 
     # ---
 
-    def _PZADRV_PSU_write_misc(self, field, v):
+    def _PZA_DRV_PSU_write_misc(self, field, v):
         pass

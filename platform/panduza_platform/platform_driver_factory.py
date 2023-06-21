@@ -69,7 +69,7 @@ class PlatformDriverFactory:
 
             # Control
             if not 'name' in dev_config:
-                raise InitializationError(f"'name' field is not found in config of driver {dev}")
+                raise InitializationError(f"'name' field is not found in config of driver {dev} => config:{dev_config}")
 
             # Register driver
             name = dev()._PZA_DRV_config()['name']

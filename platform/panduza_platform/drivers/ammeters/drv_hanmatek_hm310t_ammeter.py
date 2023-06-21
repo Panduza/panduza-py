@@ -4,9 +4,6 @@ from panduza_platform.connectors.modbus_client_serial import ConnectorModbusClie
 from panduza_platform.connectors.udev_tty import HuntUsbDevs
 
 
-HM310T_USBID_VENDOR="1a86"
-HM310T_USBID_MODEL="7523"
-HM310T_TTY_BASE="/dev/ttyUSB"
 
 STATE_VALUE_ENUM = { True : 1, False: 0  }
 VOLTS_BOUNDS     = { "min": 0, "max": 30 }
@@ -18,44 +15,15 @@ def int_to_state_string(v_int):
     position = val_list.index(v_int)
     return key_list[position]
 
-class DriverHM310tAmpermeter(MetaDriverAmpermt):
+class DriverHM310tAmmeter(MetaDriverAmmeter):
     """
     """
 
-    def _PZA_DRV_config(self):
-        # Extend the common psu config
-        return ChainMap(super()._PZA_DRV_config(), {
-            "name": "Py_Ampermeter_HM310T",
-            "description": "Ampermeter for HM310T channel",
-            "compatible": [
-                "hm310t.ampermeter",
-                "hanmatek.hm310t.ampermeter",
-                "psu.hanmatek.hm310t.ampermeter",
-                "py.psu.hanmatek.hm310t.ampermeter"
-            ]
-        })
-
-    # ---
-
-    def __tgen(name_suffix):
+    def _PZA_DRV_AMMETER_config(self):
         return {
-            "name": "HM310T:" + name_suffix,
-            "driver": "py.psu.hanmatek.hm310t"
+            "name": "hanmatek.hm310t.ammeter",
+            "description": "Ampermeter for HM310T channel"
         }
-
-    # ---
-
-    def _PZADRV_tree_template(self):
-        return DriverHM310tAmpermeter.__tgen("template")
-
-    # ---
-
-    def _PZADRV_hunt_instances(self):
-        instances = []
-        usb_pieces = HuntUsbDevs(vendor=HM310T_USBID_VENDOR, model=HM310T_USBID_MODEL, subsystem="tty")
-        for p in usb_pieces:
-            instances.append(DriverHM310tAmpermeter.__tgen("instance"))
-        return instances
 
     # ---
 
