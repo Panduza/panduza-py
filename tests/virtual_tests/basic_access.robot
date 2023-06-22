@@ -24,9 +24,8 @@ Test Fake PSU interfaces
     Interface Psu Basic Controls    fake_psu_0
     Interface Psu Basic Controls    fake_psu_1
 
-
-
-# power_supply_resistor_test
+Test Fake Relay interfaces
+    Test Basic Access Of Relay Interface           fake_relay_0
 
 
 

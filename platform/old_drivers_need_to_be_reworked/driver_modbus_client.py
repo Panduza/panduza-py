@@ -32,7 +32,7 @@ class DriverModbusClient(MetaDriver):
 
 
 
-    def _PZADRV_tree_template(self,
+    def _PZA_DRV_tree_template(self,
         name="template",
         vendor="USB: Vendor ID",
         model="USB: Model ID",
@@ -57,7 +57,7 @@ class DriverModbusClient(MetaDriver):
 
         return template
 
-    def _PZADRV_hunt_instances(self):
+    def _PZA_DRV_hunt_instances(self):
         instances = []
 
         # 16de:0003 Telemecanique USB - RS485 SL cable
@@ -66,7 +66,7 @@ class DriverModbusClient(MetaDriver):
         usb_pieces = HuntUsbDevs(vendor=TELEMEC_VENDOR, model=TELEMEC_MODEL, subsystem="tty")
         for p in usb_pieces:
             iss = p["ID_SERIAL_SHORT"]
-            instances.append(self._PZADRV_tree_template(
+            instances.append(self._PZA_DRV_tree_template(
                 name=iss,
                 vendor=TELEMEC_VENDOR,
                 model=TELEMEC_MODEL,
@@ -97,13 +97,13 @@ class DriverModbusClient(MetaDriver):
             "watchlist": self.__handle_cmds_set_watchlist,
         }
 
-        self._pzadrv_init_success()
+        self._PZA_DRV_init_success()
 
 
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_loop_run(self, loop):
+    def _PZA_DRV_loop_run(self, loop):
         """
         """
         
@@ -127,7 +127,7 @@ class DriverModbusClient(MetaDriver):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_loop_err(self):
+    def _PZA_DRV_loop_err(self):
         """
         """
         pass

@@ -13,7 +13,7 @@ class MetaDriverAmpermt(MetaDriver):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_AMPERMT_read_value(self):
+    def _PZA_DRV_AMPERMT_read_value(self):
         """
         """
         raise NotImplementedError("Must be implemented !")
@@ -54,11 +54,11 @@ class MetaDriverAmpermt(MetaDriver):
         }
 
         # Init success, the driver can pass into the run mode
-        self._pzadrv_init_success()
+        self._PZA_DRV_init_success()
 
     # ---
 
-    def _PZADRV_loop_run(self, loop):
+    def _PZA_DRV_loop_run(self, loop):
 
         self.__poll_att_measure()
         # Limit on python platform
@@ -91,7 +91,7 @@ class MetaDriverAmpermt(MetaDriver):
             return
         if (time.perf_counter() - self.polling_ref["measure"]) > polling_cycle:
             p = False
-            p = self._update_attribute("measure", "value", self._PZADRV_AMPERMT_read_value(), False) or p
+            p = self._update_attribute("measure", "value", self._PZA_DRV_AMPERMT_read_value(), False) or p
             if p:
                 self._push_attribute("measure")
             self.polling_ref["measure"] = time.perf_counter()
@@ -100,7 +100,7 @@ class MetaDriverAmpermt(MetaDriver):
 
     def __update_attribute_initial(self):
         p = False
-        p = self._update_attribute("measure", "value", self._PZADRV_AMPERMT_read_value(), False) or p
+        p = self._update_attribute("measure", "value", self._PZA_DRV_AMPERMT_read_value(), False) or p
         if p:
             self._push_attribute("measure")
 

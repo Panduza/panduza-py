@@ -40,7 +40,7 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    # def _PZADRV_loop_run(self, loop):
+    # def _PZA_DRV_loop_run(self, loop):
     #     # polls
     #     # self.__poll_att_direction()
     #     # self.__poll_att_state()

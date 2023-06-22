@@ -45,7 +45,7 @@ class DriverFakeVoltmeter(MetaDriverVoltmeter):
 
     # ---
 
-    def _PZADRV_VOLTMETER_read_measure_value(self):
+    def _PZA_DRV_VOLTMETER_read_measure_value(self):
         return self.__fakes["measure"]["value"]
 
     # ---

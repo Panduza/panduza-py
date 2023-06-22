@@ -40,7 +40,7 @@ class DriverAardvarkSpiMaster(MetaDriverSpiMaster):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_hunt_instances(self):
+    def _PZA_DRV_hunt_instances(self):
         instances = [] # ConnectorSPIMasterAardvark.hunt()
 
         # 0403:6001 Future Technology Devices International, Ltd FT232 Serial (UART) IC
@@ -66,19 +66,19 @@ class DriverAardvarkSpiMaster(MetaDriverSpiMaster):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_loop_run(self, loop):
+    def _PZA_DRV_loop_run(self, loop):
         """ """
         pass
 
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_loop_err(self):
+    def _PZA_DRV_loop_err(self):
         """ """
         pass
 
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_SPIM_transfer(self, data):
+    def _PZA_DRV_SPIM_transfer(self, data):
         return self.spi_connector.transfer(data, len(data))

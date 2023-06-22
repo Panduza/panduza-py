@@ -44,10 +44,10 @@ class DriverQL355P(MetaDriverPsu):
             }
         }
 
-    def _PZADRV_tree_template(self):
+    def _PZA_DRV_tree_template(self):
         return DriverQL355P.__tgen("USB: Short Serial ID", "template")
 
-    def _PZADRV_hunt_instances(self):
+    def _PZA_DRV_hunt_instances(self):
         instances = []
         usb_pieces = HuntUsbDevs(vendor=QL355P_USBID_VENDOR, model=QL355P_USBID_MODEL, subsystem="tty")
         for p in usb_pieces:

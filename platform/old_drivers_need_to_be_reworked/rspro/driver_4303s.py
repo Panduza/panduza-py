@@ -48,10 +48,10 @@ class DriverIPS4303S(MetaDriverPsu):
             }
         }
 
-    def _PZADRV_tree_template(self):
+    def _PZA_DRV_tree_template(self):
         return DriverIPS4303S.__tgen("USB: Short Serial ID", "template")
 
-    def _PZADRV_hunt_instances(self):
+    def _PZA_DRV_hunt_instances(self):
         instances = []
         usb_pieces = HuntUsbDevs(vendor=IPS4303S_USBID_VENDOR, model=IPS4303S_USBID_MODEL, subsystem="tty")
         for p in usb_pieces:

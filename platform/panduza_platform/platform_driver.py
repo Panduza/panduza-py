@@ -229,7 +229,7 @@ class PlatformDriver(PlatformWorker):
             await self.__states[self.__drv_state](loop)
 
         except Exception as e:
-            self._pzadrv_error_detected(str(e) + " " + traceback.format_exc())
+            self._PZA_DRV_error_detected(str(e) + " " + traceback.format_exc())
 
 
 
@@ -251,9 +251,9 @@ class PlatformDriver(PlatformWorker):
         """
         """
         try:
-            await self._PZADRV_loop_run(loop)
+            await self._PZA_DRV_loop_run(loop)
         except Exception as e:
-            self._pzadrv_error_detected(str(e) + " " + traceback.format_exc())
+            self._PZA_DRV_error_detected(str(e) + " " + traceback.format_exc())
 
     # ---
 
@@ -262,7 +262,7 @@ class PlatformDriver(PlatformWorker):
         """
         try:
             self.worker_panic()
-            await self._PZADRV_loop_err(loop)
+            await self._PZA_DRV_loop_err(loop)
         except Exception as e:
             self.log.error(str(e))
 
@@ -459,18 +459,18 @@ class PlatformDriver(PlatformWorker):
     ###########################################################################
     ###########################################################################
 
-    def _pzadrv_init_success(self):
+    def _PZA_DRV_init_success(self):
         self.__drv_state = "run"
 
     # ---
 
-    def _pzadrv_error_detected(self, err_string):
+    def _PZA_DRV_error_detected(self, err_string):
         self.__drv_state = "err"
         self.__err_string = err_string
 
     # ---
 
-    def _pzadrv_restart(self):
+    def _PZA_DRV_restart(self):
         self.__drv_state = "init"
 
     ###########################################################################
@@ -487,12 +487,12 @@ class PlatformDriver(PlatformWorker):
         """
         pass
 
-    def _PZADRV_tree_template(self):
+    def _PZA_DRV_tree_template(self):
         """
         """
         return {}
 
-    def _PZADRV_hunt_instances(self):
+    def _PZA_DRV_hunt_instances(self):
         """
         """
         return []
@@ -500,19 +500,19 @@ class PlatformDriver(PlatformWorker):
     async def _PZA_DRV_loop_init(self, loop, tree):
         """
         """
-        self._pzadrv_init_success()
+        self._PZA_DRV_init_success()
 
-    async def _PZADRV_loop_run(self, loop):
+    async def _PZA_DRV_loop_run(self, loop):
         """
         """
         await asyncio.sleep(0.1)
 
-    async def _PZADRV_loop_err(self, loop):
+    async def _PZA_DRV_loop_err(self, loop):
         """
         """
         elasped = time.time() - self._state_started_time
         if elasped > PlatformDriver.ERROR_TIME_BEFORE_RETRY_S:
-            self._pzadrv_restart()
+            self._PZA_DRV_restart()
         else:
             await asyncio.sleep(1)
             self.log.debug(f"restart in { int(PlatformDriver.ERROR_TIME_BEFORE_RETRY_S - elasped) }s")
@@ -543,13 +543,13 @@ class PlatformDriver(PlatformWorker):
     #     config = self._PZA_DRV_config()
     #     name = "unnamed" if "name" not in config else config["name"]
     #     description = "" if "description" not in config else config["description"]
-    #     template = self._PZADRV_tree_template()
+    #     template = self._PZA_DRV_tree_template()
     #     driver = {
     #         "name": name,
     #         "description": description,
     #         "template": template
     #     }
-    #     meat = self._PZADRV_hunt_instances()
+    #     meat = self._PZA_DRV_hunt_instances()
     #     instances = None
     #     if meat:
     #         instances = {

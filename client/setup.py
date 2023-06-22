@@ -11,7 +11,13 @@ setup(
         long_description='This library provides simple wrapper to help implementing tests through panduza interfaces',
         packages=find_packages(),
 
-        install_requires=['setuptools', 'paho-mqtt', 'python-magic', 'colorama', 'robotframework-pythonlibcore'],
+        install_requires=['setuptools', 'paho-mqtt', 
+                'python-magic',
+                'colorama',
+                'PyHamcrest',
+                'robotframework',
+                'robotframework-pythonlibcore'
+        ],
 
         entry_points={
             'console_scripts': [

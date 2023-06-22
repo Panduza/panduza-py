@@ -31,9 +31,9 @@ class MetaDriverSerial(MetaDriver):
         # default = dict() if "default" not in tree else tree["default"]
         # self._update_attributes_from_dict(default)
 
-        self._pzadrv_init_success()
+        self._PZA_DRV_init_success()
 
-    def _PZADRV_loop_run(self, loop):
+    def _PZA_DRV_loop_run(self, loop):
         pass
 
     def _PZA_DRV_cmds_set(self, loop, payload):
@@ -55,7 +55,7 @@ class MetaDriverSerial(MetaDriver):
     ###########################################################################
 
 
-    def _PZADRV_SERIAL_data_received(self, rx_data: bytes):
+    def _PZA_DRV_SERIAL_data_received(self, rx_data: bytes):
         """
         """
         # *bytes* to *base64 bytes*
@@ -76,7 +76,7 @@ class MetaDriverSerial(MetaDriver):
 
 
 
-    def _PZADRV_SERIAL_write_data(self, v):
+    def _PZA_DRV_SERIAL_write_data(self, v):
         """
         """
         raise NotImplementedError("Must be implemented !")
@@ -97,7 +97,7 @@ class MetaDriverSerial(MetaDriver):
             base64_bytes = v.encode('ascii')
             message_bytes = base64.b64decode(base64_bytes)
             try:
-                self._PZADRV_SERIAL_write_data(message_bytes)
+                self._PZA_DRV_SERIAL_write_data(message_bytes)
             except Exception as e:
                 self.log.error(f"{e}")
 

@@ -5,6 +5,7 @@ export PZA_ALIASES='{
         "url": "localhost",
         "port": 1883,
         "interfaces": {
+            "fake_relay_0": "pza/default/Panduza_FakeRelayController/channel_0",
             "fake_ammeter_0": "pza/default/Panduza_FakePsu/channel_0_am",
             "fake_ammeter_1": "pza/default/Panduza_FakePsu/channel_1_am",
             "fake_voltmeter_0": "pza/default/Panduza_FakePsu/channel_0_vl",

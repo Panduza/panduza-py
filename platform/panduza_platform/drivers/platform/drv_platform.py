@@ -30,5 +30,5 @@ class DriverPlatform(PlatformDriver):
         await self._update_attribute("info", "interfaces", self.platform.get_interface_number())
 
         # Tell the platform that the init state end sucessfuly
-        self._pzadrv_init_success()
+        self._PZA_DRV_init_success()
 

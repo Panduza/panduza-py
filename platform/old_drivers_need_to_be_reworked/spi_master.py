@@ -26,12 +26,12 @@ class MetaDriverSpiMaster(MetaDriver):
     def _PZA_DRV_loop_init(self, loop, tree):
         self.__cmd_handlers = {"transfer": self.__handle_cmd_transfer}
 
-        self._pzadrv_init_success()
+        self._PZA_DRV_init_success()
 
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_hunt_instances(self):
+    def _PZA_DRV_hunt_instances(self):
         raise NotImplementedError("Must be implemented !")
 
     def __tgen(driver, vendor, model, serial_short, name_suffix):
@@ -48,14 +48,14 @@ class MetaDriverSpiMaster(MetaDriver):
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_loop_run(self, loop):
+    def _PZA_DRV_loop_run(self, loop):
         """ """
         raise NotImplementedError("Must be implemented !")
 
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_loop_err(self):
+    def _PZA_DRV_loop_err(self):
         """ """
         raise NotImplementedError("Must be implemented !")
 
@@ -82,13 +82,13 @@ class MetaDriverSpiMaster(MetaDriver):
             values = cmd_att["tx"]
             try:
                 # TODO give the cs to the spi write
-                read_values = self._PZADRV_SPIM_transfer(values)
+                read_values = self._PZA_DRV_SPIM_transfer(values)
                 self.log.debug("update")
                 self._update_attribute("transfer", "rx", list(read_values), push='always')
             except Exception as e:
                 self.log.error(f"{e}")
 
-    def _PZADRV_SPIM_transfer(self, data):
+    def _PZA_DRV_SPIM_transfer(self, data):
         """
         default behavior: return the write data as data read
         """

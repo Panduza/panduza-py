@@ -184,11 +184,11 @@ class MetaDriverPsu(PlatformDriver):
         }
 
         # Init success, the driver can pass into the run mode
-        self._pzadrv_init_success()
+        self._PZA_DRV_init_success()
 
     # ---
 
-    async def _PZADRV_loop_run(self, loop):
+    async def _PZA_DRV_loop_run(self, loop):
         # Polls
         await self.__poll_att_enable()
         await self.__poll_att_volts()

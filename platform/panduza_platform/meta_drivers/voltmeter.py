@@ -67,7 +67,7 @@ class MetaDriverVoltmeter(PlatformDriver):
 
     # ---
 
-    def _PZADRV_VOLTMETER_read_measure_value(self):
+    def _PZA_DRV_VOLTMETER_read_measure_value(self):
         """
         """
         file_name = inspect.stack()[0][1]
@@ -86,7 +86,7 @@ class MetaDriverVoltmeter(PlatformDriver):
             await asyncio.sleep(self.__polling_cycle)
             await self._update_attributes_from_dict({
                 "measure": {
-                    "value": self._PZADRV_VOLTMETER_read_measure_value()
+                    "value": self._PZA_DRV_VOLTMETER_read_measure_value()
                 }
             })
 
@@ -127,7 +127,7 @@ class MetaDriverVoltmeter(PlatformDriver):
         """
         await self._update_attributes_from_dict({
             "measure": {
-                "value": self._PZADRV_VOLTMETER_read_measure_value(),
+                "value": self._PZA_DRV_VOLTMETER_read_measure_value(),
                 "polling_cycle": self.__get_poll_cycle()
             }
         })

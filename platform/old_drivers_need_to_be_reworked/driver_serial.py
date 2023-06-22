@@ -38,14 +38,14 @@ class DriverSerial(MetaDriverSerial):
             }
         }
 
-    def _PZADRV_tree_template(self):
+    def _PZA_DRV_tree_template(self):
         return DriverSerial.__tgen(
             "USB: Vendor ID",
             "USB: Model ID",
             "USB: Short Serial ID",
             "template")
 
-    def _PZADRV_hunt_instances(self):
+    def _PZA_DRV_hunt_instances(self):
         instances = []
 
         # 0403:6001 Future Technology Devices International, Ltd FT232 Serial (UART) IC
@@ -85,19 +85,19 @@ class DriverSerial(MetaDriverSerial):
 
 
 
-    def _PZADRV_loop_run(self, loop):
+    def _PZA_DRV_loop_run(self, loop):
         """
         """
         # Check if there is data waiting to be read
         if self.serp.get_internal_driver().in_waiting > 0:
             # Read the data
             data = self.serp.get_internal_driver().read(self.serp.get_internal_driver().in_waiting)
-            self._PZADRV_SERIAL_data_received(data)
+            self._PZA_DRV_SERIAL_data_received(data)
 
     ###########################################################################
     ###########################################################################
 
-    def _PZADRV_SERIAL_write_data(self, v):
+    def _PZA_DRV_SERIAL_write_data(self, v):
         """
         """
         self.serp.get_internal_driver().write(v)

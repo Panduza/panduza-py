@@ -11,6 +11,12 @@
             "settings": {
                 "number_of_dio": 2
             }
+        },
+        {
+            "model": "Panduza.FakeRelayController",
+            "settings": {
+                "number_of_dio": 1
+            }
         }
     ]
 }
