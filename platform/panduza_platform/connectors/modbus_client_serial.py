@@ -1,11 +1,10 @@
-from pymodbus.client import AsyncModbusSerialClient
 import logging
+import asyncio
+
+from pymodbus.client import AsyncModbusSerialClient
 from panduza_platform.log.driver import driver_logger
 
 from .udev_tty import SerialPortFromUsbSetting
-from threading import Lock
-
-
 from .modbus_client_base import ConnectorModbusClientBase
 
 class ConnectorModbusClientSerial(ConnectorModbusClientBase):
@@ -13,7 +12,7 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
     """
 
     # Hold instances mutex
-    __MUTEX = Lock()
+    __MUTEX = asyncio.Lock()
 
     # Contains instances
     __INSTANCES = {}
@@ -46,7 +45,13 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
             ID_SERIAL_SHORT
         
         """
-        with ConnectorModbusClientSerial.__MUTEX:
+        # Log
+        ConnectorModbusClientSerial.log.debug(f"Get connector for {kwargs}")
+
+        async with ConnectorModbusClientSerial.__MUTEX:
+            
+            # Log
+            ConnectorModbusClientSerial.log.debug(f"Lock acquired !")
             
             # Get the serial port name
             serial_port_name = None
@@ -80,7 +85,7 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
         """Constructor
         """
         # Init local mutex
-        self._mutex = Lock()
+        self._mutex = asyncio.Lock()
         
         key = kwargs["serial_port_name"]
 
@@ -110,7 +115,7 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
     ###########################################################################
 
     async def write_register(self, address: int, value, unit: int = 1):
-        with self._mutex:
+        async with self._mutex:
             response = await self.client.write_register(address, value, slave=unit)
             if response.isError():
                 raise Exception(f'Error message: {response}')
@@ -119,7 +124,7 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
     ###########################################################################
 
     async def read_input_registers(self, address: int, size: int = 1, unit: int = 1):
-        with self._mutex:
+        async with self._mutex:
             response = await self.client.read_input_registers(address, size, slave=unit)
             if not response.isError():
                 
@@ -131,7 +136,7 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
     ###########################################################################
 
     async def read_holding_registers(self, address: int, size: int = 1, unit: int = 1):
-        with self._mutex:
+        async with self._mutex:
             response = await self.client.read_holding_registers(address=address, count=size, slave=unit)
             if not response.isError():
                 return response.registers
