@@ -38,14 +38,14 @@ class DriverFakeDio(MetaDriverDio):
 
     # ---
 
-    def _PZA_DRV_DIO_get_direction_value(self):
+    async def _PZA_DRV_DIO_get_direction_value(self):
         """From MetaDriverDio
         """
         return self.__fakes["direction"]["value"]
 
     # ---
 
-    def _PZA_DRV_DIO_set_direction_value(self, value):
+    async def _PZA_DRV_DIO_set_direction_value(self, value):
         """ set value of direction value
 
         -  Args
@@ -55,14 +55,14 @@ class DriverFakeDio(MetaDriverDio):
 
     # ---
 
-    def _PZA_DRV_DIO_get_direction_pull(self):
+    async def _PZA_DRV_DIO_get_direction_pull(self):
         """ get direction pull
         """
         return self.__fakes["direction"]["pull"]
 
     # ---
 
-    def _PZA_DRV_DIO_set_direction_pull(self, v):
+    async def _PZA_DRV_DIO_set_direction_pull(self, v):
         """ set the pull direction
         -Args
         value : value to be set : up, down or open
@@ -71,14 +71,14 @@ class DriverFakeDio(MetaDriverDio):
 
     # ---
 
-    def _PZA_DRV_DIO_get_state_active(self):
+    async def _PZA_DRV_DIO_get_state_active(self):
         """ get the active state
         """
         return self.__fakes["state"]["active"]
 
     # ---
 
-    def _PZA_DRV_DIO_set_state_active(self,v):
+    async def _PZA_DRV_DIO_set_state_active(self,v):
         """ get the active state
         -Args
         value : value to be set : True or False
@@ -87,14 +87,14 @@ class DriverFakeDio(MetaDriverDio):
 
     # ---
 
-    def _PZA_DRV_DIO_get_state_activeLow(self):
+    async def _PZA_DRV_DIO_get_state_activeLow(self):
         """ get the active low state
         """
         return self.__fakes["state"]["active_low"]
 
     # ---
 
-    def _PZA_DRV_DIO_set_state_activeLow(self,v):
+    async def _PZA_DRV_DIO_set_state_activeLow(self,v):
         """
         """
         self.__fakes["state"]["active_low"] = v

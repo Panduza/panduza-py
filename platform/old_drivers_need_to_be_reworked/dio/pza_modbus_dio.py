@@ -73,12 +73,12 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         super()._PZA_DRV_loop_init(tree)
     
 
-    def _PZA_DRV_DIO_get_direction_value(self):
+    async def _PZA_DRV_DIO_get_direction_value(self):
         self.log.info(f"read direction value : {self.__dir['direction']['value']} !")
         return self.__dir["direction"]["value"]
 
     # configure the direction and value of io 
-    def _PZA_DRV_DIO_set_direction_value(self, v): # value direction (in/out)
+    async def _PZA_DRV_DIO_set_direction_value(self, v): # value direction (in/out)
         self.log.info(f"set direction value : {v}")
         self.__dir["direction"]["value"] = v
 
@@ -93,7 +93,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         else:
             raise Exception("error in value")
 
-    def _PZA_DRV_DIO_set_direction_pull(self, v):
+    async def _PZA_DRV_DIO_set_direction_pull(self, v):
         self.log.info(f"set direction pull : {v}")
         self.__dir["direction"]["pull"] = v # update brocker
 
@@ -106,12 +106,12 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
         else : 
             raise Exception('You cant configure a pull for a output')
 
-    def _PZA_DRV_DIO_get_direction_pull(self):
+    async def _PZA_DRV_DIO_get_direction_pull(self):
         self.log.info(f"read direction pull : {self.__dir['direction']['pull']}!")
         return self.__dir["direction"]["pull"]
         
         
-    def _PZA_DRV_DIO_get_state_active(self):
+    async def _PZA_DRV_DIO_get_state_active(self):
         self.log.info(f"read state active : {self.__dir['state']['active']}!")
 
         # get the values of the instance dictionary
@@ -132,7 +132,7 @@ class DriverPZA_MODBUS_DIO(MetaDriverDio):
 
         return self.__dir["state"]["active"]
     
-    def _PZA_DRV_DIO_set_state_active(self,v):
+    async def _PZA_DRV_DIO_set_state_active(self,v):
         self.log.info(f"set state active : {v}")
         self.__dir["state"]["active"] = v
         gpio_id = self.settings["gpio_id"]

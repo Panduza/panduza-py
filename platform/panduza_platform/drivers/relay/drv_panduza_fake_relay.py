@@ -33,14 +33,14 @@ class DrvPanduzaFakeRelay(MetaDriverRelay):
 
     # ---
 
-    def _PZA_DRV_RELAY_read_state_open(self):
+    async def _PZA_DRV_RELAY_read_state_open(self):
         """
         """
         return self.__fakes["state"]["open"]
 
     # ---
 
-    def _PZA_DRV_RELAY_write_state_open(self, v):
+    async def _PZA_DRV_RELAY_write_state_open(self, v):
         """
         """
         self.__fakes["state"]["open"] = v

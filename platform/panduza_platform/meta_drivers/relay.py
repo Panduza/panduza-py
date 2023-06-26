@@ -59,7 +59,7 @@ class MetaDriverRelay(PlatformDriver):
     # ---
 
     @abc.abstractmethod
-    def _PZA_DRV_RELAY_read_state_open(self):
+    async def _PZA_DRV_RELAY_read_state_open(self):
         """
         """
         pass
@@ -67,7 +67,7 @@ class MetaDriverRelay(PlatformDriver):
     # ---
 
     @abc.abstractmethod
-    def _PZA_DRV_RELAY_write_state_open(self, value):
+    async def _PZA_DRV_RELAY_write_state_open(self, value):
         """
         """
         pass
@@ -88,7 +88,7 @@ class MetaDriverRelay(PlatformDriver):
         """
         """
         update_obj = {}
-        self._prepare_update(update_obj, 
+        await self._prepare_update(update_obj, 
                             "state", cmd_att,
                             "open", [bool]
                             , self._PZA_DRV_RELAY_write_state_open
@@ -102,7 +102,7 @@ class MetaDriverRelay(PlatformDriver):
         """
         await self._update_attributes_from_dict({
             "state": {
-                "open": self._PZA_DRV_RELAY_read_state_open()
+                "open": await self._PZA_DRV_RELAY_read_state_open()
             }
         })
 

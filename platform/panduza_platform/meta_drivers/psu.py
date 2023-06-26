@@ -240,7 +240,7 @@ class MetaDriverPsu(PlatformDriver):
                 
         await self._prepare_update(update_obj, 
                             "volts", cmd_att,
-                            "value", [float, int]
+                            "goal", [float, int]
                             , self._PZA_DRV_PSU_write_volts_goal
                             , self._PZA_DRV_PSU_read_volts_goal)
         
@@ -264,7 +264,7 @@ class MetaDriverPsu(PlatformDriver):
                 
         await self._prepare_update(update_obj, 
                             "amps", cmd_att,
-                            "value", [float, int]
+                            "goal", [float, int]
                             , self._PZA_DRV_PSU_write_amps_goal
                             , self._PZA_DRV_PSU_read_amps_goal)
         

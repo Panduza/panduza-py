@@ -71,7 +71,7 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    def _PZA_DRV_DIO_get_direction_value(self):
+    async def _PZA_DRV_DIO_get_direction_value(self):
         """ get value of direction value
         """
         file_name = inspect.stack()[0][1]
@@ -80,7 +80,7 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    def _PZA_DRV_DIO_set_direction_value(self, value):
+    async def _PZA_DRV_DIO_set_direction_value(self, value):
         """ set value of direction value
 
         -  Args
@@ -92,7 +92,7 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    def _PZA_DRV_DIO_get_direction_pull(self):
+    async def _PZA_DRV_DIO_get_direction_pull(self):
         """ get direction pull
         """
         file_name = inspect.stack()[0][1]
@@ -101,7 +101,7 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    def _PZA_DRV_DIO_set_direction_pull(self, v):
+    async def _PZA_DRV_DIO_set_direction_pull(self, v):
         """ set the pull direction
         -Args
         value : value to be set : up, down or open
@@ -112,7 +112,7 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    def _PZA_DRV_DIO_get_state_active(self):
+    async def _PZA_DRV_DIO_get_state_active(self):
         """ get the active state
         """
         file_name = inspect.stack()[0][1]
@@ -121,7 +121,7 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    def _PZA_DRV_DIO_set_state_active(self,v):
+    async def _PZA_DRV_DIO_set_state_active(self,v):
         """ get the active state
         -Args
         value : value to be set : True or False
@@ -132,7 +132,7 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    def _PZA_DRV_DIO_get_state_activeLow(self):
+    async def _PZA_DRV_DIO_get_state_activeLow(self):
         """ get the active low state
         """
         file_name = inspect.stack()[0][1]
@@ -141,7 +141,7 @@ class MetaDriverDio(PlatformDriver):
 
     # ---
 
-    def _PZA_DRV_DIO_set_state_activeLow(self,v):
+    async def _PZA_DRV_DIO_set_state_activeLow(self,v):
         """ set the active low state
             -Args
             value : value to be set : True or False
@@ -168,12 +168,12 @@ class MetaDriverDio(PlatformDriver):
         """
         """
         update_obj = {}
-        self._prepare_update(update_obj, 
+        await self._prepare_update(update_obj, 
                             "direction", cmd_att,
                             "value", [str]
                             , self._PZA_DRV_DIO_set_direction_value
                             , self._PZA_DRV_DIO_get_direction_value)
-        self._prepare_update(update_obj, 
+        await self._prepare_update(update_obj, 
                             "direction", cmd_att,
                             "pull", [str]
                             , self._PZA_DRV_DIO_set_direction_pull
@@ -186,12 +186,12 @@ class MetaDriverDio(PlatformDriver):
         """
         """
         update_obj = {}
-        self._prepare_update(update_obj, 
+        await self._prepare_update(update_obj, 
                             "state", cmd_att,
                             "active", [bool]
                             , self._PZA_DRV_DIO_set_state_active
                             , self._PZA_DRV_DIO_get_state_active)
-        self._prepare_update(update_obj, 
+        await self._prepare_update(update_obj, 
                             "state", cmd_att,
                             "active_low", [bool]
                             , self._PZA_DRV_DIO_set_state_activeLow
@@ -205,8 +205,8 @@ class MetaDriverDio(PlatformDriver):
         """
         await self._update_attributes_from_dict({
             "direction": {
-                "value": self._PZA_DRV_DIO_get_direction_value(),
-                "pull": self._PZA_DRV_DIO_get_direction_pull(),
+                "value": await self._PZA_DRV_DIO_get_direction_value(),
+                "pull": await self._PZA_DRV_DIO_get_direction_pull(),
                 "polling_cycle": 1
             }
         })
@@ -218,8 +218,8 @@ class MetaDriverDio(PlatformDriver):
         """
         await self._update_attributes_from_dict({
             "state": {
-                "active": self._PZA_DRV_DIO_get_state_active(),
-                "active_low": self._PZA_DRV_DIO_get_state_activeLow(),
+                "active": await self._PZA_DRV_DIO_get_state_active(),
+                "active_low": await self._PZA_DRV_DIO_get_state_activeLow(),
                 "polling_cycle": 1
             }
         })

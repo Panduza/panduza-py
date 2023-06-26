@@ -43,7 +43,7 @@ class DriverFakeAmmeter(MetaDriverAmmeter):
 
     # ---
 
-    def _PZA_DRV_AMMETER_read_measure_value(self):
+    async def _PZA_DRV_AMMETER_read_measure_value(self):
         return self.__fakes["measure"]["value"]
 
     # ---

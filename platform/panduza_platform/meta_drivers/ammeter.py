@@ -67,7 +67,7 @@ class MetaDriverAmmeter(PlatformDriver):
 
     # ---
 
-    def _PZA_DRV_AMMETER_read_measure_value(self):
+    async def _PZA_DRV_AMMETER_read_measure_value(self):
         """
         """
         file_name = inspect.stack()[0][1]
@@ -86,7 +86,7 @@ class MetaDriverAmmeter(PlatformDriver):
             await asyncio.sleep(self.__polling_cycle)
             await self._update_attributes_from_dict({
                 "measure": {
-                    "value": self._PZA_DRV_AMMETER_read_measure_value()
+                    "value": await self._PZA_DRV_AMMETER_read_measure_value()
                 }
             })
 
@@ -103,7 +103,7 @@ class MetaDriverAmmeter(PlatformDriver):
         """
         """
         update_obj = {}
-        self._prepare_update(update_obj, 
+        await self._prepare_update(update_obj, 
                             "measure", cmd_att,
                             "polling_cycle", [float, int]
                             , self.__set_poll_cycle
@@ -112,12 +112,12 @@ class MetaDriverAmmeter(PlatformDriver):
 
     # ---
 
-    def __set_poll_cycle(self, v):
+    async def __set_poll_cycle(self, v):
         self.__polling_cycle = v
 
     # ---
 
-    def __get_poll_cycle(self):
+    async def __get_poll_cycle(self):
         return self.__polling_cycle
 
     # ---
@@ -127,8 +127,8 @@ class MetaDriverAmmeter(PlatformDriver):
         """
         await self._update_attributes_from_dict({
             "measure": {
-                "value": self._PZA_DRV_AMMETER_read_measure_value(),
-                "polling_cycle": self.__get_poll_cycle()
+                "value": await self._PZA_DRV_AMMETER_read_measure_value(),
+                "polling_cycle": await self.__get_poll_cycle()
             }
         })
 

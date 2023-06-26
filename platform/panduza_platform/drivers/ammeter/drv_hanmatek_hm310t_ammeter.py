@@ -59,7 +59,7 @@ class DriverHM310tAmmeter(MetaDriverAmmeter):
     # AMPS #
 
 
-    def _PZA_DRV_AMPERMT_read_value(self):
+    async def _PZA_DRV_AMPERMT_read_value(self):
         addr = 0x0011
         regs = self.modbus.read_holding_registers(addr, 1, self.modbus_unit)
         self.log.debug(f"read real amps addr={hex(addr)} regs={regs}")
