@@ -2,7 +2,8 @@ import pyudev
 import logging
 
 # True to enable deep debug logs
-ENABLE_LOCAL_DEBUG=True
+# ENABLE_LOCAL_DEBUG=True
+ENABLE_LOCAL_DEBUG=False
 
 # ---
 
