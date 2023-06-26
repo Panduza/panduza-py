@@ -350,24 +350,24 @@ class PlatformDriver(PlatformWorker):
 
     # ---
 
-    def _prepare_update(self, update_obj, att, cmd_att, field, 
+    async def _prepare_update(self, update_obj, att, cmd_att, field, 
                         valid_types, set_callback, get_callback):
         """
         """
         if field in cmd_att:
             v = cmd_att[field]
 
-            # 
+            # Check types
             if not type(v) in valid_types:
                 raise Exception(f"Invalid type for direction.value {type(v)}")
 
-            # 
-            set_callback(v)
+            # Try to set
+            await set_callback(v)
 
-            # 
+            # Then prepare the update
             update_obj.update({
                 att: {
-                    field: get_callback()
+                    field: await get_callback()
                 }
             })
 

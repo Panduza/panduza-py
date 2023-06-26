@@ -3,7 +3,6 @@ from hamcrest import assert_that, has_key, instance_of
 from collections import ChainMap
 from panduza_platform.meta_drivers.psu import MetaDriverPsu
 from panduza_platform.connectors.modbus_client_serial import ConnectorModbusClientSerial
-# from panduza_platform.connectors.udev_tty import HuntUsbDevs
 
 STATE_VALUE_ENUM = { True : 1, False: 0  }
 VOLTS_BOUNDS     = { "min": 0, "max": 30 }
@@ -49,16 +48,10 @@ class DrvHanmatekHm310tPsu(MetaDriverPsu):
         assert_that(settings, has_key("serial_baudrate"))
 
         # Get the gate
-        self.modbus = ConnectorModbusClientSerial.Get(**settings)
+        self.modbus = await ConnectorModbusClientSerial.Get(**settings)
 
         # 
         self.modbus_unit = 1
-
-        # # Misc
-        # self.__misc = {
-        #     "model": "HM310T (Hanmatek)",
-        #     "modbus_slave_id": self.modbus_unit
-        # }
 
         # Call meta class PSU ini
         await super()._PZA_DRV_loop_init(loop, tree)
@@ -68,102 +61,72 @@ class DrvHanmatekHm310tPsu(MetaDriverPsu):
 
     # STATE #
 
-    def _PZA_DRV_PSU_read_enable_value(self):
+    async def _PZA_DRV_PSU_read_enable_value(self):
         addr = 0x0001
-        regs = self.modbus.read_holding_registers(addr, 1, self.modbus_unit)
+        regs = await self.modbus.read_holding_registers(addr, 1, self.modbus_unit)
         self.log.debug(f"read state addr={hex(addr)} regs={regs}")
         str_value = int_to_state_string(regs[0])
         return str_value
 
     # ---
 
-    def _PZA_DRV_PSU_write_enable_value(self, v):
+    async def _PZA_DRV_PSU_write_enable_value(self, v):
         addr = 0x0001
         int16_value = STATE_VALUE_ENUM[v]
         self.log.info(f"write state addr={hex(addr)} value={int16_value}")
-        self.modbus.write_register(addr, int16_value, self.modbus_unit)
+        await self.modbus.write_register(addr, int16_value, self.modbus_unit)
 
     # VOLTS #
 
-    def _PZA_DRV_PSU_read_volts_goal(self):
+    async def _PZA_DRV_PSU_read_volts_goal(self):
         addr = 0x0030
-        regs = self.modbus.read_holding_registers(addr, 1, self.modbus_unit)
+        regs = await self.modbus.read_holding_registers(addr, 1, self.modbus_unit)
         self.log.debug(f"read goal volts addr={hex(addr)} regs={regs}")
         float_value = float(regs[0]) / 100.0
         return float_value
 
     # ---
 
-    def _PZA_DRV_PSU_write_volts_goal(self, v):
+    async def _PZA_DRV_PSU_write_volts_goal(self, v):
         addr = 0x0030
         int16_value = int(v * 100)
         self.log.info(f"write goal volts addr={hex(addr)} valuex100={int16_value}")
-        self.modbus.write_register(addr, int16_value, self.modbus_unit)
+        await self.modbus.write_register(addr, int16_value, self.modbus_unit)
 
     # ---
 
-    def _PZA_DRV_PSU_volts_goal_min_max(self):
+    async def _PZA_DRV_PSU_volts_goal_min_max(self):
         return VOLTS_BOUNDS
 
     # ---
 
-    # def _PZA_DRV_PSU_read_volts_real(self):
-    #     addr = 0x0010
-    #     regs = self.modbus.read_holding_registers(addr, 1, self.modbus_unit)
-    #     self.log.debug(f"read real volts addr={hex(addr)} regs={regs}")
-    #     float_value = float(regs[0]) / 100.0
-    #     return float_value
-
-    # ---
-
-    def _PZA_DRV_PSU_read_volts_decimals(self):
+    async def _PZA_DRV_PSU_read_volts_decimals(self):
         return 2
 
     # AMPS #
 
-    def _PZA_DRV_PSU_read_amps_goal(self):
+    async def _PZA_DRV_PSU_read_amps_goal(self):
         addr = 0x0031
-        regs = self.modbus.read_holding_registers(addr, 1, self.modbus_unit)
+        regs = await self.modbus.read_holding_registers(addr, 1, self.modbus_unit)
         self.log.debug(f"read goal amps addr={hex(addr)} regs={regs}")
         float_value = float(regs[0]) / 1000.0
         return float_value
 
     # ---
 
-    def _PZA_DRV_PSU_write_amps_goal(self, v):
+    async def _PZA_DRV_PSU_write_amps_goal(self, v):
         addr = 0x0031
         int16_value = int(v * 1000.0)
         self.log.info(f"write goal amps addr={hex(addr)} valuex1000={int16_value}")
-        self.modbus.write_register(addr, int16_value, self.modbus_unit)
+        await self.modbus.write_register(addr, int16_value, self.modbus_unit)
 
     # ---
 
-    def _PZA_DRV_PSU_amps_goal_min_max(self):
+    async def _PZA_DRV_PSU_amps_goal_min_max(self):
         return AMPS_BOUNDS
 
     # ---
 
-    # def _PZA_DRV_PSU_read_amps_real(self):
-    #     addr = 0x0011
-    #     regs = self.modbus.read_holding_registers(addr, 1, self.modbus_unit)
-    #     self.log.debug(f"read real amps addr={hex(addr)} regs={regs}")
-    #     float_value = float(regs[0]) / 1000.0
-    #     return float_value
-
-    # ---
-
-    def _PZA_DRV_PSU_read_amps_decimals(self):
+    async def _PZA_DRV_PSU_read_amps_decimals(self):
         return 3
-
-    # SETTINGS #
-
-    def _PZA_DRV_PSU_settings_capabilities(self):
-        return  {
-            "ovp": False,
-            "ocp": False,
-            "silent": False,
-        }
-
-
-
 
