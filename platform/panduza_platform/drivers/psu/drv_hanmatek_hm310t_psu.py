@@ -3,7 +3,7 @@ from hamcrest import assert_that, has_key, instance_of
 from collections import ChainMap
 from panduza_platform.meta_drivers.psu import MetaDriverPsu
 from panduza_platform.connectors.modbus_client_serial import ConnectorModbusClientSerial
-from panduza_platform.connectors.udev_tty import HuntUsbDevs
+# from panduza_platform.connectors.udev_tty import HuntUsbDevs
 
 STATE_VALUE_ENUM = { True : 1, False: 0  }
 VOLTS_BOUNDS     = { "min": 0, "max": 30 }
@@ -34,7 +34,7 @@ class DrvHanmatekHm310tPsu(MetaDriverPsu):
 
     # ---
 
-    def _PZA_DRV_loop_init(self, loop, tree):
+    async def _PZA_DRV_loop_init(self, loop, tree):
         """Driver initialization
         """
 
@@ -44,9 +44,9 @@ class DrvHanmatekHm310tPsu(MetaDriverPsu):
         assert_that(settings, instance_of(dict))
 
         # Checks
-        assert_that(settings, has_key("vendor"))
-        assert_that(settings, has_key("model"))
-        assert_that(settings, has_key("baudrate"))
+        assert_that(settings, has_key("usb_vendor"))
+        assert_that(settings, has_key("usb_model"))
+        assert_that(settings, has_key("serial_baudrate"))
 
         # Get the gate
         self.modbus = ConnectorModbusClientSerial.Get(**settings)
@@ -54,14 +54,14 @@ class DrvHanmatekHm310tPsu(MetaDriverPsu):
         # 
         self.modbus_unit = 1
 
-        # Misc
-        self.__misc = {
-            "model": "HM310T (Hanmatek)",
-            "modbus_slave_id": self.modbus_unit
-        }
+        # # Misc
+        # self.__misc = {
+        #     "model": "HM310T (Hanmatek)",
+        #     "modbus_slave_id": self.modbus_unit
+        # }
 
         # Call meta class PSU ini
-        super()._PZA_DRV_loop_init(tree)
+        await super()._PZA_DRV_loop_init(loop, tree)
 
     ###########################################################################
     ###########################################################################

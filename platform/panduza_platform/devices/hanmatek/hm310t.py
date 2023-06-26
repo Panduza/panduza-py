@@ -1,9 +1,11 @@
 
+from ...platform_device_model import PlatformDeviceModel
+
 USBID_VENDOR="1a86"
 USBID_MODEL="7523"
 TTY_BASE="/dev/ttyUSB"
 
-class DeviceHanmatekHm310t:
+class DeviceHanmatekHm310t(PlatformDeviceModel):
     """Power Supply From Hanmatek
     """
 
@@ -29,9 +31,9 @@ class DeviceHanmatekHm310t:
                 "name": f"psu",
                 "driver": "hanmatek.hm310t.psu",
                 "settings": {
-                    "vendor": USBID_VENDOR,
-                    "model": USBID_MODEL,
-                    "baudrate": 9600
+                    "usb_vendor": USBID_VENDOR,
+                    "usb_model": USBID_MODEL,
+                    "serial_baudrate": 9600
                 }
             })
 

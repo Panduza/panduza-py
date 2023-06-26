@@ -61,10 +61,6 @@ class MetaDriverPsu(PlatformDriver):
         """
         return {"min": 0, "max": 0 }
 
-    def _PZA_DRV_PSU_read_volts_real(self):
-        """Must get the volts real value on the PSU and return it
-        """
-        raise NotImplementedError("Must be implemented !")
 
     def _PZA_DRV_PSU_read_volts_decimals(self):
         """Must return the number of decimals supported for the voltage
@@ -88,10 +84,6 @@ class MetaDriverPsu(PlatformDriver):
         """
         return {"min": 0, "max": 0 }
 
-    def _PZA_DRV_PSU_read_amps_real(self):
-        """Must get the amperage real value on the PSU and return it
-        """
-        raise NotImplementedError("Must be implemented !")
 
     def _PZA_DRV_PSU_read_amps_decimals(self):
         """Must return the number of decimals supported for the amperage
@@ -230,7 +222,7 @@ class MetaDriverPsu(PlatformDriver):
         if (time.perf_counter() - self.polling_ref["volts"]) > polling_cycle:
             p = False
             p = await self._update_attribute("volts", "goal", self._PZA_DRV_PSU_read_volts_goal(), False) or p
-            p = await self._update_attribute("volts", "real", self._PZA_DRV_PSU_read_volts_real(), False) or p
+            
             if p:
                 await self._push_attribute("volts")
             self.polling_ref["volts"] = time.perf_counter()
@@ -244,7 +236,7 @@ class MetaDriverPsu(PlatformDriver):
         if (time.perf_counter() - self.polling_ref["amps"]) > polling_cycle:
             p = False
             p = await self._update_attribute("amps", "goal", self._PZA_DRV_PSU_read_amps_goal(), False) or p
-            p = await self._update_attribute("amps", "real", self._PZA_DRV_PSU_read_amps_real(), False) or p
+            
             if p:
                 await self._push_attribute("amps")
             self.polling_ref["amps"] = time.perf_counter()
@@ -263,7 +255,7 @@ class MetaDriverPsu(PlatformDriver):
         p = await self._update_attribute("volts", "min", min_max.get("min", 0), False) or p
         p = await self._update_attribute("volts", "max", min_max.get("max", 0), False) or p
         p = await self._update_attribute("volts", "goal", self._PZA_DRV_PSU_read_volts_goal(), False) or p
-        p = await self._update_attribute("volts", "real", self._PZA_DRV_PSU_read_volts_real(), False) or p
+        
         p = await self._update_attribute("volts", "decimals", self._PZA_DRV_PSU_read_volts_decimals(), False) or p
         p = await self._update_attribute("volts", "polling_cycle", 5, False) or p
         if p:
@@ -276,7 +268,6 @@ class MetaDriverPsu(PlatformDriver):
         p = await self._update_attribute("amps", "min", min_max.get("min", 0), False) or p
         p = await self._update_attribute("amps", "max", min_max.get("max", 0), False) or p
         p = await self._update_attribute("amps", "goal", self._PZA_DRV_PSU_read_amps_goal(), False) or p
-        p = await self._update_attribute("amps", "real", self._PZA_DRV_PSU_read_amps_real(), False) or p
         p = await self._update_attribute("amps", "decimals", self._PZA_DRV_PSU_read_amps_decimals(), False) or p
         p = await self._update_attribute("amps", "polling_cycle", 5, False) or p
         if p:
@@ -342,8 +333,7 @@ class MetaDriverPsu(PlatformDriver):
                     await self._update_attributes_from_dict(
                     {
                         "volts": {
-                            "goal": self._PZA_DRV_PSU_read_volts_goal(),
-                            "real": self._PZA_DRV_PSU_read_volts_real()
+                            "goal": self._PZA_DRV_PSU_read_volts_goal()
                         }
                     })
                 else:
@@ -378,8 +368,7 @@ class MetaDriverPsu(PlatformDriver):
                     await self._update_attributes_from_dict(
                     {
                         "amps": {
-                            "goal": self._PZA_DRV_PSU_read_amps_goal(),
-                            "real": self._PZA_DRV_PSU_read_amps_real()
+                            "goal": self._PZA_DRV_PSU_read_amps_goal()
                         }
                     })
                 else:
