@@ -32,6 +32,7 @@ setup(
         'pyserial',
         'pyudev',
         'pyusb',
+        'PyHamcrest'
     ],
 
     classifiers=[
