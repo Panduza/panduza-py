@@ -3,7 +3,7 @@ from setuptools.command.install import install
 
 # Setting up
 setup(
-        name="panduza", 
+        name="panduza",
         version='0.0.1',
         author="Panduza Team",
         author_email="panduza.team@gmail.com",
@@ -11,12 +11,15 @@ setup(
         long_description='This library provides simple wrapper to help implementing tests through panduza interfaces',
         packages=find_packages(),
 
-        install_requires=['setuptools', 'paho-mqtt', 
-                'python-magic',
-                'colorama',
-                'PyHamcrest',
-                'robotframework',
-                'robotframework-pythonlibcore'
+        install_requires=[
+            'setuptools',
+            'paho-mqtt',
+            'python-magic',
+            'colorama',
+            'Pygal',
+            'PyHamcrest',
+            'robotframework',
+            'robotframework-pythonlibcore'
         ],
 
         entry_points={

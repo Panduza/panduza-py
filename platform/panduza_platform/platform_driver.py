@@ -231,17 +231,23 @@ class PlatformDriver(PlatformWorker):
         except Exception as e:
             self._PZA_DRV_error_detected(str(e) + " " + traceback.format_exc())
 
-
-
-
     # =============================================================================
     # INTERNAL STATES FUNCTIONS
+
+    # ---
+
+    async def alive_task(self):
+        while(True):
+            await asyncio.sleep(60)
+            # self.log.error("pok")
+            await self._push_attribute("info", 0, False) # heartbeat_pulse
 
     # ---
 
     async def __drv_state_init(self, loop):
         """
         """
+        loop.create_task(self.alive_task())
         self.__subscribe_topics()
         await self._PZA_DRV_loop_init(loop, self.tree)
 

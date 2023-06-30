@@ -2,6 +2,7 @@ import abc
 import sys
 import time
 import json
+import socket
 import asyncio
 import traceback
 import threading
@@ -250,6 +251,11 @@ class PlatformClient(PlatformWorker):
 
         # Start connection
         self.mqtt_client = mqtt.Client()
+        # self.mqtt_client.socket().setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 2048)
+
+        # self.mqtt_client.keep_alive = 45
+
+
         self.mqtt_client.on_message = self.__on_message
 
         self.mqtt_client.on_connect = self.__on_connect
@@ -264,7 +270,7 @@ class PlatformClient(PlatformWorker):
         self.mqtt_client.on_socket_close = self.__on_socket_close
         self.mqtt_client.on_socket_register_write = self.__on_socket_register_write
         self.mqtt_client.on_socket_unregister_write = self.__on_socket_unregister_write
-        self.mqtt_client.connect(self.addr, self.port)
+        self.mqtt_client.connect(self.addr, self.port, keepalive=60)
 
         # Go connecting state
         self.__state = 'connecting'
@@ -288,7 +294,6 @@ class PlatformClient(PlatformWorker):
                 self.log.debug(f"subscribe topic '{entry.topic}'")
                 self.mqtt_client.subscribe(entry.topic)
                 entry.subscribed = True
-
 
     # ---
 
@@ -391,8 +396,11 @@ class PlatformClient(PlatformWorker):
         self.evloop.remove_reader(sock)
         self.misc.cancel()
 
-        self.log.debug("Socket closed")
-        raise Exception("Socket closed")
+        self.log.warning("Socket closed")
+
+        # self.__state = "error"
+        self.worker_panic()
+
 
     # ---
 

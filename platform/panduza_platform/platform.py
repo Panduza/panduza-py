@@ -232,10 +232,14 @@ class Platform:
             sys.exit(-1)
 
         # Check if the hunt mode is enabled
+        start_time = time.time()
         if self.__hunt_mode_requested():
             self.__hunt_mode()
         else:
             self.__oper_mode()
+
+        alive_time = round(time.time()-start_time, 2)
+        self.log.info(f"Platform alive time {alive_time}s")
 
     # --
 

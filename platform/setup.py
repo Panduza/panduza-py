@@ -28,7 +28,7 @@ setup(
         'colorama',
         'paho-mqtt',
         'pyftdi',
-        'pymodbus',
+        'pymodbus==3.3.2',
         'pyserial',
         'pyudev',
         'pyusb',

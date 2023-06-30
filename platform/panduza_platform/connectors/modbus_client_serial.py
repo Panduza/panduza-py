@@ -1,8 +1,11 @@
 import logging
 import asyncio
 
+from pymodbus.exceptions import ConnectionException
 from pymodbus.client import AsyncModbusSerialClient
 from panduza_platform.log.driver import driver_logger
+
+from hamcrest import assert_that, equal_to, any_of, has_item
 
 from .udev_tty import SerialPortFromUsbSetting
 from .modbus_client_base import ConnectorModbusClientBase
@@ -43,16 +46,16 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
             ID_MODEL_ID
         * *usb_serial_short* (``str``) --
             ID_SERIAL_SHORT
-        
+
         """
         # Log
         ConnectorModbusClientSerial.log.debug(f"Get connector for {kwargs}")
 
         async with ConnectorModbusClientSerial.__MUTEX:
-            
+
             # Log
             ConnectorModbusClientSerial.log.debug(f"Lock acquired !")
-            
+
             # Get the serial port name
             serial_port_name = None
             if "serial_port_name" in kwargs:
@@ -94,9 +97,10 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
         else:
             self.log = logging.getLogger(key)
             self.log.info(f"attached to the Modbus Serial Client Connector")
-            
+
             # create client object
             self.client = AsyncModbusSerialClient(
+                method='rtu',
                 port=key, 
                 baudrate=kwargs.get("serial_baudrate", 112500),
                 bytesize=kwargs.get("serial_bytesize", 8),
@@ -109,7 +113,14 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
     async def connect(self):
         """Start the client connection
         """
-        await self.client.connect()
+
+        # Connect to the Modbus device
+        connected = await self.client.connect()
+
+        # Check the connected status
+        if not connected:
+            ConnectorModbusClientSerial.log.info(f"Connection failed")
+            raise Exception("Error cannot connect to Serial Port")
 
     ###########################################################################
     ###########################################################################
@@ -119,7 +130,7 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
             response = await self.client.write_register(address, value, slave=unit)
             if response.isError():
                 raise Exception(f'Error message: {response}')
-        
+
     ###########################################################################
     ###########################################################################
 
@@ -127,11 +138,10 @@ class ConnectorModbusClientSerial(ConnectorModbusClientBase):
         async with self._mutex:
             response = await self.client.read_input_registers(address, size, slave=unit)
             if not response.isError():
-                
                 return response.registers
             else:
                 raise Exception(f'Error message: {response}')
-        
+
     ###########################################################################
     ###########################################################################
 

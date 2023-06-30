@@ -13,7 +13,7 @@ class KeywordsAmmeter(object):
         """
         """
         pza = BuiltIn().get_variable_value("${__pza__}")
-        pza[amm_alias].measure.value.get()
+        return pza[amm_alias].measure.value.get()
 
     # ---
 
@@ -35,6 +35,9 @@ class KeywordsAmmeter(object):
         #
         BuiltIn().run_keyword("Set Ammeter Measure Polling Cycle", amm_alias, 0.5)
         BuiltIn().run_keyword("Sleep", 1)
-        BuiltIn().run_keyword("Read Ammeter Measure", amm_alias)
+
+        measure = BuiltIn().run_keyword("Read Ammeter Measure", amm_alias)
+        BuiltIn().run_keyword("Should Be True", measure != None)
+
         BuiltIn().run_keyword("Set Ammeter Measure Polling Cycle", amm_alias, 3)
 

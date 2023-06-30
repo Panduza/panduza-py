@@ -11,6 +11,8 @@ from .dio import KeywordsDio
 from .relay         import KeywordsRelay
 from .voltmeter     import KeywordsVoltmeter
 
+from .tool_chart    import KeywordsToolChart
+
 
 from ..interfaces.generator import GenerateAllInterfacesFromAliases
 
@@ -23,7 +25,9 @@ class Keywords(DynamicCore):
             KeywordsDio(),
             KeywordsPsu(),
             KeywordsRelay(),
-            KeywordsVoltmeter()
+            KeywordsVoltmeter(),
+
+            KeywordsToolChart()
         ]
         DynamicCore.__init__(self, libraries)
 
