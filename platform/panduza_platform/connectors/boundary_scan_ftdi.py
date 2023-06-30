@@ -1,8 +1,6 @@
 import asyncio
-import threading
 import concurrent.futures
 import os
-
 
 from boundary_scan_base import ConnectorBoundaryScanBase
 from panduza_platform.extlibs.bsdl import bsdl,bsdlJson
@@ -30,14 +28,6 @@ class BsdlSemantics:
 ###########################################################################
 ###########################################################################
 
-class BitSettingsContainer:
-    def __init__(self):
-        self.bit_settings = {}
-
-
-###########################################################################
-###########################################################################
-
 
 def get_bit_settings(bit_state_dict, boundary_reg):
     byte_array = list(boundary_reg)
@@ -52,34 +42,34 @@ def get_bit_settings(bit_state_dict, boundary_reg):
 
 
 def get_bsdl_file(bsdl_folder):
-        list_bsdl_files = os.listdir(bsdl_folder)
-        bsdl_file_directory = []
-        bsdl_file = []
-        for i in range(len(list_bsdl_files)):
-            bsdl_file_directory.append(os.path.join(bsdl_folder,list_bsdl_files[i]))
-            f = open(bsdl_file_directory[i],"r") 
-            bsdl_file.append(f.read())
+    list_bsdl_files = os.listdir(bsdl_folder)
+    bsdl_file_directory = []
+    bsdl_file = []
+    for i in range(len(list_bsdl_files)):
+        bsdl_file_directory.append(os.path.join(bsdl_folder,list_bsdl_files[i]))
+        f = open(bsdl_file_directory[i],"r") 
+        bsdl_file.append(f.read())
 
-        return bsdl_file
+    return bsdl_file
 
 def get_idcode_from_bsdl(bsdl_folder):
-        
-        parser = bsdl.bsdlParser()
-        list_bsdl_files = os.listdir(bsdl_folder)
-        bsdl_file = get_bsdl_file(bsdl_folder)
-        
-        idcode_bsdl= []
+    parser = bsdl.bsdlParser()
+    list_bsdl_files = os.listdir(bsdl_folder)
+    bsdl_file = get_bsdl_file(bsdl_folder)
+    
+    idcode_bsdl= []
 
-        for i in range(len(list_bsdl_files)):
-            json = parser.parse(bsdl_file[i], "bsdl_description", semantics=BsdlSemantics(), parseinfo=False).asjson()
-            json_bsdl = bsdlJson.BsdlJson(json)
+    for i in range(len(list_bsdl_files)):
+        json = parser.parse(bsdl_file[i], "bsdl_description", semantics=BsdlSemantics(), parseinfo=False).asjson()
+        json_bsdl = bsdlJson.BsdlJson(json)
 
-            idcode_bsdl.append(json_bsdl.idcode)
-        
-        return idcode_bsdl
+        idcode_bsdl.append(json_bsdl.idcode)
+    
+    return idcode_bsdl
 
 ###########################################################################
 ###########################################################################
+
 class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
     """The serial modbus client connector centralize access to a given port as a modbus client
     """
@@ -108,7 +98,10 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
             ID_MODEL_ID
         * *usb_serial_short* (``str``) --
             ID_SERIAL_SHORT
-        
+        * *jtag_frequency* (``str``) --
+            jtag_frequency
+        * *jtag_bsdl_folder* (``str``) --
+            jtag_bsdl_folder
         """
 
         # Log
@@ -118,7 +111,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
              # Log
             ConnectorBoundaryScanFtdi.log.debug(f"Lock acquired !")
         
-            
+            # Check if an FTDI is detected
             if (len(Ftdi.list_devices())) < 1 :
                 raise Exception("can't detect the FTDI")
             
@@ -143,6 +136,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
             if instance_name in ConnectorBoundaryScanFtdi.__INSTANCES:
                 return ConnectorBoundaryScanFtdi.__INSTANCES[instance_name]
             
+            # Create an instance
             try:
                 new_instance = ConnectorBoundaryScanFtdi(key=instance_name,               
                                             usb_vendor=usb_vendor,
@@ -167,17 +161,12 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         """Constructor
         """
 
-        bit_settings = BitSettingsContainer()
-
         # Init local mutex
         self._mutex = asyncio.Lock()
-        
-        # Init Thread
-        self.executor = concurrent.futures.ThreadPoolExecutor() #######################
 
         parser = bsdl.bsdlParser()
         
-        # Get paramete/usr/share/code/resources/app/out/vs/code/electron-sandbox/workbench/workbench.htmlrs
+        # Get parameters
         usb_vendor = kwargs.get('usb_vendor', "0403")
         usb_model = kwargs.get('usb_model', "6014")
         jtag_frequency = kwargs.get('jtag_frequency', 6E6)
@@ -192,33 +181,37 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         idcode_bsdl = get_idcode_from_bsdl(jtag_bsdl_folder)       
         idcode_detected = self.idcode()    # retrieve the idcodes in order and store them in a dictionnary (key = device_number ; value = idcode)
         
+        # Get number of devices
         self.total_devices = self.scan()
 
         # Get bsdl files
         bsdl_file = get_bsdl_file(jtag_bsdl_folder)
 
+        # list of idcode 
         idcode = []
         idcode_modified = []
 
+        # Dictionnary for BSDL files 
         self.bsdl_dict = {}
         
-        # remove the first 4 bits of the idcodes (= idcode without 4-bit version number)
+        # Remove the first 4 bits of the idcodes (= idcode without 4-bit version number)
         for n in range (len(idcode_detected)):
             idcode.append(idcode_detected[n])
             idcode_modified.append(hex(int(idcode_detected[n][-7:],16)))    
         
-        # store the correct bsdl files in order 
+        # Store the correct bsdl files in order 
         for j in range(len(idcode_modified)):
             for k in range(len(idcode_bsdl)) :
 
                 if idcode_modified[j] == idcode_bsdl[k]:
                     self.bsdl_dict[j] = bsdl_file[k]
 
-
+        # Check if the number of devices detected correponds to the number of bsdl files detected
         if (len(self.bsdl_dict) != self.total_devices):
             raise Exception("can't reach bsdl files of some devices")
 
-        # definition of dictionnaries and lists
+        
+        # Definition of dictionnaries and lists
  
         self.json  = {}             # store the bsdl file convert in json file
         self.json_bsdl  = {}        # in order to use bsdl_lib
@@ -251,7 +244,11 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         self.total_boundary_length = sum(self.boundary_length)
 
         
+        self.previous_device_number = None
+
+        # Init bit setting
         self.init_bit_settings()
+        
 
 
     ###########################################################################
@@ -262,18 +259,8 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         """
         """
         async with self._mutex:
-            #self.scan()
-            
-            # t = threading.Thread(target=self.scan)
-            # t.start()
-            # #t.join()
-            # while t.is_alive():
-            #      await asyncio.sleep(0.1)
-            #      print("Waiting for the thread to complete...")
 
-            # print("finished")
-
-             with self.executor as executor :
+             with concurrent.futures.ThreadPoolExecutor() as executor:
                 # Submit the scan function to the executor
                 future = executor.submit(self.scan)
                 
@@ -292,7 +279,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         """
         async with self._mutex:
 
-             with self.executor as executor :
+             with concurrent.futures.ThreadPoolExecutor() as executor:
                 # Submit the idcode function to the executor
                 future = executor.submit(self.idcode)
                 
@@ -305,15 +292,12 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
                 result = future.result()
                 print("Result:", result)
 
-
-
-    
     
     async def read_pin(self, device_number, pin, direction):
         """
         """
         async with self._mutex:
-            with self.executor as executor:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
                 # Submit the read function to the executor
                 future = executor.submit(self.read,device_number, pin, direction)
                 
@@ -327,7 +311,6 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
                 print("Result:", result)
 
     
-
     async def write_pin(self, device_number, pin, value):
         """
         """
@@ -388,6 +371,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
 
     def read(self,device_number,pin,direction):
         global bit_settings
+
         boundary_scan = self.sample(device_number)
         #print(boundary_scan)                       
         for bit in range(0, self.boundary_length[device_number]):
@@ -409,7 +393,9 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
                         return False
                     
                 elif direction == "out" and cell_spec["function"].upper() == "OUTPUT3":
-
+                    
+                    self.check_device(device_number)
+                    
                     byte_array = list(bit_settings)
                 
                     if byte_array[bit] == 1 :
@@ -438,7 +424,9 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
 
         global bit_settings
         
-        boundary_reg = self.readback(1) ###############################
+        self.check_device(device_number)
+        #print (bit_settings)
+        boundary_reg = bit_settings ###############################
 
         bit_settings = get_bit_settings(bit_state_dict, boundary_reg) 
                     
@@ -447,27 +435,23 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
 
 
     def init_bit_settings(self):
+        """ function that init/reset the bit settings """
+
         global bit_settings
         self.engine.capture_dr()
+        self.engine.reset()
         bit_settings = self.engine.read_dr(self.total_boundary_length)
         self.engine.go_idle()
 
         return bit_settings
 
 
-    def readback(self,flag):
-        """fonction qui permet de lire les registres actuels"""
-
-        global bit_settings
-        if flag == 0 :          ###############################
-            self.engine.capture_dr()
-            
-            self.engine.go_idle()
-            flag = 1
-        else :
-            boundary_reg  = bit_settings          
-
-        return boundary_reg 
+    def check_device(self,device_number):
+        """ Check if the device number is different than the previous device number. This function is used in read and write functions """
+        if self.previous_device_number != device_number :
+            self.init_bit_settings()
+            self.previous_device_number = device_number
+        
 
     def sample(self,device_number):
         """fonction qui permet d'effectuer le BoundaryScan et qui renvoi le bitstream"""
@@ -494,39 +478,39 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         self.engine.write_ir(instruction)
         self.engine.capture_dr()
         
-        bit_settings_shift = bin(int(bit_settings) >> self.total_devices-device_number-1) # total devices = 3
+        bit_settings_shift = bin(int(bit_settings) >> self.total_devices - device_number - 1)
         bit_settings_shift = int(bit_settings_shift,2)
         bit_settings_shift = format(bit_settings_shift,f'0{self.boundary_length[device_number]}b')
         bit_settings = BitSequence(bit_settings_shift,msb=True)
 
-        print(bit_settings)
         self.engine.write_dr(bit_settings)  
 
     
     def instruction (self,device_number,mode):
-            
-            tab = []
-            instruct = self.instruct.copy()   ###############
+        """ function that generate the instruction to control the device wanted """
+        
+        tab = []
+        instruct = self.instruct.copy()   ###############
 
-            #print(instruct)
-            if mode == "extest":
-                instruct[device_number] = (self.extest_opcode[device_number],) + instruct[device_number][1:]
-                
-            elif mode == "sample":
-                instruct[device_number] = (self.sample_opcode[device_number],) + instruct[device_number][1:]
+        #print(instruct)
+        if mode == "extest":
+            instruct[device_number] = (self.extest_opcode[device_number],) + instruct[device_number][1:]
             
-            for k in sorted(instruct.keys(),reverse = True):
-                
-                tab.append(BitSequence(int(instruct[k][0]),length = instruct[k][1]))
-                #print(tab)
-                result = ''.join(str(element)[3:] for element in tab)
-                #print(result)
-                
-                if len(tab) == self.total_devices: 
-                    #print(BitSequence(str(result), msb=True,length=self.length_instruct))
-                    return BitSequence(str(result), msb=True,length=self.length_instruct)
-                                                          
-            else :             
-                raise Exception ("unknown mode")
+        elif mode == "sample":
+            instruct[device_number] = (self.sample_opcode[device_number],) + instruct[device_number][1:]
+        
+        for k in sorted(instruct.keys(),reverse = True):
+            
+            tab.append(BitSequence(int(instruct[k][0]),length = instruct[k][1]))
+            #print(tab)
+            result = ''.join(str(element)[3:] for element in tab)
+            #print(result)
+            
+            if len(tab) == self.total_devices: 
+                #print(BitSequence(str(result), msb=True,length=self.length_instruct))
+                return BitSequence(str(result), msb=True,length=self.length_instruct)
+                                                        
+        else :             
+            raise Exception ("unknown mode")
 
 
