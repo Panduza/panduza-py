@@ -7,3 +7,4 @@ pyserial==3.5
 pyudev==0.24.0
 pyusb==1.2.1
 PyHamcrest==2.0.4
+grako==3.99.9 

@@ -29,6 +29,7 @@ class BsdlJson:
         self.pin_map = self._get_pin_map()
         self.instruction_length = self._get_instruction_length()
         self.idcode = self._get_idcode()
+        self.all_pins = self._get_all_pins()
 
     def _get_instruction_length(self):
         instruction_length_int = 0
@@ -92,23 +93,46 @@ class BsdlJson:
             for entry in pin_map_ast:
                 pin_map[entry["port_name"]] = entry["pin_list"]
         return pin_map
-    
-    def _get_idcode(self):
 
+
+############################################################################################################
+
+    def _get_idcode(self):
         optional_register_description = self.json_data.get("optional_register_description")
         if optional_register_description is not None:
             if len(optional_register_description) > 1 :
                 idcode_register = optional_register_description[0]
             else :
                 idcode_register = optional_register_description
-
-            
+ 
             id = idcode_register['idcode_register']
-
             id_concatenated = ''.join(id[1:])
-
             idcode = hex(int(id_concatenated,2))
-    
-            #print(idcode)
 
         return idcode
+    
+    def _get_all_pins(self):
+        pins = []
+        try:
+            boundary_scan_register_description = self.json_data.get("boundary_scan_register_description")
+            if boundary_scan_register_description is not None:
+                fixed_boundary_stmts = boundary_scan_register_description.get("fixed_boundary_stmts")
+                if fixed_boundary_stmts is not None:
+                    boundary_register_list = fixed_boundary_stmts.get("boundary_register")
+                    if boundary_register_list is not None:
+                        for cell in boundary_register_list:
+                            cell_number = cell.get("cell_number")
+                            if cell_number is not None:
+                                cell_info = cell.get("cell_info")
+                                if cell_info is not None:
+                                    cell_spec = cell_info.get("cell_spec")
+                                    if cell_spec is not None:
+                                        funct = cell_spec.get("function")
+                                        if funct == "INPUT" or funct == "OUTPUT3":
+                                            port_id = cell_spec.get("port_id")
+                                            pins.append(port_id)
+            return pins
+        except:
+            return None
+                                    
+                                

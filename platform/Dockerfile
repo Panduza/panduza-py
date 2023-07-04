@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:20.04
 
 # Attach to the repository
 LABEL org.opencontainers.image.source https://github.com/Panduza/panduza-py

@@ -2,7 +2,7 @@ import asyncio
 import concurrent.futures
 import os
 
-from boundary_scan_base import ConnectorBoundaryScanBase
+from .boundary_scan_base import ConnectorBoundaryScanBase
 from panduza_platform.extlibs.bsdl import bsdl,bsdlJson
 from panduza_platform.log.driver import driver_logger
 
@@ -126,6 +126,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
                 jtag_frequency = kwargs["jtag_frequency"]
             elif "jtag_bsdl_folder" in kwargs:
                 jtag_bsdl_folder = kwargs["jtag_bsdl_folder"] 
+
             else:
                 raise Exception("no way to identify the informations given in tre tree.json")
             
@@ -165,12 +166,15 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         self._mutex = asyncio.Lock()
 
         parser = bsdl.bsdlParser()
+
+        # Init thread
+        self.executor = concurrent.futures.ThreadPoolExecutor() ####################### it doesn't work
         
         # Get parameters
         usb_vendor = kwargs.get('usb_vendor', "0403")
         usb_model = kwargs.get('usb_model', "6014")
         jtag_frequency = kwargs.get('jtag_frequency', 6E6)
-        jtag_bsdl_folder = kwargs.get('jtag_bsdl_folder', "/home/rethusan/Panduza/panduza-py/platform/deploy/etc_panduza/BSDL")
+        jtag_bsdl_folder = kwargs.get('jtag_bsdl_folder', "/home/rethusan/test/BSDL") #################
            
         # Init engine
         self.engine = JtagEngine(frequency=float(jtag_frequency))
@@ -274,7 +278,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
                 print("Result:", result)
     
     
-    async def get_idcode(self):
+    async def get_idcodes(self):
         """
         """
         async with self._mutex:
@@ -361,7 +365,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         while int(idcode) != 0:
             number_of_devices += 1
             idcode = self.engine._ctrl.read(32)
-            if int(int(idcode)>0): 
+            if (int(idcode)>0): 
                 idcode_hex[number_of_devices] = str(f"0x{format(int(idcode),'08X')}")          
         
         self.engine.change_state('update_dr')
@@ -463,7 +467,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         
         boundary_scan = self.engine.read_dr(self.boundary_length[device_number])
 
-        boundary_scan_shift = bin(int(boundary_scan) >>device_number)
+        boundary_scan_shift = bin(int(boundary_scan) >> device_number)
         boundary_scan_shift = int(boundary_scan_shift,2)
         boundary_scan_shift = format(boundary_scan_shift,f'0{self.boundary_length[device_number]}b')
         bit_sequence = BitSequence(boundary_scan_shift,msb=True)

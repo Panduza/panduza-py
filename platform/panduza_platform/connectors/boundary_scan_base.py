@@ -13,7 +13,7 @@ class ConnectorBoundaryScanBase(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    async def get_idcode(self):
+    async def get_idcodes(self):
         """
         """
         pass
