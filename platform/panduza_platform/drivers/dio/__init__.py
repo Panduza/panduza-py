@@ -1,7 +1,7 @@
 
 from .drv_panduza_fake_dio import DriverFakeDio
-from .drv_panduza_fake_boundary_scan_dio import DriverFakeBoundaryScanDio
+from .drv_ftdi_boundary_scan_dio import DriverBoundaryScanDio
 
 
-PZA_DRIVERS_LIST= [DriverFakeDio,DriverFakeBoundaryScanDio]
+PZA_DRIVERS_LIST= [DriverFakeDio,DriverBoundaryScanDio]
 
