@@ -130,7 +130,8 @@ class BsdlJson:
                                         funct = cell_spec.get("function")
                                         if funct == "INPUT" or funct == "OUTPUT3":
                                             port_id = cell_spec.get("port_id")
-                                            pins.append(port_id)
+                                            if port_id not in pins :
+                                                pins.append(port_id)
             return pins
         except:
             return None
