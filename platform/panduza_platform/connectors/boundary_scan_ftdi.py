@@ -1,6 +1,5 @@
 import asyncio
 import concurrent.futures
-import threading
 
 from .boundary_scan_base import ConnectorBoundaryScanBase
 from panduza_platform.extlibs.bsdl import bsdl,bsdlJson,read_bsdlJson_files
@@ -104,7 +103,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
                 jtag_frequency = kwargs["jtag_frequency"]
 
             if "jtag_bsdl_folder" in kwargs:
-                jtag_bsdl_folder = kwargs["jtag_bsdl_folder"] 
+                jtag_bsdl_folder = kwargs["jtag_bsdl_folder"]  
 
             else:
                 raise Exception("no way to identify the informations given in the tree.json")
@@ -239,6 +238,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         function that returns the number of devices detected in the jtag chain
         """
         result = await self.run_async_function(self.scan)
+        print("Result:", result)
         return result
 
          
@@ -249,6 +249,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         """
         
         result = await self.run_async_function(self.idcode)
+        print("Result:", result)
         return result
 
 
@@ -258,6 +259,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         function that reads the state of a pin
         """  
         result = await self.run_async_function(self.read,device_number, pin, direction)
+        print("Result:", result)
         return result
             
 
@@ -280,11 +282,11 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
                 # Wait for the future to complete
                 while not future.done():
                     await asyncio.sleep(0.1)
-                    print(f"Waiting for the thread to complete...")
+                    #print(f"Waiting for the thread to complete...")
                 
                 # Retrieve the result from the future
                 result = future.result()
-                print("Result:", result)
+                #print("Result:", result)
                 
                 return result
             
@@ -294,17 +296,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
     ###########################################################################
 
     def scan(self):
-        number_of_devices = 0
-        self.engine.reset()
-        self.engine.change_state('shift_dr')
-        idcode = self.engine._ctrl.read(32)
-        
-        while int(idcode) != 0:
-            number_of_devices += 1
-            idcode = self.engine._ctrl.read(32)           
-        
-        self.engine.change_state('update_dr')
-        self.engine.go_idle()
+        number_of_devices = len(self.idcode())
 
         return number_of_devices
     

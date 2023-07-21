@@ -26,18 +26,37 @@ class DeviceFtdiFt232h_jtag(PlatformDeviceModel):
         """
         """
         interfaces = []
-
+        
         jtag_frequency = self._initial_settings.get("jtag_frequency",6E6)
         jtag_bsdl_folder = self._initial_settings.get("jtag_bsdl_folder")
-        #number_of_devices = int(self._initial_settings.get("number_of_devices"))
 
-        pins = self.get_pins_from_idcode(jtag_bsdl_folder) # a list of pins from each device detected
+        pins_detected = self.get_pins_from_idcode(jtag_bsdl_folder) # a list of pins from each device detected
+        pins_wanted  = self._initial_settings.get("pins_wanted",None)
+        number_of_devices = len(pins_detected)
+
+        # print(pins_wanted)
+        # print(pins)
+
+        pins = pins_detected.copy()
+    
         #pins = asyncio.run(get_pins_from_idcode(jtag_bsdl_folder,jtag_frequency))
         #pins = run_async_function(jtag_bsdl_folder,jtag_frequency)
-        #print(pins)
-        number_of_devices = len(pins)
         
-        #print(pins)  
+        if pins_wanted != None : 
+            pins_list = set(pins_wanted)
+
+            for i in range(number_of_devices):
+                if pins[i] is not None:
+                    common_pins = pins_list.intersection(pins[i])
+                    if not common_pins:
+                        pins[i] = None
+                    else:
+                        pins[i] = list(common_pins) 
+    
+
+
+
+
     
         for device_number in range(0,number_of_devices):
             if pins[device_number] is not None:

@@ -33,6 +33,7 @@ class DriverBoundaryScanDio(MetaDriverDio):
         assert_that(settings, has_key("jtag_bsdl_folder"))
         assert_that(settings, has_key("pin"))
         assert_that(settings, has_key("device_number"))
+        #assert_that(settings, has_key("pins_wanted"))
         
 
         self.pin = settings["pin"]
@@ -107,7 +108,6 @@ class DriverBoundaryScanDio(MetaDriverDio):
         """ get the active state
         """
         direction = self.__fakes["direction"]["value"]
-
         self.__fakes["state"]["active"] = await self.jtag_connector.async_read_pin(self.device_number,self.pin,direction)
         self.log.info(f'the state of the device {self.device_number} {self.pin} ({direction}) is {self.__fakes["state"]["active"]}')
 
@@ -122,7 +122,7 @@ class DriverBoundaryScanDio(MetaDriverDio):
         """
         global previous_device_number,previous_pins
         #self.log.info(f' 1 pre : {previous_device_number} ; mtn : {self.device_number}')
-        self.log.info(f'1 pins : {previous_pins} ')
+        #self.log.info(f'1 pins : {previous_pins} ')
         if (previous_device_number != self.device_number):
             for pins in previous_pins : 
                 self.log.info(f'write on previous device {previous_device_number} {pins} with {not(v)}')
@@ -130,7 +130,7 @@ class DriverBoundaryScanDio(MetaDriverDio):
             previous_pins.clear()
 
 
-        self.log.info(f'2 pins : {previous_pins} ')
+        #self.log.info(f'2 pins : {previous_pins} ')
         self.log.info(f'write on device {self.device_number} {self.pin} with {v}')
         self.__fakes["state"]["active"] = v
         
@@ -143,7 +143,7 @@ class DriverBoundaryScanDio(MetaDriverDio):
             previous_pins.append(self.pin)
 
         #self.log.info(f'2 pre : {previous_device_number} ; mtn : {self.device_number}')
-        self.log.info(f'3 pins : {previous_pins} ')
+        #self.log.info(f'3 pins : {previous_pins} ')
         
 
     # ---

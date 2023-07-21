@@ -38,8 +38,8 @@ class MetaDriverDio(PlatformDriver):
         # first update
         await self.__update_attribute_initial()
 
-        # Start polling task
-        #self.__task_polling = loop.create_task(self.__polling_task())
+        # trigger for polling task
+        self.trigger = False
 
         # Init Success
         await super()._PZA_DRV_loop_init(loop, tree)
@@ -48,10 +48,13 @@ class MetaDriverDio(PlatformDriver):
 
     async def _PZA_DRV_loop_run(self, loop):
         # polls
-        # self.__poll_att_direction()
-        await asyncio.sleep(0.2)
         
-        #await self.__poll_att_state()
+        # await self.__poll_att_state()
+        # await asyncio.sleep(5)
+        # await self.__poll_att_direction()
+        # await asyncio.sleep(5)
+
+        await self.__poll_trigger()
         
 
     # ---
@@ -62,6 +65,10 @@ class MetaDriverDio(PlatformDriver):
         for att in self.__cmd_handlers:
             if att in cmds:
                 await self.__cmd_handlers[att](cmds[att])
+        
+        self.trigger = True
+        
+                
 
 
     # =============================================================================
@@ -232,42 +239,49 @@ class MetaDriverDio(PlatformDriver):
         })
 
     
+    async def __poll_trigger(self):
+        
+        if self.trigger:
+            
+            v = await self._PZA_DRV_DIO_get_state_active()
+            await self._update_attribute("state", "active", v, 'always') 
+
+            self.trigger = False
 
 
-    async def __poll_att_state(self):
+
+    # async def __poll_att_state(self):
         
-        polling_cycle = float(self._get_field("state", "polling_cycle"))
+    #     polling_cycle = float(self._get_field("state", "polling_cycle"))
         
-        if polling_cycle < 0:
-            return
-        if (time.perf_counter() - self.__polling_cycle) > polling_cycle:
-            p = False
-            p = await self._update_attribute("state", "active_low", await self._PZA_DRV_DIO_get_state_activeLow(), False) or p
-            p = await self._update_attribute("state", "active", await self._PZA_DRV_DIO_get_state_active(), False) or p
-            print(f'dddddddd{p}')
-            if p:
-                await self._push_attribute("state")
-            self.__polling_cycle = time.perf_counter()
+    #     if polling_cycle < 0:
+    #         return
+    #     if (time.perf_counter() - self.__polling_cycle) > polling_cycle:
+    #         p = False
+    #         p = await self._update_attribute("state", "active_low", await self._PZA_DRV_DIO_get_state_activeLow(), False) or p
+    #         p = await self._update_attribute("state", "active", await self._PZA_DRV_DIO_get_state_active(), False) or p
+
+    #         if p:
+    #             await self._push_attribute("state")
+    #         self.__polling_cycle = time.perf_counter()
            
 
     
-    # def __poll_att_direction(self):
+    # async def __poll_att_direction(self):
 
     #     polling_cycle = float(self._get_field("direction", "polling_cycle"))
         
     #     if polling_cycle < 0:
     #         return
-    #     if (time.perf_counter() - self.polling_ref["direction"]) > polling_cycle:
+    #     if (time.perf_counter() - self.__polling_cycle) > polling_cycle:
     #         p = False
-    #         p = await self._update_attribute("direction", "pull", self._PZA_DRV_DIO_get_direction_pull(), False) or p
-    #         p = await self._update_attribute("direction", "value", self._PZA_DRV_DIO_get_direction_value(), False) or p
+    #         p = await self._update_attribute("direction", "pull", await self._PZA_DRV_DIO_get_direction_pull(), False) or p
+    #         p = await self._update_attribute("direction", "value", await self._PZA_DRV_DIO_get_direction_value(), False) or p
+
     #         if p:
-    #             self._push_attribute("direction")
-    #         self.polling_ref["direction"] = time.perf_counter()
+    #             await self._push_attribute("direction")
+    #         self.__polling_cycle = time.perf_counter()
+            
 
 
     
-
-
-
-
