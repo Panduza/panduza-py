@@ -18,15 +18,14 @@ jobs:
       - run: pip install -r ./tests/requirements.txt
       - run: pip install -r ./platform/requirements.txt
       - run: pip install ./client/
-      - run: pip install ./platform/
 
       # ---
       - run: pzadmin init test_hunt_directory
 
       # ---
-      - run: python3 ./platform/deploy/pza-py-platform-run.py 
-        env:
-          HUNT: 1
+      # - run: python3 ./platform/deploy/pza-py-platform-run.py 
+      #   env:
+      #     HUNT: 1
 
       # ---
       - run: mosquitto -d
@@ -34,7 +33,7 @@ jobs:
       # ---
       - name: Start the platform
         run: >
-          python3 ./platform/deploy/pza-py-platform-run.py ./tests/pza_platform/tree.json &
+          python3 ./platform/panduza_platform/__main__.py ./tests/pza_platform/tree.json &
           sleep 1
 
       - name: Export test env variables
