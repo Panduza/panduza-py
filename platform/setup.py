@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 from setuptools.command.install import install
-from panduza_platform.conf import PLATFORM_VERSION
+from panduza_platform.core.conf import PLATFORM_VERSION
 
 class CustomInstallCommand(install):
     def run(self):

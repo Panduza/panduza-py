@@ -1,9 +1,9 @@
 import io
 from collections import ChainMap
-from panduza_platform.meta_drivers.psu import MetaDriverPsu
-from panduza_platform.connectors.serial_tty import ConnectorSerialTty
+from meta_drivers.psu import MetaDriverPsu
+from connectors.serial_tty import ConnectorSerialTty
 
-from panduza_platform.connectors.udev_tty import HuntUsbDevs
+from connectors.udev_tty import HuntUsbDevs
 
 QL355P_USBID_VENDOR="103e"
 QL355P_USBID_MODEL="03e8"

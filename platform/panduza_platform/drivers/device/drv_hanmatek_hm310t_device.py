@@ -1,8 +1,8 @@
 import time
 from hamcrest import assert_that, has_key, instance_of
 from collections import ChainMap
-from panduza_platform.meta_drivers.psu import MetaDriverDevice
-from panduza_platform.connectors.modbus_client_serial import ConnectorModbusClientSerial
+from meta_drivers.psu import MetaDriverDevice
+from connectors.modbus_client_serial import ConnectorModbusClientSerial
 
 
 

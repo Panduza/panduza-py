@@ -1,6 +1,6 @@
 from meta_drivers.spi_master import MetaDriverSpiMaster
 from ...connectors.spi_master_ftdi import ConnectorSPIMasterFTDI
-from panduza_platform.connectors.udev_tty import HuntUsbDevs
+from connectors.udev_tty import HuntUsbDevs
 from collections import ChainMap
 
 class DriverFtdiSpiMaster(MetaDriverSpiMaster):

@@ -1,6 +1,6 @@
 from hamcrest import assert_that, has_key, instance_of
-from panduza_platform.meta_drivers.psu import MetaDriverPsu
-from panduza_platform.connectors.modbus_client_serial import ConnectorModbusClientSerial
+from meta_drivers.psu import MetaDriverPsu
+from connectors.modbus_client_serial import ConnectorModbusClientSerial
 
 STATE_VALUE_ENUM = { True : 1, False: 0  }
 VOLTS_BOUNDS     = { "min": 0, "max": 30 }

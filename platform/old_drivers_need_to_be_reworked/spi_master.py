@@ -1,7 +1,7 @@
 from ..meta_driver import MetaDriver
 from ..connectors.spi_master_ftdi import ConnectorSPIMasterFTDI
 from ..connectors.spi_master_aardvark import ConnectorSPIMasterAardvark
-from panduza_platform.connectors.udev_tty import HuntUsbDevs
+from connectors.udev_tty import HuntUsbDevs
 
 
 class MetaDriverSpiMaster(MetaDriver):

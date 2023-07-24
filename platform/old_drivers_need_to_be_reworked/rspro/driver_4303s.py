@@ -1,9 +1,9 @@
 import io
 from collections import ChainMap
-from panduza_platform.meta_drivers.psu import MetaDriverPsu
-from panduza_platform.connectors.serial_tty import ConnectorSerialTty
+from meta_drivers.psu import MetaDriverPsu
+from connectors.serial_tty import ConnectorSerialTty
 
-from panduza_platform.connectors.udev_tty import HuntUsbDevs
+from connectors.udev_tty import HuntUsbDevs
 
 IPS4303S_USBID_VENDOR="0403" # /!\ This is the VendorID and ProductID of the FT232 chip. Not a custome one!
 IPS4303S_USBID_MODEL="6001"

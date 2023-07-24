@@ -3,7 +3,7 @@ import asyncio
 
 from pymodbus.exceptions import ConnectionException
 from pymodbus.client import AsyncModbusSerialClient
-from panduza_platform.log.driver import driver_logger
+from log.driver import driver_logger
 
 from hamcrest import assert_that, equal_to, any_of, has_item
 

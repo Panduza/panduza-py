@@ -2,7 +2,7 @@ import time
 from ...meta_driver import MetaDriver
 from ...connectors.modbus_client_serial import ConnectorModbusClientSerial
 
-from panduza_platform.connectors.udev_tty import HuntUsbDevs
+from connectors.udev_tty import HuntUsbDevs
 
 
 class DriverModbusClient(MetaDriver):

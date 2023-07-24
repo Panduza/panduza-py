@@ -1,9 +1,9 @@
 import io
 from collections import ChainMap
-from panduza_platform.meta_drivers.serial import MetaDriverSerial
-from panduza_platform.connectors.serial_tty import ConnectorSerialTty
+from meta_drivers.serial import MetaDriverSerial
+from connectors.serial_tty import ConnectorSerialTty
 
-from panduza_platform.connectors.udev_tty import HuntUsbDevs
+from connectors.udev_tty import HuntUsbDevs
 
 
 
