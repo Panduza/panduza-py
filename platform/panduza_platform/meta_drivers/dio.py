@@ -3,7 +3,7 @@ import json
 import time
 import inspect
 from collections import ChainMap
-from ..platform_driver import PlatformDriver
+from core.platform_driver import PlatformDriver
 
 class MetaDriverDio(PlatformDriver):
 

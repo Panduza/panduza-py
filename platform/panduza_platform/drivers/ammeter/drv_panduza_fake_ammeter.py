@@ -1,5 +1,5 @@
 import asyncio
-from ...meta_drivers.ammeter import MetaDriverAmmeter
+from meta_drivers.ammeter import MetaDriverAmmeter
 
 
 class DriverFakeAmmeter(MetaDriverAmmeter):

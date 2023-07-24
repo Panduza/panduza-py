@@ -1,6 +1,6 @@
 import time
 from collections import ChainMap
-from ...meta_drivers.psu import MetaDriverPsu
+from meta_drivers.psu import MetaDriverPsu
 
 class DrvPanduzaFakePsu(MetaDriverPsu):
     """Fake PSU driver

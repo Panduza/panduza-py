@@ -1,5 +1,5 @@
 
-from ...platform_device_model import PlatformDeviceModel
+from core.platform_device_model import PlatformDeviceModel
 
 class DevicePanduzaFakeDioController(PlatformDeviceModel):
     

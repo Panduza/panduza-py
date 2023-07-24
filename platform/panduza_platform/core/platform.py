@@ -11,7 +11,7 @@ import importlib
 from sys import platform
 
 from .conf import PLATFORM_VERSION
-from .log.platform import platform_logger
+from log.platform import platform_logger
 
 from .platform_thread import PlatformThread
 from .platform_client import PlatformClient

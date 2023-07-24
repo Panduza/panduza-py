@@ -1,6 +1,6 @@
 from hamcrest import assert_that, has_key, instance_of
-from panduza_platform.meta_drivers.ammeter import MetaDriverAmmeter
-from panduza_platform.connectors.modbus_client_serial import ConnectorModbusClientSerial
+from meta_drivers.ammeter import MetaDriverAmmeter
+from connectors.modbus_client_serial import ConnectorModbusClientSerial
 
 class DriverHM310tAmmeter(MetaDriverAmmeter):
     """

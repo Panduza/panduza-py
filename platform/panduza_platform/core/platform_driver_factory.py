@@ -1,7 +1,7 @@
 import traceback
 from .platform_errors import InitializationError
 
-from .drivers import PZA_DRIVERS_LIST as INBUILT_DRIVERS
+from drivers import PZA_DRIVERS_LIST as INBUILT_DRIVERS
 
 class PlatformDriverFactory:
     """Manage the factory of drivers

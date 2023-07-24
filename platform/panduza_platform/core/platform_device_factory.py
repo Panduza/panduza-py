@@ -1,6 +1,6 @@
 import traceback
 from .platform_errors import InitializationError
-from .devices import PZA_DEVICES_LIST as INBUILT_DEVICES
+from devices import PZA_DEVICES_LIST as INBUILT_DEVICES
 
 class PlatformDeviceFactory:
     """Manage the factory of devices

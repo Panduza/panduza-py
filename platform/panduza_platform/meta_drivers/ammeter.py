@@ -3,7 +3,7 @@ import time
 import asyncio
 import inspect
 from collections import ChainMap
-from ..platform_driver import PlatformDriver
+from core.platform_driver import PlatformDriver
 
 class MetaDriverAmmeter(PlatformDriver):
     """Abstract Driver with helper class to manage AmeperMeter interface

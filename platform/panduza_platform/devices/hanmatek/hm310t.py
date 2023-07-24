@@ -1,5 +1,5 @@
 
-from ...platform_device_model import PlatformDeviceModel
+from core.platform_device_model import PlatformDeviceModel
 
 USBID_VENDOR="1a86"
 USBID_MODEL="7523"

@@ -2,7 +2,7 @@ import abc
 import time
 import asyncio
 from collections import ChainMap
-from ..platform_driver import PlatformDriver
+from core.platform_driver import PlatformDriver
 
 class MetaDriverPsu(PlatformDriver):
     """ Abstract Driver with helper class to manage power supply interface

@@ -1,5 +1,5 @@
 import json
-from ..platform_driver import PlatformDriver
+from core.platform_driver import PlatformDriver
 
 class MetaDriverIo(PlatformDriver):
     """ Abstract Driver with helper class to manage io interface

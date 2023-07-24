@@ -1,4 +1,4 @@
-from ...meta_drivers.relay import MetaDriverRelay
+from meta_drivers.relay import MetaDriverRelay
 
 class DrvPanduzaFakeRelay(MetaDriverRelay):
     """

@@ -5,7 +5,7 @@ import queue
 import asyncio
 import traceback
 
-from .log.driver import driver_logger
+from log.driver import driver_logger
 from .platform_worker import PlatformWorker
 
 class PlatformDriver(PlatformWorker):

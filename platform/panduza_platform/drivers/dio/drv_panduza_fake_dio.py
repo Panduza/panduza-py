@@ -1,4 +1,4 @@
-from ...meta_drivers.dio import MetaDriverDio
+from meta_drivers.dio import MetaDriverDio
 
 class DriverFakeDio(MetaDriverDio):
 

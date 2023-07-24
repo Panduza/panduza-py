@@ -10,7 +10,7 @@ import paho.mqtt.client as mqtt
 import logging
 
 from fnmatch import fnmatch
-from .log.client import client_logger
+from log.client import client_logger
 from .platform_worker import PlatformWorker
 
 # =============================================================================

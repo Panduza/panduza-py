@@ -1,5 +1,5 @@
 import time
-from ...platform_driver import PlatformDriver
+from core.platform_driver import PlatformDriver
 
 class DriverPlatform(PlatformDriver):
     """

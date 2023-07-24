@@ -1,5 +1,5 @@
 import time
-from ...meta_drivers.dio import MetaDriverDio
+from meta_drivers.dio import MetaDriverDio
 from collections import ChainMap
 from ...connectors.modbus_client_serial import ConnectorModbusClientSerial
 from threading import Lock

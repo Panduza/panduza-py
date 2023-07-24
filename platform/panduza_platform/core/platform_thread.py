@@ -2,7 +2,7 @@ import time
 import asyncio
 import threading
 
-from .log.thread import thread_logger
+from log.thread import thread_logger
 
 
 
