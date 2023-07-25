@@ -55,9 +55,6 @@ class DeviceFtdiFt232h_jtag(PlatformDeviceModel):
     
 
 
-
-
-    
         for device_number in range(0,number_of_devices):
             if pins[device_number] is not None:
                 for pin in pins[device_number]:
@@ -123,47 +120,47 @@ class DeviceFtdiFt232h_jtag(PlatformDeviceModel):
 
     
     
-async def get_pins_from_idcode(jtag_bsdl_folder,jtag_frequency):
+# async def get_pins_from_idcode(jtag_bsdl_folder,jtag_frequency):
 
-    idcode_modified = []
-    pins = []
+#     idcode_modified = []
+#     pins = []
 
-    idcode_bsdl = read_bsdlJson_files.get_idcode_from_bsdl(jtag_bsdl_folder)
-    pins_bsdl = read_bsdlJson_files.get_pins_from_bsdl(jtag_bsdl_folder)
+#     idcode_bsdl = read_bsdlJson_files.get_idcode_from_bsdl(jtag_bsdl_folder)
+#     pins_bsdl = read_bsdlJson_files.get_pins_from_bsdl(jtag_bsdl_folder)
 
-    jtag_connector = await ConnectorBoundaryScanFtdi.Get(usb_vendor=USBID_VENDOR,
-                                                              usb_model=USBID_MODEL,
-                                                              usb_serial_short=USBID_SERIAL_SHORT,
-                                                              jtag_bsdl_folder=jtag_bsdl_folder,
-                                                              jtag_frequency=jtag_frequency)
+#     jtag_connector = await ConnectorBoundaryScanFtdi.Get(usb_vendor=USBID_VENDOR,
+#                                                               usb_model=USBID_MODEL,
+#                                                               usb_serial_short=USBID_SERIAL_SHORT,
+#                                                               jtag_bsdl_folder=jtag_bsdl_folder,
+#                                                               jtag_frequency=jtag_frequency)
 
     
 
-    idcodes_detected = await jtag_connector.get_idcodes()
+#     idcodes_detected = await jtag_connector.get_idcodes()
 
-    # Remove the first 4 bits of the idcodes (= idcode without 4-bit version number)
-    for n in range (len(idcodes_detected)):
-        idcode_modified.append(hex(int(idcodes_detected[n][-7:],16)))    
+#     # Remove the first 4 bits of the idcodes (= idcode without 4-bit version number)
+#     for n in range (len(idcodes_detected)):
+#         idcode_modified.append(hex(int(idcodes_detected[n][-7:],16)))    
     
-    for j in range(len(idcode_modified)):
-        for k in range(len(idcode_bsdl)) :
+#     for j in range(len(idcode_modified)):
+#         for k in range(len(idcode_bsdl)) :
 
-            if idcode_modified[j] == idcode_bsdl[k]:
-                pins.append(pins_bsdl[k])
+#             if idcode_modified[j] == idcode_bsdl[k]:
+#                 pins.append(pins_bsdl[k])
     
-    return pins
+#     return pins
 
 
 
 
-def run_async_function(jtag_bsdl_folder,jtag_frequency):
-    # loop = asyncio.new_event_loop()
-    #asyncio.set_event_loop(loop)
-    print("pookkkkkkk")
-    pins = asyncio.get_event_loop().run_until_complete(get_pins_from_idcode(jtag_bsdl_folder, jtag_frequency))
-    print("fiiiiiiiiiiiiiiiiiiiiiiiin")
-    #return pins
-    return [ None,["PA5","PA10"],None,["PA5","PA10"]]
+# def run_async_function(jtag_bsdl_folder,jtag_frequency):
+#     # loop = asyncio.new_event_loop()
+#     #asyncio.set_event_loop(loop)
+#     print("pookkkkkkk")
+#     pins = asyncio.get_event_loop().run_until_complete(get_pins_from_idcode(jtag_bsdl_folder, jtag_frequency))
+#     print("fiiiiiiiiiiiiiiiiiiiiiiiin")
+#     #return pins
+#     return [ None,["PA5","PA10"],None,["PA5","PA10"]]
 
 
 

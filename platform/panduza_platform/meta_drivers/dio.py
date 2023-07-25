@@ -243,8 +243,17 @@ class MetaDriverDio(PlatformDriver):
         
         if self.trigger:
             
-            v = await self._PZA_DRV_DIO_get_state_active()
-            await self._update_attribute("state", "active", v, 'always') 
+            # v = await self._PZA_DRV_DIO_get_state_active()
+            # w = await self._PZA_DRV_DIO_get_state_activeLow()
+            # x = await self._PZA_DRV_DIO_get_direction_pull()
+            # y = await self._PZA_DRV_DIO_get_direction_value()
+
+            # await self._update_attribute("state", "active", v, 'always') 
+            # await self._update_attribute("state", "active_low", w, 'always') 
+            # await self._update_attribute("direction", "pull", x, 'always') 
+            # await self._update_attribute("direction", "value", y, 'always') 
+
+            await self.__update_attribute_initial()
 
             self.trigger = False
 
@@ -258,12 +267,10 @@ class MetaDriverDio(PlatformDriver):
     #         return
     #     if (time.perf_counter() - self.__polling_cycle) > polling_cycle:
     #         p = False
-    #         p = await self._update_attribute("state", "active_low", await self._PZA_DRV_DIO_get_state_activeLow(), False) or p
-    #         p = await self._update_attribute("state", "active", await self._PZA_DRV_DIO_get_state_active(), False) or p
+    #         p = await self._update_attribute("state", "active_low", await self._PZA_DRV_DIO_get_state_activeLow(), 'always') or p
+    #         p = await self._update_attribute("state", "active", await self._PZA_DRV_DIO_get_state_active(), 'always') or p
 
-    #         if p:
-    #             await self._push_attribute("state")
-    #         self.__polling_cycle = time.perf_counter()
+    #     self.__polling_cycle = time.perf_counter()
            
 
     

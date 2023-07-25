@@ -150,7 +150,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         usb_vendor = kwargs.get('usb_vendor', "0403")
         usb_model = kwargs.get('usb_model', "6014")
         jtag_frequency = kwargs.get('jtag_frequency', 6E6)
-        jtag_bsdl_folder = kwargs.get('jtag_bsdl_folder', "/home/rethusan/test/BSDL") #################
+        jtag_bsdl_folder = kwargs.get('jtag_bsdl_folder', None) #################
            
         # Init engine
         self.engine = JtagEngine(frequency=float(jtag_frequency))
@@ -371,7 +371,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         
         self.check_device(device_number)
         #print (bit_settings)
-        boundary_reg = bit_settings ###############################
+        boundary_reg = bit_settings 
 
         bit_settings = get_bit_settings(bit_state_dict, boundary_reg) 
                     
@@ -435,7 +435,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         """ function that generate the instruction to control the device wanted """
         
         tab = []
-        instruct = self.instruct.copy()   ###############
+        instruct = self.instruct.copy()  
 
         #print(instruct)
         if mode == "extest":
