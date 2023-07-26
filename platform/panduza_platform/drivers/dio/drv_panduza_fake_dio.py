@@ -33,7 +33,7 @@ class DriverFakeDio(MetaDriverDio):
             },
         }
 
-        # Call meta class PSU ini
+        # Call meta class BPS ini
         await super()._PZA_DRV_loop_init(loop, tree)
 
     # ---

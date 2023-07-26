@@ -1,7 +1,7 @@
 {
     "devices": [
         {
-            "model": "Panduza.FakePsu",
+            "model": "Panduza.FakeBps",
             "settings": {
                 "number_of_channel": 2
             }

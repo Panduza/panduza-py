@@ -1,12 +1,12 @@
 from core.platform_device_model import PlatformDeviceModel
 
-class DevicePanduzaFakePsu(PlatformDeviceModel):
+class DevicePanduzaFakeBps(PlatformDeviceModel):
 
     def _PZA_DEV_config(self):
         """
         """
         return {
-            "model": "Panduza.FakePsu",
+            "model": "Panduza.FakeBps",
         }
 
     def _PZA_DEV_interfaces(self):
@@ -20,7 +20,7 @@ class DevicePanduzaFakePsu(PlatformDeviceModel):
             interfaces.append(
                 {
                     "name": f"channel_{chan}",
-                    "driver": "panduza.fake.psu"
+                    "driver": "panduza.fake.bps"
                 }
             )
             interfaces.append(
@@ -28,7 +28,7 @@ class DevicePanduzaFakePsu(PlatformDeviceModel):
                     "name": f"channel_{chan}_am",
                     "driver": "panduza.fake.ammeter",
                     "settings": {
-                        "work_with_fake_psu": f"!//channel_{chan}"
+                        "work_with_fake_bps": f"!//channel_{chan}"
                     }
                 }
             )

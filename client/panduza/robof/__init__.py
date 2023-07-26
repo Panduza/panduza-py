@@ -4,10 +4,10 @@ from robot.libraries.BuiltIn import BuiltIn
 
 from ..core.core import Core
 
-from .ammeter import KeywordsAmmeter
-from .client import KeywordsClient
-from .psu import KeywordsPsu
-from .dio import KeywordsDio
+from .ammeter       import KeywordsAmmeter
+from .client        import KeywordsClient
+from .bps           import KeywordsBps
+from .dio           import KeywordsDio
 from .relay         import KeywordsRelay
 from .voltmeter     import KeywordsVoltmeter
 
@@ -23,7 +23,7 @@ class Keywords(DynamicCore):
             KeywordsAmmeter(),
             KeywordsClient(),
             KeywordsDio(),
-            KeywordsPsu(),
+            KeywordsBps(),
             KeywordsRelay(),
             KeywordsVoltmeter(),
 

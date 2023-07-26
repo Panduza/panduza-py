@@ -20,9 +20,9 @@ Test Fake AmpereMeter interfaces
 Test Fake VoltMeter interfaces
     Test Basic Access Of VoltMeter Interface        fake_voltmeter_0
 
-Test Fake PSU interfaces
-    Interface Psu Basic Controls    fake_psu_0
-    Interface Psu Basic Controls    fake_psu_1
+Test Fake BPS interfaces
+    Interface Bps Basic Controls    fake_bps_0
+    Interface Bps Basic Controls    fake_bps_1
 
 Test Fake Relay interfaces
     Test Basic Access Of Relay Interface           fake_relay_0

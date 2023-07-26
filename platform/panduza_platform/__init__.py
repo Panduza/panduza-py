@@ -2,7 +2,7 @@
 
 # from .meta_driver import MetaDriver
 # from .meta_drivers.io import MetaDriverIo
-# from .meta_drivers.psu import MetaDriverPsu
+# from .meta_drivers.bps import MetaDriverBps
 # from .meta_drivers.dio import MetaDriverDio
 
 # from .connectors.serial_tty import ConnectorSerialTty

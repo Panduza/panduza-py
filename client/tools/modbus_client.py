@@ -1,4 +1,4 @@
-"""Script to test psu on the given broker
+"""Script to test bps on the given broker
 
 WARNING : !!! Make sur your Power Supply are not connected to any board !!!
 """

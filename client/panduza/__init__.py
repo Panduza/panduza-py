@@ -4,5 +4,5 @@ from .core import Interface
 from .core import EnsureError
 
 from .interfaces import Dio
-from .interfaces import Psu
+from .interfaces import Bps
 

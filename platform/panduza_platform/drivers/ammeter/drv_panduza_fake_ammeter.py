@@ -25,8 +25,8 @@ class DriverFakeAmmeter(MetaDriverAmmeter):
         settings = tree.get("settings", {})
         # self.log.info(settings)
 
-        # work_with_fake_psu = settings.get("work_with_fake_psu", None)
-        # self.psu_obj = self.get_interface_instance_from_pointer(work_with_fake_psu)
+        # work_with_fake_bps = settings.get("work_with_fake_bps", None)
+        # self.bps_obj = self.get_interface_instance_from_pointer(work_with_fake_bps)
 
         
         self.__task_increment = loop.create_task(self.__increment_task())
@@ -38,7 +38,7 @@ class DriverFakeAmmeter(MetaDriverAmmeter):
             }
         }
 
-        # Call meta class PSU ini
+        # Call meta class BPS ini
         await super()._PZA_DRV_loop_init(loop, tree)
 
     # ---

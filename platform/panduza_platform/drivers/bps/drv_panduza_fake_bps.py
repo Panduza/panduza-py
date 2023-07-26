@@ -1,22 +1,22 @@
 import time
 from collections import ChainMap
-from meta_drivers.psu import MetaDriverPsu
+from meta_drivers.bps import MetaDriverBps
 
-class DrvPanduzaFakePsu(MetaDriverPsu):
-    """Fake PSU driver
+class DrvPanduzaFakeBps(MetaDriverBps):
+    """Fake BPS driver
     """
 
     # =============================================================================
-    # FROM MetaDriverPsu
+    # FROM MetaDriverBps
 
     # ---
 
-    def _PZA_DRV_PSU_config(self):
+    def _PZA_DRV_BPS_config(self):
         """
         """
         return {
-            "name": "panduza.fake.psu",
-            "description": "Virtual PSU"
+            "name": "panduza.fake.bps",
+            "description": "Virtual BPS"
         }
 
     # ---
@@ -58,37 +58,37 @@ class DrvPanduzaFakePsu(MetaDriverPsu):
             }
         }
 
-        # Call meta class PSU ini
+        # Call meta class BPS ini
         await super()._PZA_DRV_loop_init(loop, tree)
 
     ###########################################################################
 
-    async def _PZA_DRV_PSU_read_enable_value(self):
+    async def _PZA_DRV_BPS_read_enable_value(self):
         # self.log.debug(f"read enable !")
         return self.__fakes["enable"]["value"]
 
     # ---
 
-    async def _PZA_DRV_PSU_write_enable_value(self, v):
+    async def _PZA_DRV_BPS_write_enable_value(self, v):
         self.log.info(f"write enable : {v}")
         self.__fakes["enable"]["value"] = v
 
     ###########################################################################
 
-    async def _PZA_DRV_PSU_read_volts_goal(self):
+    async def _PZA_DRV_BPS_read_volts_goal(self):
         # self.log.debug(f"read volts goal !")
         return self.__fakes["volts"]["goal"]
 
     # ---
 
-    async def _PZA_DRV_PSU_write_volts_goal(self, v):
+    async def _PZA_DRV_BPS_write_volts_goal(self, v):
         self.log.info(f"write volts : {v}")
         self.__fakes["volts"]["goal"] = v
         self.__fakes["volts"]["real"] = v
     
     # ---
 
-    async def _PZA_DRV_PSU_volts_goal_min_max(self):
+    async def _PZA_DRV_BPS_volts_goal_min_max(self):
         return {
             "min": self.__fakes["volts"]["min"],
             "max": self.__fakes["volts"]["max"] 
@@ -96,25 +96,25 @@ class DrvPanduzaFakePsu(MetaDriverPsu):
 
     # ---
 
-    async def _PZA_DRV_PSU_read_volts_decimals(self):
+    async def _PZA_DRV_BPS_read_volts_decimals(self):
         return self.__fakes["volts"]["decimals"]
 
     ###########################################################################
 
-    async def _PZA_DRV_PSU_read_amps_goal(self):
+    async def _PZA_DRV_BPS_read_amps_goal(self):
         # self.log.debug(f"read amps goal !")
         return self.__fakes["amps"]["goal"]
 
     # ---
 
-    async def _PZA_DRV_PSU_write_amps_goal(self, v):
+    async def _PZA_DRV_BPS_write_amps_goal(self, v):
         self.log.info(f"write amps : {v}")
         self.__fakes["amps"]["goal"] = v
         self.__fakes["amps"]["real"] = v
 
     # ---
 
-    async def _PZA_DRV_PSU_amps_goal_min_max(self):
+    async def _PZA_DRV_BPS_amps_goal_min_max(self):
         return {
             "min": self.__fakes["amps"]["min"],
             "max": self.__fakes["amps"]["max"] 
@@ -122,6 +122,6 @@ class DrvPanduzaFakePsu(MetaDriverPsu):
 
     # ---
 
-    async def _PZA_DRV_PSU_read_amps_decimals(self):
+    async def _PZA_DRV_BPS_read_amps_decimals(self):
         return self.__fakes["amps"]["decimals"]
 

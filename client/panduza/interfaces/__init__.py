@@ -1,5 +1,5 @@
 from .dio import Dio
-from .psu import Psu
+from .bps import Bps
 from .relay import Relay
 # from .serial_ import Serial
 # from .modbus_client import ModbusClient

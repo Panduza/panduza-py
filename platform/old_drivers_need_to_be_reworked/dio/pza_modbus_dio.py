@@ -17,7 +17,7 @@ DIO_OFFSET_WRITE = 64
 class DriverPZA_MODBUS_DIO(MetaDriverDio):
 
     def _PZA_DRV_config(self):
-        # Extend the common psu config
+        # Extend the common bps config
         return ChainMap(
             super()._PZA_DRV_config(),
             {

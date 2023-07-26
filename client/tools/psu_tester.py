@@ -1,4 +1,4 @@
-"""Script to test psu on the given broker
+"""Script to test bps on the given broker
 
 WARNING : !!! Make sur your Power Supply are not connected to any board !!!
 """
@@ -7,7 +7,7 @@ import sys
 import time 
 import logging
 import argparse
-from panduza import Core, Client, Psu
+from panduza import Core, Client, Bps
 
 # Main Variables
 BROKER_ADDR="localhost"
@@ -18,11 +18,11 @@ RUN_TEST=False
 # logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 
 
-def step_set_state(psu, state, wait_s=3):
+def step_set_state(bps, state, wait_s=3):
     """Step to set the state
     """
     print(f"- set state to {state}")
-    psu.state.value.set(state)
+    bps.state.value.set(state)
     if CHECK_USER_INPUT:
         in_data = input("Ok or Ko ? [O/k] ")
     else:  
@@ -30,11 +30,11 @@ def step_set_state(psu, state, wait_s=3):
 
 
 
-def step_set_volts(psu, value, wait_s=3):
+def step_set_volts(bps, value, wait_s=3):
     """Step to set the voltage
     """
     print(f"- set volts to {value}")
-    psu.volts.value.set(value)
+    bps.volts.value.set(value)
     if CHECK_USER_INPUT:
         in_data = input("Ok or Ko ? [O/k] ")
     else:  
@@ -42,11 +42,11 @@ def step_set_volts(psu, value, wait_s=3):
 
 
 
-def step_set_amps(psu, value, wait_s=3):
+def step_set_amps(bps, value, wait_s=3):
     """Step to set the amps
     """
     print(f"- set amps to {value}")
-    psu.amps.value.set(value)
+    bps.amps.value.set(value)
     if CHECK_USER_INPUT:
         in_data = input("Ok or Ko ? [O/k] ")
     else:  
@@ -60,20 +60,20 @@ def run_test_on_interface(client, topic):
     print(f"### Test : ({topic}) ###")
 
     # Create interface
-    psu = Psu(topic=topic, client=client)
+    bps = Bps(topic=topic, client=client)
 
     # ===
-    step_set_volts(psu, 5)
-    step_set_volts(psu, 10)
-    step_set_volts(psu, 3.3)
+    step_set_volts(bps, 5)
+    step_set_volts(bps, 10)
+    step_set_volts(bps, 3.3)
 
     # ===
-    step_set_amps(psu, 0.5)
-    step_set_amps(psu, 3)
+    step_set_amps(bps, 0.5)
+    step_set_amps(bps, 3)
 
     # ===
-    step_set_state(psu, "on")
-    step_set_state(psu, "off")
+    step_set_state(bps, "on")
+    step_set_state(bps, "off")
 
 
 
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     # Arguments
     parser = argparse.ArgumentParser(
                         prog = 'Pza Power Supply Tester',
-                        description = 'Perform test configuration on PSU connected to the broker')
+                        description = 'Perform test configuration on BPS connected to the broker')
     parser.add_argument('-a', '--broker-address')
     parser.add_argument('-p', '--broker-port')
     # parser.add_argument('-m', '--max')
@@ -125,7 +125,7 @@ if __name__ == '__main__':
     interfaces = client.scan_interfaces()
     for iface in interfaces:
         iface_type = interfaces[iface]["type"]
-        if iface_type == "psu":
+        if iface_type == "bps":
             iface_state = interfaces[iface]["state"]
             if iface_state == "run":
                 run_test_on_interface(client, iface)

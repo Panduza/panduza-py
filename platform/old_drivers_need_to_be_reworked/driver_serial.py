@@ -16,7 +16,7 @@ class DriverSerial(MetaDriverSerial):
     ###########################################################################
 
     def _PZA_DRV_config(self):
-        # Extend the common psu config
+        # Extend the common bps config
         return ChainMap(super()._PZA_DRV_config(), {
             "name": "Py_Serial",
             "description": "Generic Serial Interface",
@@ -80,7 +80,7 @@ class DriverSerial(MetaDriverSerial):
  
 
 
-        # Call meta class PSU ini
+        # Call meta class BPS ini
         super()._PZA_DRV_loop_init(tree)
 
 
