@@ -61,12 +61,12 @@ async def main():
     write_task = asyncio.create_task(write_loop_task(connector))
     read_task = asyncio.create_task(read_on_write_task(connector))
 
-    #await asyncio.gather(write_task,read_task)
+    await asyncio.gather(write_task,read_task)
 
     # task1 = asyncio.create_task(connector.async_read_number_of_devices())
     # await task1
    
-    
+
     # await asyncio.gather(  
 
     #     connector.async_read_number_of_devices(),

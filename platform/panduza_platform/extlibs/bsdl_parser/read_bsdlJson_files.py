@@ -1,4 +1,4 @@
-from panduza_platform.extlibs.bsdl import bsdl,bsdlJson
+from panduza_platform.extlibs.bsdl_parser import bsdl,bsdlJson
 import os
 
 

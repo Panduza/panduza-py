@@ -2,7 +2,7 @@ import asyncio
 import concurrent.futures
 
 from .boundary_scan_base import ConnectorBoundaryScanBase
-from panduza_platform.extlibs.bsdl import bsdl,bsdlJson,read_bsdlJson_files
+from panduza_platform.extlibs.bsdl_reader import read_Bsdl
 from panduza_platform.log.driver import driver_logger
 
 from pyftdi.ftdi import Ftdi
@@ -10,19 +10,6 @@ from pyftdi.jtag import JtagEngine
 from pyftdi.bits import BitSequence
 
 
-###########################################################################
-###########################################################################
-class BsdlSemantics:
-    def map_string(self, ast):
-        parser = bsdl.bsdlParser()
-        ast = parser.parse(''.join(ast), "port_map")
-        return ast
-
-    def grouped_port_identification(self, ast):
-        parser = bsdl.bsdlParser()
-        ast = parser.parse(''.join(ast), "group_table")
-        return ast
-    
 
 ###########################################################################
 ###########################################################################
@@ -141,16 +128,13 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         """
 
         # Init local mutex
-        self._mutex = asyncio.Lock()
-
-        parser = bsdl.bsdlParser()
-
+        self._mutex = asyncio.Lock()    
                
         # Get parameters
         usb_vendor = kwargs.get('usb_vendor', "0403")
         usb_model = kwargs.get('usb_model', "6014")
         jtag_frequency = kwargs.get('jtag_frequency', 6E6)
-        jtag_bsdl_folder = kwargs.get('jtag_bsdl_folder', None) #################
+        jtag_bsdl_folder = kwargs.get('jtag_bsdl_folder', "/home/rethusan/test_parser/BSDL") #################
            
         # Init engine
         self.engine = JtagEngine(frequency=float(jtag_frequency))
@@ -158,14 +142,15 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         self.engine.reset()
 
         # Get idcodes
-        idcode_bsdl = read_bsdlJson_files.get_idcode_from_bsdl(jtag_bsdl_folder)       
+        idcode_bsdl = read_Bsdl.get_idcodes_from_bsdl(jtag_bsdl_folder)
+             
         idcode_detected = self.idcode()    # retrieve the idcodes in order and store them in a dictionnary (key = device_number ; value = idcode)
-        
+
         # Get number of devices
         self.total_devices = self.scan()
 
         # Get bsdl files
-        bsdl_file = read_bsdlJson_files.get_bsdl_file(jtag_bsdl_folder)
+        bsdl_file = read_Bsdl.get_bsdl_files(jtag_bsdl_folder)
 
         # list for idcode without version number
         idcode_modified = []
@@ -188,12 +173,9 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         if (len(self.bsdl_dict) != self.total_devices):
             raise Exception("can't reach bsdl files of some devices")
 
-        
         # Definition of dictionnaries and lists
  
-        self.json  = {}             # store the bsdl file convert in json file
-        self.json_bsdl  = {}        # in order to use bsdl_lib
-
+        self.bsdl = {}
         self.bypass_opcode = {}
         self.sample_opcode = {}
         self.extest_opcode = {}
@@ -206,21 +188,21 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
 
         # Get informations from bsdl files
         for k in sorted(self.bsdl_dict.keys()):
-            self.json[k] = parser.parse(self.bsdl_dict.get(k), "bsdl_description", semantics=BsdlSemantics(), parseinfo=False).asjson()
-            self.json_bsdl[k] = bsdlJson.BsdlJson(self.json[k])
+        
+            bsdl_info = read_Bsdl.BsdlInfo(self.bsdl_dict.get(k))
+            self.bsdl[k] = bsdl_info
             
-            self.bypass_opcode[k] = self.json_bsdl[k].get_opcode('BYPASS')
-            self.extest_opcode[k] = self.json_bsdl[k].get_opcode('EXTEST')
-            self.sample_opcode[k] = self.json_bsdl[k].get_opcode('SAMPLE')
+            self.bypass_opcode[k] = self.bsdl[k]._get_opcode('BYPASS')
+            self.extest_opcode[k] = self.bsdl[k]._get_opcode('EXTEST')
+            self.sample_opcode[k] = self.bsdl[k]._get_opcode('SAMPLE')
             
-            self.ir_length.append(self.json_bsdl[k].instruction_length)
-            self.boundary_length.append(self.json_bsdl[k].boundary_length)
+            self.ir_length.append(self.bsdl[k].instruction_length)
+            self.boundary_length.append(self.bsdl[k].boundary_length)
             self.instruct[k] = (self.bypass_opcode[k],self.ir_length[k])
             
-        
+
         self.length_instruct = sum(self.ir_length)
         self.total_boundary_length = sum(self.boundary_length)
-
         
         self.previous_device_number = None
 
@@ -325,7 +307,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
 
         boundary_scan = self.sample(device_number)
         for bit in range(0, self.boundary_length[device_number]):
-            cell = self.json_bsdl[device_number].boundary_register[str(bit)]
+            cell = self.bsdl[device_number].boundary_register[bit]
             cell_spec = cell["cell_spec"]
             if cell_spec["port_id"] == pin:
                 if direction == "in" and cell_spec["function"].upper() == "INPUT": 
@@ -356,7 +338,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
     def write (self, device_number,pin,value):
         bit_state_dict = {}
         for bit in range(0, self.boundary_length[device_number]):
-            cell = self.json_bsdl[device_number].boundary_register[str(bit)]
+            cell = self.bsdl[device_number].boundary_register[bit]
             cell_spec = cell["cell_spec"]
             if cell_spec["port_id"] == pin:
                 if cell_spec["function"].upper() == "OUTPUT3":
@@ -366,13 +348,11 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
                     enable_value = 0 if disable_value == 1 else 1
                     bit_state_dict[control_cell_number] = enable_value
                     bit_state_dict[bit] = value
-
+                    
         global bit_settings
         
         self.check_device(device_number)
-        #print (bit_settings)
         boundary_reg = bit_settings 
-
         bit_settings = get_bit_settings(bit_state_dict, boundary_reg) 
                     
         self.extest(bit_settings,device_number) 
@@ -443,13 +423,13 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
             
         elif mode == "sample":
             instruct[device_number] = (self.sample_opcode[device_number],) + instruct[device_number][1:]
+            
+        #print(instruct)
         
         for k in sorted(instruct.keys(),reverse = True):
             
             tab.append(BitSequence(int(instruct[k][0]),length = instruct[k][1]))
-            #print(tab)
             result = ''.join(str(element)[3:] for element in tab)
-            #print(result)
             
             if len(tab) == self.total_devices: 
                 #print(BitSequence(str(result), msb=True,length=self.length_instruct))

@@ -1,7 +1,7 @@
 
 from ...platform_device_model import PlatformDeviceModel
 from ...connectors.boundary_scan_ftdi import ConnectorBoundaryScanFtdi
-from panduza_platform.extlibs.bsdl import read_bsdlJson_files
+from panduza_platform.extlibs.bsdl_reader import read_Bsdl
 
 from pyftdi.jtag import JtagEngine
 
@@ -85,8 +85,8 @@ class DeviceFtdiFt232h_jtag(PlatformDeviceModel):
         idcode_modified = []
         pins = []
 
-        idcode_bsdl = read_bsdlJson_files.get_idcode_from_bsdl(jtag_bsdl_folder)
-        pins_bsdl = read_bsdlJson_files.get_pins_from_bsdl(jtag_bsdl_folder)
+        idcode_bsdl = read_Bsdl.get_idcodes_from_bsdl(jtag_bsdl_folder)
+        pins_bsdl = read_Bsdl.get_pins_from_bsdl(jtag_bsdl_folder)
 
         self.engine = JtagEngine(frequency=float(10E6))
         self.engine.configure(f'ftdi://0x{USBID_VENDOR}:0x{USBID_MODEL}/1')
