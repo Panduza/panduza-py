@@ -28,7 +28,7 @@ class DeviceFtdiFt232h_jtag(PlatformDeviceModel):
         interfaces = []
         
         jtag_frequency = self._initial_settings.get("jtag_frequency",6E6)
-        jtag_bsdl_folder = self._initial_settings.get("jtag_bsdl_folder")
+        jtag_bsdl_folder = self._initial_settings.get("jtag_bsdl_folder", "/etc/BSDL")
 
         pins_detected = self.get_pins_from_idcode(jtag_bsdl_folder) # a list of pins from each device detected
         pins_wanted  = self._initial_settings.get("pins_wanted",None)

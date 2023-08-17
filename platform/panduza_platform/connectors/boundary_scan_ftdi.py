@@ -134,7 +134,7 @@ class ConnectorBoundaryScanFtdi(ConnectorBoundaryScanBase):
         usb_vendor = kwargs.get('usb_vendor', "0403")
         usb_model = kwargs.get('usb_model', "6014")
         jtag_frequency = kwargs.get('jtag_frequency', 6E6)
-        jtag_bsdl_folder = kwargs.get('jtag_bsdl_folder', "/home/rethusan/test_parser/BSDL") #################
+        jtag_bsdl_folder = kwargs.get('jtag_bsdl_folder', "/etc/BSDL") #################
            
         # Init engine
         self.engine = JtagEngine(frequency=float(jtag_frequency))
