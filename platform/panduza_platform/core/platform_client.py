@@ -212,14 +212,13 @@ class PlatformClient(PlatformWorker):
 
     # ---
 
-    def PZA_WORKER_report(self):
+    def PZA_WORKER_status(self):
         """From Worker
         """
-        report =f"""
-    + {self.PZA_WORKER_name()}
-        - End state '{self.__state}'
-        """
-        return report
+        status = {}
+        status["name"] = self.PZA_WORKER_name()
+        status["final_state"] = f'{self.__state}'
+        return status
 
     # ---
 

@@ -171,17 +171,15 @@ class PlatformDriver(PlatformWorker):
 
     # ---
 
-    def PZA_WORKER_report(self):
-        """Return a stats report of the worker
+    def PZA_WORKER_status(self):
+        """Return a status object of the worker
         """
-        report =f"""
-    + {self.PZA_WORKER_name()}
-        - End state '{self.__drv_state}'
-        """
-
+        status = {}
+        status["name"] = self.PZA_WORKER_name()
+        status["final_state"] = f'{self.__drv_state}'
         if self.__err_string:
-            report +=f"""- Error : {self.__err_string}"""
-        return report
+            status["error_string"] = f'{self.__err_string}'
+        return status
 
     # ---
 

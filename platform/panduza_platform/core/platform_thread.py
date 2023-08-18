@@ -104,14 +104,16 @@ class PlatformThread:
 
     # ---
 
-    def get_worker_stats(self):
-        report  = ""
-        report += "=================================\n"
-        report +=f"== STATS THREAD {self.id}\n"
-        report += "=================================\n"
+    def get_status(self):
+
+        status = {}
+        status["name"] = f"thread {self.id}"
+        status["workers"] = []
+
         for w in self.__workers:
-            report += w.PZA_WORKER_report()
-        return report
+            status["workers"].append( w.PZA_WORKER_status() )
+        
+        return status
 
     # ---
 

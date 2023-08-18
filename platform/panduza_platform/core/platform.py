@@ -395,13 +395,38 @@ class Platform:
         for thr in self.threads:
             thr.join()
 
+        # Generate status reports
+        self.generate_status_reports()
 
-        thread_final_report  = "\n"
+
+    # --
+
+    def generate_status_reports(self):
+        """Generate a json report status and log it to the console
+        """
+
+        # Gather the status of each thread
+        thread_status = []
         for thr in self.threads:
-            thread_final_report += thr.get_worker_stats()
-        self.log.info(thread_final_report)
+            thread_status.append(thr.get_status())
 
+        # Write the status file
+        with open("/etc/panduza/log/status.json", "w") as json_file:
+            json.dump(thread_status, json_file)
 
+        # Print into the console
+        report  = "\n"
+        for thr in thread_status:
+            report += "=================================\n"
+            report +=f"== {thr['name']} \n"
+            report += "=================================\n"
+
+            for w in thr['workers']:
+                report += "\n"
+                report += str(w.get("name", "")) + "\n"
+                report += str(w.get("final_state", "")) + "\n"
+                report += str(w.get("error_string", "")) + "\n"
+        self.log.info(report)
 
     # --
 
