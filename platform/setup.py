@@ -32,6 +32,8 @@ setup(
         'pyserial',
         'pyudev',
         'pyusb',
+        'PyHamcrest',
+        'grako'
     ],
 
     classifiers=[

@@ -39,5 +39,9 @@ WORKDIR /work
 # Create the directory for platform plugins
 # Then run the platform
 CMD mkdir -p /etc/panduza/plugins/py; \
+<<<<<<< HEAD
     python3 /usr/local/lib/python3.10/dist-packages/panduza_platform/__main__.py
     
+=======
+    python3 /usr/local/bin/pza-py-platform-run.py
+>>>>>>> 60-mettre-en-place-un-connecteur-ftdi-jtag
