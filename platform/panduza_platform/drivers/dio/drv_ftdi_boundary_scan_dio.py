@@ -1,6 +1,6 @@
 from hamcrest import assert_that, has_key, instance_of
-from ...meta_drivers.dio import MetaDriverDio
-from ...connectors.boundary_scan_ftdi import ConnectorBoundaryScanFtdi
+from meta_drivers.dio import MetaDriverDio
+from connectors.boundary_scan_ftdi import ConnectorBoundaryScanFtdi
 
 class DriverBoundaryScanDio(MetaDriverDio):
 
