@@ -1,7 +1,7 @@
 
-from ...platform_device_model import PlatformDeviceModel
-from ...connectors.boundary_scan_ftdi import ConnectorBoundaryScanFtdi
-from panduza_platform.extlibs.bsdl_reader import read_Bsdl
+from core.platform_device_model import PlatformDeviceModel
+from connectors.boundary_scan_ftdi import ConnectorBoundaryScanFtdi
+from extlibs.bsdl_reader import read_Bsdl
 
 from pyftdi.jtag import JtagEngine
 

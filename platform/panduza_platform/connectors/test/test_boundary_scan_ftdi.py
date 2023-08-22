@@ -1,7 +1,7 @@
 import asyncio
 
 import time
-from panduza_platform.connectors.boundary_scan_ftdi import ConnectorBoundaryScanFtdi
+from connectors.boundary_scan_ftdi import ConnectorBoundaryScanFtdi
 
 
 device_number_1 = 1
