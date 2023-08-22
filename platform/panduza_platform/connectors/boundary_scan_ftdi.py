@@ -2,8 +2,8 @@ import asyncio
 import concurrent.futures
 
 from .boundary_scan_base import ConnectorBoundaryScanBase
-from panduza_platform.extlibs.bsdl_reader import read_Bsdl
-from panduza_platform.log.driver import driver_logger
+from extlibs.bsdl_reader import read_Bsdl
+from log.driver import driver_logger
 
 from pyftdi.ftdi import Ftdi
 from pyftdi.jtag import JtagEngine
