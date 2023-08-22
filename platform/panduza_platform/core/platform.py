@@ -20,6 +20,10 @@ from .platform_errors import InitializationError
 from .platform_driver_factory import PlatformDriverFactory
 from .platform_device_factory import PlatformDeviceFactory
 
+
+STATUS_FILE_PATH="/etc/panduza/log/status.json"
+
+
 class Platform:
     """ Main class to manage the platform
     """
@@ -302,6 +306,10 @@ class Platform:
         Threads are started and worker are bring to life
         """
         try:
+            if os.path.isfile(STATUS_FILE_PATH):
+                os.remove(STATUS_FILE_PATH)
+
+
             self.__load_tree()
             
             
@@ -322,7 +330,7 @@ class Platform:
 
             # attach interface to client
 
-            # attach clients   to thread
+            # attach clients   os.remove(myfile)to thread
 
 
             for interface in self.interfaces:
@@ -373,6 +381,7 @@ class Platform:
 
         except InitializationError as e:
             self.log.critical(f"Error during platform initialization: {e}")
+            self.generate_early_status_report(str(e))
         except KeyboardInterrupt:
             self.log.warning("ctrl+c => user stop requested")
             self.__stop()
@@ -398,6 +407,21 @@ class Platform:
         # Generate status reports
         self.generate_status_reports()
 
+    # --
+
+    def generate_early_status_report(self, error_string):
+        """Generate a status report when something went wrong during initialization
+        """
+        status_obj = {}
+
+        status_obj["final_state"] = "initialization"
+        status_obj["error_string"] = error_string
+        status_obj["threads"] = []
+
+        # Write the status file
+        with open(STATUS_FILE_PATH, "w") as json_file:
+            json.dump(status_obj, json_file)
+
 
     # --
 
@@ -405,14 +429,20 @@ class Platform:
         """Generate a json report status and log it to the console
         """
 
+        status_obj = {}
+        status_obj["final_state"] = "running"
+
         # Gather the status of each thread
         thread_status = []
         for thr in self.threads:
             thread_status.append(thr.get_status())
 
+        # 
+        status_obj["threads"] = thread_status
+
         # Write the status file
-        with open("/etc/panduza/log/status.json", "w") as json_file:
-            json.dump(thread_status, json_file)
+        with open(STATUS_FILE_PATH, "w") as json_file:
+            json.dump(status_obj, json_file)
 
         # Print into the console
         report  = "\n"
