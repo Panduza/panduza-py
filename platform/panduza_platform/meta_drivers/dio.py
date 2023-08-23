@@ -2,6 +2,7 @@ import abc
 import json
 import time
 import inspect
+import asyncio
 from collections import ChainMap
 from core.platform_driver import PlatformDriver
 
@@ -32,20 +33,29 @@ class MetaDriverDio(PlatformDriver):
             "state" : self.__handle_cmds_set_state,
         }
 
+        self.__polling_cycle = 1
+
         # first update
         await self.__update_attribute_initial()
+
+        # trigger for polling task
+        self.trigger = False
 
         # Init Success
         await super()._PZA_DRV_loop_init(loop, tree)
 
     # ---
 
-    # def _PZA_DRV_loop_run(self, loop):
-    #     # polls
-    #     # self.__poll_att_direction()
-    #     # self.__poll_att_state()
-    #     # time.sleep(0.1)
-    #     pass
+    async def _PZA_DRV_loop_run(self, loop):
+        # polls
+        
+        # await self.__poll_att_state()
+        # await asyncio.sleep(5)
+        # await self.__poll_att_direction()
+        # await asyncio.sleep(5)
+
+        await self.__poll_trigger()
+        
 
     # ---
 
@@ -55,6 +65,10 @@ class MetaDriverDio(PlatformDriver):
         for att in self.__cmd_handlers:
             if att in cmds:
                 await self.__cmd_handlers[att](cmds[att])
+        
+        self.trigger = True
+        
+                
 
 
     # =============================================================================
@@ -224,36 +238,57 @@ class MetaDriverDio(PlatformDriver):
             }
         })
 
+    
+    async def __poll_trigger(self):
+        
+        if self.trigger:
+            
+            # v = await self._PZA_DRV_DIO_get_state_active()
+            # w = await self._PZA_DRV_DIO_get_state_activeLow()
+            # x = await self._PZA_DRV_DIO_get_direction_pull()
+            # y = await self._PZA_DRV_DIO_get_direction_value()
 
-    # def __poll_att_direction(self):
+            # await self._update_attribute("state", "active", v, 'always') 
+            # await self._update_attribute("state", "active_low", w, 'always') 
+            # await self._update_attribute("direction", "pull", x, 'always') 
+            # await self._update_attribute("direction", "value", y, 'always') 
+
+            await self.__update_attribute_initial()
+
+            self.trigger = False
+
+
+
+    # async def __poll_att_state(self):
+        
+    #     polling_cycle = float(self._get_field("state", "polling_cycle"))
+        
+    #     if polling_cycle < 0:
+    #         return
+    #     if (time.perf_counter() - self.__polling_cycle) > polling_cycle:
+    #         p = False
+    #         p = await self._update_attribute("state", "active_low", await self._PZA_DRV_DIO_get_state_activeLow(), 'always') or p
+    #         p = await self._update_attribute("state", "active", await self._PZA_DRV_DIO_get_state_active(), 'always') or p
+
+    #     self.__polling_cycle = time.perf_counter()
+           
+
+    
+    # async def __poll_att_direction(self):
 
     #     polling_cycle = float(self._get_field("direction", "polling_cycle"))
         
     #     if polling_cycle < 0:
     #         return
-    #     if (time.perf_counter() - self.polling_ref["direction"]) > polling_cycle:
+    #     if (time.perf_counter() - self.__polling_cycle) > polling_cycle:
     #         p = False
-    #         p = await self._update_attribute("direction", "pull", self._PZA_DRV_DIO_get_direction_pull(), False) or p
-    #         p = await self._update_attribute("direction", "value", self._PZA_DRV_DIO_get_direction_value(), False) or p
+    #         p = await self._update_attribute("direction", "pull", await self._PZA_DRV_DIO_get_direction_pull(), False) or p
+    #         p = await self._update_attribute("direction", "value", await self._PZA_DRV_DIO_get_direction_value(), False) or p
+
     #         if p:
-    #             self._push_attribute("direction")
-    #         self.polling_ref["direction"] = time.perf_counter()
+    #             await self._push_attribute("direction")
+    #         self.__polling_cycle = time.perf_counter()
+            
 
 
-    # def __poll_att_state(self):
-        
-    #     polling_cycle = float(self._get_field("state", "polling_cycle"))
-    #     value = bool(self._get_field("state", "active"))
-    #     if polling_cycle < 0:
-    #         return
-    #     if (time.perf_counter() - self.polling_ref["state"]) > polling_cycle:
-    #         p = False
-    #         p = await self._update_attribute("state", "active", self._PZA_DRV_DIO_get_state_active(), False) or p
-    #         p = await self._update_attribute("state", "active_low", self._PZA_DRV_DIO_get_state_activeLow(), False) or p
-    #         if p:
-    #             self._push_attribute("state")
-    #         self.polling_ref["state"] = time.perf_counter()
-
-
-
-
+    
