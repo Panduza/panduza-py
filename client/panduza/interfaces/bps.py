@@ -82,3 +82,7 @@ class Bps(Interface):
         if self.ensure:
             self.ensure_init()
 
+
+    def toggle(self):
+        pass
+

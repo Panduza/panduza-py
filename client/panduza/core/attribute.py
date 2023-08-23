@@ -62,6 +62,18 @@ class Attribute:
         self._update_event = threading.Event()
         self._update_event.clear()
 
+        self._event_listeners = []
+
+    # ---
+
+    def attach_event_listener(self, callback):
+        self._event_listeners.append(callback)
+
+    # ---
+
+    def detach_event_listener(self, callback):
+        self._event_listeners.remove(callback)
+
     # ---
 
     def set_interface(self, interface):
@@ -134,7 +146,11 @@ class Attribute:
                 self._field_data[field] = update
                 self._log.debug(f"{self._lhead}UPDATE < {field}={self._field_data[field]}")
                 # self._log.debug(f"{self._lhead}ALL FIELDS < {self._field_data}")
-                
+
+        # Notify listener
+        for callback in self._event_listeners:
+            callback(field_update)
+
         # Thread trigger
         self._update_event.set()
 
