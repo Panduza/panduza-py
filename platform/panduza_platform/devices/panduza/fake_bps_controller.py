@@ -1,12 +1,13 @@
-from core.platform_device_model import PlatformDeviceModel
+from core.platform_device import PlatformDevice
 
-class DevicePanduzaFakeBps(PlatformDeviceModel):
+class DevicePanduzaFakeBps(PlatformDevice):
 
     def _PZA_DEV_config(self):
         """
         """
         return {
-            "model": "Panduza.FakeBps",
+            "model": "FakeBps",
+            "manufacturer": "Panduza"
         }
 
     def _PZA_DEV_interfaces(self):

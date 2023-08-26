@@ -1,13 +1,14 @@
 
-from core.platform_device_model import PlatformDeviceModel
+from core.platform_device import PlatformDevice
 
-class DevicePanduzaFakeDioController(PlatformDeviceModel):
+class DevicePanduzaFakeDioController(PlatformDevice):
     
     def _PZA_DEV_config(self):
         """
         """
         return {
-            "model": "Panduza.FakeDioController",
+            "model": "FakeDioController",
+            "manufacturer": "Panduza"
         }
 
     def _PZA_DEV_interfaces(self):

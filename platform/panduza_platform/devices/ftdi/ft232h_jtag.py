@@ -1,5 +1,5 @@
 
-from core.platform_device_model import PlatformDeviceModel
+from core.platform_device import PlatformDevice
 from connectors.boundary_scan_ftdi import ConnectorBoundaryScanFtdi
 from extlibs.bsdl_reader import read_Bsdl
 
@@ -11,7 +11,7 @@ USBID_VENDOR="0403"
 USBID_MODEL="6014"
 USBID_SERIAL_SHORT="null"
 
-class DeviceFtdiFt232h_jtag(PlatformDeviceModel):
+class DeviceFtdiFt232h_jtag(PlatformDevice):
     """ FTDI
     """
 
@@ -19,7 +19,8 @@ class DeviceFtdiFt232h_jtag(PlatformDeviceModel):
         """
         """
         return {
-            "model": "Ftdi.Ft232h_jtag",
+            "model": "Ft232h_jtag",
+            "manufacturer": "Ftdi"
         }
 
     def _PZA_DEV_interfaces(self):

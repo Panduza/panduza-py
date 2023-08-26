@@ -523,11 +523,9 @@ class Platform:
             # device == class type for device
             device = self.device_factory.produce_device(device_cfg)
 
-            device_name = device_cfg["model"].replace(".", "_")
-
             interfaces = device._PZA_DEV_interfaces()
-            self.log.info(f"{device_name} => {interfaces}")
+            self.log.info(f"{device.get_name()} => {interfaces}")
             for interface_config in interfaces:
-                self.load_interface("default", device_name, interface_config)
+                self.load_interface("default", device.get_name(), interface_config)
 
 

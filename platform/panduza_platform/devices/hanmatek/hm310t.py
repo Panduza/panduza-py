@@ -1,11 +1,11 @@
 
-from core.platform_device_model import PlatformDeviceModel
+from core.platform_device import PlatformDevice
 
 USBID_VENDOR="1a86"
 USBID_MODEL="7523"
 TTY_BASE="/dev/ttyUSB"
 
-class DeviceHanmatekHm310t(PlatformDeviceModel):
+class DeviceHanmatekHm310t(PlatformDevice):
     """Power Supply From Hanmatek
     """
 
@@ -13,7 +13,8 @@ class DeviceHanmatekHm310t(PlatformDeviceModel):
         """
         """
         return {
-            "model": "Hanmatek.Hm310t",
+            "model": "Hm310t",
+            "manufacturer": "Hanmatek"
         }
 
     def _PZA_DEV_interfaces(self):

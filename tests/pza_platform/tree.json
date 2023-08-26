@@ -1,19 +1,19 @@
 {
     "devices": [
         {
-            "model": "Panduza.FakeBps",
+            "ref": "Panduza.FakeBps",
             "settings": {
                 "number_of_channel": 2
             }
         },
         {
-            "model": "Panduza.FakeDioController",
+            "ref": "Panduza.FakeDioController",
             "settings": {
                 "number_of_dio": 2
             }
         },
         {
-            "model": "Panduza.FakeRelayController",
+            "ref": "Panduza.FakeRelayController",
             "settings": {
                 "number_of_dio": 1
             }
