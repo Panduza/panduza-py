@@ -20,7 +20,7 @@ class DevicePanduzaFakeBps(PlatformDeviceModel):
             interfaces.append(
                 {
                     "name": f"channel_{chan}",
-                    "driver": "panduza.fake.bps"
+                    "driver": "panduza.fake.bpc"
                 }
             )
             interfaces.append(
@@ -28,7 +28,7 @@ class DevicePanduzaFakeBps(PlatformDeviceModel):
                     "name": f"channel_{chan}_am",
                     "driver": "panduza.fake.ammeter",
                     "settings": {
-                        "work_with_fake_bps": f"!//channel_{chan}"
+                        "work_with_fake_bpc": f"!//channel_{chan}"
                     }
                 }
             )

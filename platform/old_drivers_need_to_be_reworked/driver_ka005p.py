@@ -1,9 +1,9 @@
 import time
 #from hamcrest import empty
 import serial
-from panduza_platform import MetaDriverBps
+from panduza_platform import MetaDriverBpc
 
-class DriverKA005P(MetaDriverBps):
+class DriverKA005P(MetaDriverBpc):
     """ Driver to manage the HM7044 power supply
     """
 
@@ -22,7 +22,7 @@ class DriverKA005P(MetaDriverBps):
 
         return {
             "compatible": "ka3005p",
-            "info": { "type": "bps", "version": "1.0" },
+            "info": { "type": "bpc", "version": "1.0" },
         }
         
     ###########################################################################
@@ -51,10 +51,10 @@ class DriverKA005P(MetaDriverBps):
         self.__serial = serial.Serial(self.serial_port, 9600, timeout=1)
 
         # Register commands
-        self.bps_register_command("state", self.__set_state)
-        self.bps_register_command("volts", self.__set_volts)
-        self.bps_register_command("amps", self.__set_amps)
-        self.bps_register_command("settings", self.__set_settings)
+        self.bpc_register_command("state", self.__set_state)
+        self.bpc_register_command("volts", self.__set_volts)
+        self.bpc_register_command("amps", self.__set_amps)
+        self.bpc_register_command("settings", self.__set_settings)
 
         for key in self.tree_settings.copy():
             if key not in self.supported_settings:
@@ -95,7 +95,7 @@ class DriverKA005P(MetaDriverBps):
         elif self.state == "off":
             cmd = bytearray(b'OUT0')
         self.__serial.write(cmd)
-        self.bps_push_attribute("state", self.state)
+        self.bpc_push_attribute("state", self.state)
         logger.info(f"new state :" + str(payload))
 
     ###########################################################################
@@ -110,7 +110,7 @@ class DriverKA005P(MetaDriverBps):
         cmd = bytearray(b'VSET1:') + bytearray(str(req["volts"]), encoding='utf8')
         self.__serial.write(cmd)
         # Update state
-        self.bps_push_attribute("volts", self.api_attributes["volts"])
+        self.bpc_push_attribute("volts", self.api_attributes["volts"])
         logger.info(f"new volts :" + str(payload))
 
     ###########################################################################
@@ -125,7 +125,7 @@ class DriverKA005P(MetaDriverBps):
         cmd = bytearray(b'ISET1:') + bytearray(str(req["amps"]), encoding='utf8')
         self.__serial.write(cmd)
         # Update state
-        self.bps_push_attribute("amps", self.api_attributes["amps"])
+        self.bpc_push_attribute("amps", self.api_attributes["amps"])
         logger.info(f"new amps :" + str(payload))
         pass
 
@@ -143,7 +143,7 @@ class DriverKA005P(MetaDriverBps):
             self.__set_silent(req_settings["silent"])
         # Update state
         self.settings = req_settings
-        self.bps_push_attribute("settings", self.settings)
+        self.bpc_push_attribute("settings", self.settings)
         logger.info(f"new settings:" + str(payload))
 
     def __set_ovp(self, value):

@@ -1,5 +1,5 @@
 from .dio import Dio
-from .bps import Bps
+from .bpc import Bpc
 from .relay import Relay
 from .ammeter import Ammeter
 # from .serial_ import Serial

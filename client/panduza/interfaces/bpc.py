@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from ..core import Interface, Attribute, RoField, RwField
 
 @dataclass
-class Bps(Interface):
+class Bpc(Interface):
     """Interface to manage power supplies
     """
 

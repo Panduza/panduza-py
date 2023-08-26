@@ -13,7 +13,7 @@ class DriverFtdiSpiMaster(MetaDriverSpiMaster):
 
     # must match with tree.json content
     def _PZA_DRV_config(self):
-        # Extend the common bps config
+        # Extend the common bpc config
         return ChainMap(
             super()._PZA_DRV_config(),
             {

@@ -1,8 +1,8 @@
 import time
 import serial
-from panduza_platform import MetaDriverBps
+from panduza_platform import MetaDriverBpc
 
-class DriverHm7044(MetaDriverBps):
+class DriverHm7044(MetaDriverBpc):
     """ Driver to manage the HM7044 power supply
     """
 
@@ -13,8 +13,8 @@ class DriverHm7044(MetaDriverBps):
         """ FROM MetaDriver
         """
         return {
-            "compatible": "bps_hm7044",
-            "info": { "type": "bps", "version": "1.0" },
+            "compatible": "bpc_hm7044",
+            "info": { "type": "bpc", "version": "1.0" },
             "settings": {
                 "serial_port" : "Serial port on which the power supply is connected",
                 "channel" : "Channel number that must be driven by this interfaces [1,2,3,4]"

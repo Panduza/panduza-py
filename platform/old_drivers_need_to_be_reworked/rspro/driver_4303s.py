@@ -1,6 +1,6 @@
 import io
 from collections import ChainMap
-from meta_drivers.bps import MetaDriverBps
+from meta_drivers.bpc import MetaDriverBpc
 from connectors.serial_tty import ConnectorSerialTty
 
 from connectors.udev_tty import HuntUsbDevs
@@ -15,11 +15,11 @@ VOLTS_BOUNDS     = { "min": 0, "max": 30 }
 AMPS_BOUNDS      = { "min": 0, "max":  5 }
 
 
-class DriverIPS4303S(MetaDriverBps):
+class DriverIPS4303S(MetaDriverBpc):
     """Driver for the device IPS4303S from RS Pro.
 
     At this time only the channel 1 is supported.
-    Also note that the ProductID and VendorID returned by the BPS
+    Also note that the ProductID and VendorID returned by the BPC
     are the ones for a basic FT232RL chip.
     """
     
@@ -27,22 +27,22 @@ class DriverIPS4303S(MetaDriverBps):
     ###########################################################################
 
     def _PZA_DRV_config(self):
-        # Extend the common bps config
+        # Extend the common bpc config
         return ChainMap(super()._PZA_DRV_config(), {
-            "name": "Py_Bps_IPS4303S",
+            "name": "Py_Bpc_IPS4303S",
             "description": "Power Supply IPS4303S",
             "compatible": [
                 "ips4303s",
                 "rspro.ips4303s",
-                "bps.rspro.ips4303s",
-                "py.bps.rspro.ips4303s"
+                "bpc.rspro.ips4303s",
+                "py.bpc.rspro.ips4303s"
             ]
         })
 
     def __tgen(serial_short, name_suffix):
         return {
             "name": "IPS4303S:" + name_suffix,
-            "driver": "py.bps.rspro.ips4303s",
+            "driver": "py.bpc.rspro.ips4303s",
             "settings": {
                 "serial_short": serial_short
             }
@@ -91,13 +91,13 @@ class DriverIPS4303S(MetaDriverBps):
         self.amps = 0
 
         # Constants Fields settings
-        self._PZA_DRV_BPS_update_volts_min_max(VOLTS_BOUNDS["min"], VOLTS_BOUNDS["max"])
-        self._PZA_DRV_BPS_update_amps_min_max(AMPS_BOUNDS["min"], AMPS_BOUNDS["max"])
+        self._PZA_DRV_BPC_update_volts_min_max(VOLTS_BOUNDS["min"], VOLTS_BOUNDS["max"])
+        self._PZA_DRV_BPC_update_amps_min_max(AMPS_BOUNDS["min"], AMPS_BOUNDS["max"])
 
         # Misc
-        self._PZA_DRV_BPS_update_misc("model", "IPS4303S (RS Pro)")
+        self._PZA_DRV_BPC_update_misc("model", "IPS4303S (RS Pro)")
 
-        # Call meta class BPS ini
+        # Call meta class BPC ini
         super()._PZA_DRV_loop_init(tree)
 
 
@@ -115,25 +115,25 @@ class DriverIPS4303S(MetaDriverBps):
     ###########################################################################
     ###########################################################################
 
-    def _PZA_DRV_BPS_read_enable_value(self):
+    def _PZA_DRV_BPC_read_enable_value(self):
         return self.state
 
-    def _PZA_DRV_BPS_write_enable_value(self, v):
+    def _PZA_DRV_BPC_write_enable_value(self, v):
         self.state = v
         cmd = STATE_VALUE_ENUM[v]
         self.__write(f"OUT{int(cmd)}")
 
-    def _PZA_DRV_BPS_read_volts_goal(self):
+    def _PZA_DRV_BPC_read_volts_goal(self):
         return self.volts
 
-    def _PZA_DRV_BPS_write_volts_goal(self, v):
+    def _PZA_DRV_BPC_write_volts_goal(self, v):
         self.volts = v
         self.__write(f"VSET1:{v:.3f}")
 
-    def _PZA_DRV_BPS_read_amps_goal(self):
+    def _PZA_DRV_BPC_read_amps_goal(self):
         return self.amps
     
-    def _PZA_DRV_BPS_write_amps_goal(self, v):
+    def _PZA_DRV_BPC_write_amps_goal(self, v):
         self.amps = v
         self.__write(f"ISET1:{v:.3f}")
 

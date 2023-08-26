@@ -4,7 +4,7 @@ from ..core.client import Client
 from ..core.interface import Interface
 
 from .dio import Dio
-from .bps import Bps
+from .bpc import Bpc
 from .ammeter import Ammeter
 
 from .relay import Relay
@@ -19,7 +19,7 @@ def GenerateAllInterfacesFromAliases(connections):
     # 
     type_gen = {
         "dio": Dio,
-        "bps": Bps,
+        "bpc": Bpc,
         "ammeter": Ammeter,
         "relay": Relay,
         "voltmeter": Voltmeter
@@ -51,7 +51,7 @@ def GenerateAllInterfacesFromAliases(connections):
         assert t != "unknown", f"Error > {name} interface does not respond"
         assert t in type_gen, f"Unmanaged interface type {t} by panduza robotF plugin for {name}"
         typed_interfaces[name] = type_gen[t](interface=itf)
-        # typed_interfaces[name] = Bps(interface=itf)
+        # typed_interfaces[name] = Bpc(interface=itf)
 
 
     return typed_interfaces

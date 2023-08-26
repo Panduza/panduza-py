@@ -18,8 +18,8 @@ class TreeWriter:
                     "port": 1883,
                     "interfaces": [
                         {
-                            "name": "fake_bps",
-                            "driver": "py.bps.fake"
+                            "name": "fake_bpc",
+                            "driver": "py.bpc.fake"
                         }
                     ]
                 }

@@ -28,7 +28,7 @@ class DrvPanduzaFakeRelay(MetaDriverRelay):
             }
         }
 
-        # Call meta class BPS ini
+        # Call meta class BPC ini
         await super()._PZA_DRV_loop_init(loop, tree)
 
     # ---

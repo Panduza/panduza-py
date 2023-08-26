@@ -1,7 +1,7 @@
 import time
 from hamcrest import assert_that, has_key, instance_of
 from collections import ChainMap
-from meta_drivers.bps import MetaDriverDevice
+from meta_drivers.bpc import MetaDriverDevice
 from connectors.modbus_client_serial import ConnectorModbusClientSerial
 
 
@@ -11,11 +11,11 @@ class DrvHanmatekHm310tDevice(MetaDriverDevice):
     """
 
     # =============================================================================
-    # FROM MetaDriverBps
+    # FROM MetaDriverBpc
 
     # ---
 
-    def _PZA_DRV_BPS_config(self):
+    def _PZA_DRV_BPC_config(self):
         """
         """
         return {
@@ -51,6 +51,6 @@ class DrvHanmatekHm310tDevice(MetaDriverDevice):
             "modbus_slave_id": self.modbus_unit
         }
 
-        # Call meta class BPS ini
+        # Call meta class BPC ini
         super()._PZA_DRV_loop_init(tree)
 

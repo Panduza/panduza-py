@@ -6,7 +6,7 @@ from ..core.core import Core
 
 from .ammeter       import KeywordsAmmeter
 from .client        import KeywordsClient
-from .bps           import KeywordsBps
+from .bpc           import KeywordsBpc
 from .dio           import KeywordsDio
 from .relay         import KeywordsRelay
 from .voltmeter     import KeywordsVoltmeter
@@ -23,7 +23,7 @@ class Keywords(DynamicCore):
             KeywordsAmmeter(),
             KeywordsClient(),
             KeywordsDio(),
-            KeywordsBps(),
+            KeywordsBpc(),
             KeywordsRelay(),
             KeywordsVoltmeter(),
 

@@ -28,8 +28,8 @@ class DeviceHanmatekHm310t(PlatformDeviceModel):
             pass
         else:
             interfaces.append({
-                "name": f"bps",
-                "driver": "hanmatek.hm310t.bps",
+                "name": f"bpc",
+                "driver": "hanmatek.hm310t.bpc",
                 "settings": {
                     "usb_vendor": USBID_VENDOR,
                     "usb_model": USBID_MODEL,

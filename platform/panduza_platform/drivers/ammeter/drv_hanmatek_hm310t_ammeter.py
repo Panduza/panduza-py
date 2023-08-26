@@ -34,7 +34,7 @@ class DriverHM310tAmmeter(MetaDriverAmmeter):
         # 
         self.modbus_unit = 1
 
-        # Call meta class BPS ini
+        # Call meta class BPC ini
         await super()._PZA_DRV_loop_init(loop, tree)
 
 

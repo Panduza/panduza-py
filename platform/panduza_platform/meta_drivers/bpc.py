@@ -4,7 +4,7 @@ import asyncio
 from collections import ChainMap
 from core.platform_driver import PlatformDriver
 
-class MetaDriverBps(PlatformDriver):
+class MetaDriverBpc(PlatformDriver):
     """ Abstract Driver with helper class to manage power supply interface
     """
 
@@ -16,11 +16,11 @@ class MetaDriverBps(PlatformDriver):
         """
         base = {
             "info": {
-                "type": "bps",
+                "type": "bpc",
                 "version": "0.0"
             }
         }
-        return ChainMap(base, self._PZA_DRV_BPS_config())
+        return ChainMap(base, self._PZA_DRV_BPC_config())
 
     # =============================================================================
     # TO OVERRIDE IN DRIVER
@@ -28,63 +28,63 @@ class MetaDriverBps(PlatformDriver):
     # ---
 
     @abc.abstractmethod
-    def _PZA_DRV_BPS_config(self):
+    def _PZA_DRV_BPC_config(self):
         """Driver base configuration
         """
         pass
 
     # ---
 
-    async def _PZA_DRV_BPS_read_enable_value(self):
-        """Must get the state value on the BPS and return it
+    async def _PZA_DRV_BPC_read_enable_value(self):
+        """Must get the state value on the BPC and return it
         """
         raise NotImplementedError("Must be implemented !")
 
-    async def _PZA_DRV_BPS_write_enable_value(self, v):
-        """Must set *v* as the new state value on the BPS
+    async def _PZA_DRV_BPC_write_enable_value(self, v):
+        """Must set *v* as the new state value on the BPC
         """
         raise NotImplementedError("Must be implemented !")
 
     # ---
 
-    async def _PZA_DRV_BPS_read_volts_goal(self):
-        """Must get the volts goal value on the BPS and return it
+    async def _PZA_DRV_BPC_read_volts_goal(self):
+        """Must get the volts goal value on the BPC and return it
         """
         raise NotImplementedError("Must be implemented !")
 
-    async def _PZA_DRV_BPS_write_volts_goal(self, v):
-        """Must set *v* as the new volts goal value on the BPS
+    async def _PZA_DRV_BPC_write_volts_goal(self, v):
+        """Must set *v* as the new volts goal value on the BPC
         """
         raise NotImplementedError("Must be implemented !")
 
-    async def _PZA_DRV_BPS_volts_goal_min_max(self):
+    async def _PZA_DRV_BPC_volts_goal_min_max(self):
         """Must return the voltage goal range of the power supply
         """
         return {"min": 0, "max": 0 }
 
-    async def _PZA_DRV_BPS_read_volts_decimals(self):
+    async def _PZA_DRV_BPC_read_volts_decimals(self):
         """Must return the number of decimals supported for the voltage
         """
         raise NotImplementedError("Must be implemented !")
 
     # ---
 
-    async def _PZA_DRV_BPS_read_amps_goal(self):
-        """Must get the amps goal value on the BPS and return it
+    async def _PZA_DRV_BPC_read_amps_goal(self):
+        """Must get the amps goal value on the BPC and return it
         """
         raise NotImplementedError("Must be implemented !")
 
-    async def _PZA_DRV_BPS_write_amps_goal(self, v):
-        """Must set *v* as the new amps goal value on the BPS
+    async def _PZA_DRV_BPC_write_amps_goal(self, v):
+        """Must set *v* as the new amps goal value on the BPC
         """
         raise NotImplementedError("Must be implemented !")
 
-    async def _PZA_DRV_BPS_amps_goal_min_max(self):
+    async def _PZA_DRV_BPC_amps_goal_min_max(self):
         """Must return the amps range of the power supply
         """
         return {"min": 0, "max": 0 }
 
-    async def _PZA_DRV_BPS_read_amps_decimals(self):
+    async def _PZA_DRV_BPC_read_amps_decimals(self):
         """Must return the number of decimals supported for the amperage
         """
         raise NotImplementedError("Must be implemented !")
@@ -171,7 +171,7 @@ class MetaDriverBps(PlatformDriver):
             await asyncio.sleep(self.polling_ref["enable"])
             await self._update_attributes_from_dict({
                 "enable": {
-                    "value": await self._PZA_DRV_BPS_read_enable_value()
+                    "value": await self._PZA_DRV_BPC_read_enable_value()
                 }
             })
 
@@ -184,7 +184,7 @@ class MetaDriverBps(PlatformDriver):
             await asyncio.sleep(self.polling_ref["volts"])
             await self._update_attributes_from_dict({
                 "volts": {
-                    "goal": await self._PZA_DRV_BPS_read_volts_goal()
+                    "goal": await self._PZA_DRV_BPC_read_volts_goal()
                 }
             })
 
@@ -197,7 +197,7 @@ class MetaDriverBps(PlatformDriver):
             await asyncio.sleep(self.polling_ref["amps"])
             await self._update_attributes_from_dict({
                 "amps": {
-                    "goal": await self._PZA_DRV_BPS_read_amps_goal()
+                    "goal": await self._PZA_DRV_BPC_read_amps_goal()
                 }
             })
 
@@ -219,8 +219,8 @@ class MetaDriverBps(PlatformDriver):
         await self._prepare_update(update_obj, 
                             "enable", cmd_att,
                             "value", [bool]
-                            , self._PZA_DRV_BPS_write_enable_value
-                            , self._PZA_DRV_BPS_read_enable_value)
+                            , self._PZA_DRV_BPC_write_enable_value
+                            , self._PZA_DRV_BPC_read_enable_value)
         await self._prepare_update(update_obj, 
                             "enable", cmd_att,
                             "polling_cycle", [float, int]
@@ -241,8 +241,8 @@ class MetaDriverBps(PlatformDriver):
         await self._prepare_update(update_obj, 
                             "volts", cmd_att,
                             "goal", [float, int]
-                            , self._PZA_DRV_BPS_write_volts_goal
-                            , self._PZA_DRV_BPS_read_volts_goal)
+                            , self._PZA_DRV_BPC_write_volts_goal
+                            , self._PZA_DRV_BPC_read_volts_goal)
         
         await self._prepare_update(update_obj, 
                             "volts", cmd_att,
@@ -265,8 +265,8 @@ class MetaDriverBps(PlatformDriver):
         await self._prepare_update(update_obj, 
                             "amps", cmd_att,
                             "goal", [float, int]
-                            , self._PZA_DRV_BPS_write_amps_goal
-                            , self._PZA_DRV_BPS_read_amps_goal)
+                            , self._PZA_DRV_BPC_write_amps_goal
+                            , self._PZA_DRV_BPC_read_amps_goal)
         
         await self._prepare_update(update_obj, 
                             "amps", cmd_att,
@@ -283,7 +283,7 @@ class MetaDriverBps(PlatformDriver):
         """
         await self._update_attributes_from_dict({
             "enable": {
-                "value": await self._PZA_DRV_BPS_read_enable_value(),
+                "value": await self._PZA_DRV_BPC_read_enable_value(),
                 "polling_cycle": 1
             }
         })
@@ -293,13 +293,13 @@ class MetaDriverBps(PlatformDriver):
     async def __att_volts_full_update(self):
         """
         """
-        min_max = await self._PZA_DRV_BPS_volts_goal_min_max()
+        min_max = await self._PZA_DRV_BPC_volts_goal_min_max()
         await self._update_attributes_from_dict({
             "volts": {
                 "min": min_max.get("min", 0),
                 "max": min_max.get("max", 0),
-                "goal": await self._PZA_DRV_BPS_read_volts_goal(),
-                "decimals": await self._PZA_DRV_BPS_read_volts_decimals(),
+                "goal": await self._PZA_DRV_BPC_read_volts_goal(),
+                "decimals": await self._PZA_DRV_BPC_read_volts_decimals(),
                 "polling_cycle": 1
             }
         })
@@ -309,13 +309,13 @@ class MetaDriverBps(PlatformDriver):
     async def __att_amps_full_update(self):
         """
         """
-        min_max = await self._PZA_DRV_BPS_amps_goal_min_max()
+        min_max = await self._PZA_DRV_BPC_amps_goal_min_max()
         await self._update_attributes_from_dict({
             "amps": {
                 "min": min_max.get("min", 0),
                 "max": min_max.get("max", 0),
-                "goal": await self._PZA_DRV_BPS_read_amps_goal(),
-                "decimals": await self._PZA_DRV_BPS_read_amps_decimals(),
+                "goal": await self._PZA_DRV_BPC_read_amps_goal(),
+                "decimals": await self._PZA_DRV_BPC_read_amps_decimals(),
                 "polling_cycle": 1
             }
         })
