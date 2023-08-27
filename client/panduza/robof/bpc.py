@@ -51,40 +51,40 @@ class KeywordsBpc(object):
         assert_that(read_state, equal_to(expected_state_bool))
 
     ###########################################################################
-    # VOLTS
+    # VOLTAGE
     ###########################################################################
 
     @keyword
-    def set_power_supply_voltage_goal(self, bpc_alias, voltage, ensure=True):
-        """Set the power supply voltage goal
+    def set_power_supply_voltage_value(self, bpc_alias, voltage, ensure=True):
+        """Set the power supply voltage value
         """
         pza = BuiltIn().get_variable_value("${__pza__}")
-        pza[bpc_alias].volts.goal.set(float(voltage), ensure)
+        pza[bpc_alias].voltage.value.set(float(voltage), ensure)
 
     @keyword
     def set_power_supply_voltage_polling_cycle(self, bpc_alias:str, cycle:float, ensure=True):
-        """Set the power supply voltage goal
+        """Set the power supply voltage value
         """
         pza = BuiltIn().get_variable_value("${__pza__}")
-        pza[bpc_alias].volts.polling_cycle.set(float(cycle), ensure)
+        pza[bpc_alias].voltage.polling_cycle.set(float(cycle), ensure)
 
     ###########################################################################
-    # AMPS
+    # CURRENT
     ###########################################################################
 
     @keyword
-    def set_power_supply_current_goal(self, bpc_alias, current, ensure=True):
-        """Set the power supply amps goal
+    def set_power_supply_current_value(self, bpc_alias, current, ensure=True):
+        """Set the power supply current value
         """
         pza = BuiltIn().get_variable_value("${__pza__}")
-        pza[bpc_alias].amps.goal.set(float(current), ensure)
+        pza[bpc_alias].current.value.set(float(current), ensure)
 
     @keyword
     def set_power_supply_current_polling_cycle(self, bpc_alias:str, cycle:float, ensure=True):
-        """Set the power supply voltage goal
+        """Set the power supply voltage value
         """
         pza = BuiltIn().get_variable_value("${__pza__}")
-        pza[bpc_alias].amps.polling_cycle.set(float(cycle), ensure)
+        pza[bpc_alias].current.polling_cycle.set(float(cycle), ensure)
 
     ###########################################################################
     # SETTINGS
@@ -140,13 +140,13 @@ class KeywordsBpc(object):
 
         Warning this test 
         """
-        # Test voltage goal
-        BuiltIn().run_keyword("Set Power Supply Voltage Goal", bpc_alias, 10)
-        BuiltIn().run_keyword("Set Power Supply Voltage Goal", bpc_alias, 3.3)
+        # Test voltage value
+        BuiltIn().run_keyword("Set Power Supply Voltage value", bpc_alias, 10)
+        BuiltIn().run_keyword("Set Power Supply Voltage value", bpc_alias, 3.3)
 
         # Test current limit
-        BuiltIn().run_keyword("Set Power Supply Current Goal", bpc_alias, 2)
-        BuiltIn().run_keyword("Set Power Supply Current Goal", bpc_alias, 0.1)
+        BuiltIn().run_keyword("Set Power Supply Current value", bpc_alias, 2)
+        BuiltIn().run_keyword("Set Power Supply Current value", bpc_alias, 0.1)
 
         # Try to turn on and off
         BuiltIn().run_keyword("Turn On Power Supply", bpc_alias)

@@ -113,7 +113,7 @@ class MetaDriverAmpermt(MetaDriver):
         if "polling_cycle" in cmd_att:
             v = cmd_att["polling_cycle"]
             if not isinstance(v, int) and not isinstance(v, float):
-                raise Exception(f"Invalid type for amps.polling_cycle {type(v)}")
+                raise Exception(f"Invalid type for current.polling_cycle {type(v)}")
             if v < 0:
                 v = -1
             self._update_attribute("measure", "polling_cycle", v, push='always')

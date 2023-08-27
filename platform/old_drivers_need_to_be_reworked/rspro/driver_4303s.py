@@ -11,8 +11,8 @@ IPS4303S_SERIAL_BAUDRATE=9600 # User manual indicates bullshit
 IPS4303S_TTY_BASE="/dev/ttyUSB"
 
 STATE_VALUE_ENUM = { "on": True, "off": False }
-VOLTS_BOUNDS     = { "min": 0, "max": 30 }
-AMPS_BOUNDS      = { "min": 0, "max":  5 }
+VOLTAGE_BOUNDS     = { "min": 0, "max": 30 }
+CURRENT_BOUNDS      = { "min": 0, "max":  5 }
 
 
 class DriverIPS4303S(MetaDriverBpc):
@@ -87,12 +87,12 @@ class DriverIPS4303S(MetaDriverBpc):
 
         # TODO :Bad pratice with loopback variable instead of reading the value back
         self.state = "off"
-        self.volts = 0
-        self.amps = 0
+        self.voltage = 0
+        self.current = 0
 
         # Constants Fields settings
-        self._PZA_DRV_BPC_update_volts_min_max(VOLTS_BOUNDS["min"], VOLTS_BOUNDS["max"])
-        self._PZA_DRV_BPC_update_amps_min_max(AMPS_BOUNDS["min"], AMPS_BOUNDS["max"])
+        self._PZA_DRV_BPC_update_voltage_min_max(VOLTAGE_BOUNDS["min"], VOLTAGE_BOUNDS["max"])
+        self._PZA_DRV_BPC_update_current_min_max(CURRENT_BOUNDS["min"], CURRENT_BOUNDS["max"])
 
         # Misc
         self._PZA_DRV_BPC_update_misc("model", "IPS4303S (RS Pro)")
@@ -123,18 +123,18 @@ class DriverIPS4303S(MetaDriverBpc):
         cmd = STATE_VALUE_ENUM[v]
         self.__write(f"OUT{int(cmd)}")
 
-    def _PZA_DRV_BPC_read_volts_goal(self):
-        return self.volts
+    def _PZA_DRV_BPC_read_voltage_value(self):
+        return self.voltage
 
-    def _PZA_DRV_BPC_write_volts_goal(self, v):
-        self.volts = v
+    def _PZA_DRV_BPC_write_voltage_value(self, v):
+        self.voltage = v
         self.__write(f"VSET1:{v:.3f}")
 
-    def _PZA_DRV_BPC_read_amps_goal(self):
-        return self.amps
+    def _PZA_DRV_BPC_read_current_value(self):
+        return self.current
     
-    def _PZA_DRV_BPC_write_amps_goal(self, v):
-        self.amps = v
+    def _PZA_DRV_BPC_write_current_value(self, v):
+        self.current = v
         self.__write(f"ISET1:{v:.3f}")
 
     ###########################################################################

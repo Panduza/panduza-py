@@ -33,16 +33,16 @@ class DriverHm7044(MetaDriverBpc):
 
         #
         self.enable=False
-        self.volts=0
-        self.amps=0
+        self.voltage=0
+        self.current=0
 
         # 
         # self.__serial = serial.Serial(self.serial_port, 9600, timeout=1)
 
         # Register commands
         self.register_command("enable/set", self.__set_enable)
-        self.register_command("volts/set", self.__set_volts)
-        self.register_command("amps/set", self.__set_amps)
+        self.register_command("voltage/set", self.__set_voltage)
+        self.register_command("current/set", self.__set_current)
 
     ###########################################################################
     ###########################################################################
@@ -95,13 +95,13 @@ class DriverHm7044(MetaDriverBpc):
     ###########################################################################
     ###########################################################################
 
-    def __set_volts(self, payload):
+    def __set_voltage(self, payload):
         """
         """
         # Parse request
         req = self.payload_to_dict(payload)
-        req_volts = req["volts"]
-        self.volts=req_volts
+        req_voltage = req["voltage"]
+        self.voltage=req_voltage
 
         try:
                         
@@ -110,10 +110,10 @@ class DriverHm7044(MetaDriverBpc):
             # ser.write(message_on)
 
             # Update mqtt
-            self.push_power_supply_volts(self.volts)
+            self.push_power_supply_voltage(self.voltage)
 
             # log
-            logger.info(f"new volts : {self.volts}")
+            logger.info(f"new voltage : {self.voltage}")
 
         except IOError as e:
             # mogger.error("Unable to set value %s to GPIO %s (%s) | %s", str(val), self.id, path, repr(e))
@@ -122,13 +122,13 @@ class DriverHm7044(MetaDriverBpc):
     ###########################################################################
     ###########################################################################
 
-    def __set_amps(self, payload):
+    def __set_current(self, payload):
         """
         """
         # Parse request
         req = self.payload_to_dict(payload)
-        req_amps = req["amps"]
-        self.amps=req_amps
+        req_current = req["current"]
+        self.current=req_current
 
         try:
 
@@ -137,10 +137,10 @@ class DriverHm7044(MetaDriverBpc):
             # ser.write(message_on)
 
             # Update mqtt
-            self.push_power_supply_amps(self.amps)
+            self.push_power_supply_current(self.current)
 
             # log
-            logger.info(f"new amps : {self.amps}")
+            logger.info(f"new current : {self.current}")
 
         except IOError as e:
             # mogger.error("Unable to set value %s to GPIO %s (%s) | %s", str(val), self.id, path, repr(e))

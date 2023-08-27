@@ -29,13 +29,13 @@ class Bpc(Interface):
             RwField( name = "value" )
         )
 
-        # === VOLTS ===
+        # === VOLTAGE ===
         self.add_attribute(
-            Attribute( name = "volts" )
+            Attribute( name = "voltage" )
         ).add_field(
             RoField( name = "real" )
         ).add_field(
-            RwField( name = "goal" )
+            RwField( name = "value" )
         ).add_field(
             RoField( name = "min" )
         ).add_field(
@@ -46,13 +46,13 @@ class Bpc(Interface):
             RwField( name = "polling_cycle" )
         )
 
-        # === AMPS ===
+        # === CURRENT ===
         self.add_attribute(
-            Attribute( name = "amps" )
+            Attribute( name = "current" )
         ).add_field(
             RoField( name = "real" )
         ).add_field(
-            RwField( name = "goal" )
+            RwField( name = "value" )
         ).add_field(
             RoField( name = "min" )
         ).add_field(

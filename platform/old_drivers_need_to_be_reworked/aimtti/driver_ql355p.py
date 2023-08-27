@@ -11,8 +11,8 @@ QL355P_SERIAL_BAUDRATE=19200
 QL355P_TTY_BASE="/dev/ttyUSB"
 
 STATE_VALUE_ENUM = { True: 1, False: 0 }
-VOLTS_BOUNDS     = { "min": 0, "max": 30 }
-AMPS_BOUNDS      = { "min": 0, "max":  5 }
+VOLTAGE_BOUNDS     = { "min": 0, "max": 30 }
+CURRENT_BOUNDS      = { "min": 0, "max":  5 }
 
 
 class DriverQL355P(MetaDriverBpc):
@@ -83,12 +83,12 @@ class DriverQL355P(MetaDriverBpc):
 
         # TODO :Bad pratice with loopback variable instead of reading the value back
         self.state = "off"
-        self.volts = 0
-        self.amps = 0
+        self.voltage = 0
+        self.current = 0
 
         # Constants Fields settings
-        self._PZA_DRV_BPC_update_volts_min_max(VOLTS_BOUNDS["min"], VOLTS_BOUNDS["max"])
-        self._PZA_DRV_BPC_update_amps_min_max(AMPS_BOUNDS["min"], AMPS_BOUNDS["max"])
+        self._PZA_DRV_BPC_update_voltage_min_max(VOLTAGE_BOUNDS["min"], VOLTAGE_BOUNDS["max"])
+        self._PZA_DRV_BPC_update_current_min_max(CURRENT_BOUNDS["min"], CURRENT_BOUNDS["max"])
 
         # Misc
         self._PZA_DRV_BPC_update_misc("model", "QL355P (AIM-TTI)")
@@ -123,55 +123,55 @@ class DriverQL355P(MetaDriverBpc):
         cmd = STATE_VALUE_ENUM[v]
         self.__write(f"OP1 {int(cmd)}")
 
-    # VOLTS #
+    # VOLTAGE #
 
-    def _PZA_DRV_BPC_read_volts_goal(self):
-        return self.volts
+    def _PZA_DRV_BPC_read_voltage_value(self):
+        return self.voltage
 
     # ---
 
-    def _PZA_DRV_BPC_read_volts_real(self):
+    def _PZA_DRV_BPC_read_voltage_real(self):
         return 0
     
     # ---
 
-    def _PZA_DRV_BPC_write_volts_goal(self, v):
-        self.volts = v
+    def _PZA_DRV_BPC_write_voltage_value(self, v):
+        self.voltage = v
         self.__write(f"V1 {v:.3f}")
 
     # ---
 
-    def _PZA_DRV_BPC_volts_goal_min_max(self):
-        return VOLTS_BOUNDS
+    def _PZA_DRV_BPC_voltage_value_min_max(self):
+        return VOLTAGE_BOUNDS
     # ---
 
-    def _PZA_DRV_BPC_read_volts_decimals(self):
+    def _PZA_DRV_BPC_read_voltage_decimals(self):
         return 2
 
-    # AMPS #
+    # CURRENT #
     
-    def _PZA_DRV_BPC_read_amps_goal(self):
-        return self.amps
+    def _PZA_DRV_BPC_read_current_value(self):
+        return self.current
 
     # ---
 
-    def _PZA_DRV_BPC_write_amps_goal(self, v):
-        self.amps = v
+    def _PZA_DRV_BPC_write_current_value(self, v):
+        self.current = v
         self.__write(f"I1 {v:.3f}")
 
     # ---
     
-    def _PZA_DRV_BPC_amps_goal_min_max(self):
-        return AMPS_BOUNDS
+    def _PZA_DRV_BPC_current_value_min_max(self):
+        return CURRENT_BOUNDS
     
     # ---
 
-    def _PZA_DRV_BPC_read_amps_real(self):
+    def _PZA_DRV_BPC_read_current_real(self):
         return 0
 
     # ---
 
-    def _PZA_DRV_BPC_read_amps_decimals(self):
+    def _PZA_DRV_BPC_read_current_decimals(self):
         return 3
     
     # SETTINGS #

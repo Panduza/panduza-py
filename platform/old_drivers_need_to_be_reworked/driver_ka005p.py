@@ -34,11 +34,11 @@ class DriverKA005P(MetaDriverBpc):
         # Initialize variables
         self.supported_settings = self.api_settings.copy()
 
-        self.api_attributes["volts"]["max"] = 30
-        self.api_attributes["volts"]["scale"] = 0.01
+        self.api_attributes["voltage"]["max"] = 30
+        self.api_attributes["voltage"]["scale"] = 0.01
 
-        self.api_attributes["amps"]["max"] = 5
-        self.api_attributes["amps"]["scale"] = 0.001
+        self.api_attributes["current"]["max"] = 5
+        self.api_attributes["current"]["scale"] = 0.001
         
         self.api_attributes["model_name"] = "KA3005P"
 
@@ -52,8 +52,8 @@ class DriverKA005P(MetaDriverBpc):
 
         # Register commands
         self.bpc_register_command("state", self.__set_state)
-        self.bpc_register_command("volts", self.__set_volts)
-        self.bpc_register_command("amps", self.__set_amps)
+        self.bpc_register_command("voltage", self.__set_voltage)
+        self.bpc_register_command("current", self.__set_current)
         self.bpc_register_command("settings", self.__set_settings)
 
         for key in self.tree_settings.copy():
@@ -101,32 +101,32 @@ class DriverKA005P(MetaDriverBpc):
     ###########################################################################
     ###########################################################################
 
-    def __set_volts(self, payload):
+    def __set_voltage(self, payload):
         """
         """
         req = self.payload_to_dict(payload)
-        self.api_attributes["volts"]["value"] = req["volts"]
-        print(req["volts"])
-        cmd = bytearray(b'VSET1:') + bytearray(str(req["volts"]), encoding='utf8')
+        self.api_attributes["voltage"]["value"] = req["voltage"]
+        print(req["voltage"])
+        cmd = bytearray(b'VSET1:') + bytearray(str(req["voltage"]), encoding='utf8')
         self.__serial.write(cmd)
         # Update state
-        self.bpc_push_attribute("volts", self.api_attributes["volts"])
-        logger.info(f"new volts :" + str(payload))
+        self.bpc_push_attribute("voltage", self.api_attributes["voltage"])
+        logger.info(f"new voltage :" + str(payload))
 
     ###########################################################################
     ###########################################################################
 
-    def __set_amps(self, payload):
+    def __set_current(self, payload):
         """
         """
         req = self.payload_to_dict(payload)
-        self.api_attributes["amps"]["value"] = req["amps"]
-        print(req["amps"])
-        cmd = bytearray(b'ISET1:') + bytearray(str(req["amps"]), encoding='utf8')
+        self.api_attributes["current"]["value"] = req["current"]
+        print(req["current"])
+        cmd = bytearray(b'ISET1:') + bytearray(str(req["current"]), encoding='utf8')
         self.__serial.write(cmd)
         # Update state
-        self.bpc_push_attribute("amps", self.api_attributes["amps"])
-        logger.info(f"new amps :" + str(payload))
+        self.bpc_push_attribute("current", self.api_attributes["current"])
+        logger.info(f"new current :" + str(payload))
         pass
 
     def __set_settings(self, payload):

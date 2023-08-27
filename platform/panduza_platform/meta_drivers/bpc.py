@@ -47,44 +47,44 @@ class MetaDriverBpc(PlatformDriver):
 
     # ---
 
-    async def _PZA_DRV_BPC_read_volts_goal(self):
-        """Must get the volts goal value on the BPC and return it
+    async def _PZA_DRV_BPC_read_voltage_value(self):
+        """Must get the voltage value value on the BPC and return it
         """
         raise NotImplementedError("Must be implemented !")
 
-    async def _PZA_DRV_BPC_write_volts_goal(self, v):
-        """Must set *v* as the new volts goal value on the BPC
+    async def _PZA_DRV_BPC_write_voltage_value(self, v):
+        """Must set *v* as the new voltage value value on the BPC
         """
         raise NotImplementedError("Must be implemented !")
 
-    async def _PZA_DRV_BPC_volts_goal_min_max(self):
-        """Must return the voltage goal range of the power supply
+    async def _PZA_DRV_BPC_voltage_value_min_max(self):
+        """Must return the voltage value range of the power supply
         """
         return {"min": 0, "max": 0 }
 
-    async def _PZA_DRV_BPC_read_volts_decimals(self):
+    async def _PZA_DRV_BPC_read_voltage_decimals(self):
         """Must return the number of decimals supported for the voltage
         """
         raise NotImplementedError("Must be implemented !")
 
     # ---
 
-    async def _PZA_DRV_BPC_read_amps_goal(self):
-        """Must get the amps goal value on the BPC and return it
+    async def _PZA_DRV_BPC_read_current_value(self):
+        """Must get the current value value on the BPC and return it
         """
         raise NotImplementedError("Must be implemented !")
 
-    async def _PZA_DRV_BPC_write_amps_goal(self, v):
-        """Must set *v* as the new amps goal value on the BPC
+    async def _PZA_DRV_BPC_write_current_value(self, v):
+        """Must set *v* as the new current value value on the BPC
         """
         raise NotImplementedError("Must be implemented !")
 
-    async def _PZA_DRV_BPC_amps_goal_min_max(self):
-        """Must return the amps range of the power supply
+    async def _PZA_DRV_BPC_current_value_min_max(self):
+        """Must return the current range of the power supply
         """
         return {"min": 0, "max": 0 }
 
-    async def _PZA_DRV_BPC_read_amps_decimals(self):
+    async def _PZA_DRV_BPC_read_current_decimals(self):
         """Must return the number of decimals supported for the amperage
         """
         raise NotImplementedError("Must be implemented !")
@@ -103,8 +103,8 @@ class MetaDriverBpc(PlatformDriver):
         # Set command handlers
         self.__cmd_handlers = {
             "enable": self.__handle_cmds_set_enable,
-            "volts": self.__handle_cmds_set_volts,
-            "amps": self.__handle_cmds_set_amps,
+            "voltage": self.__handle_cmds_set_voltage,
+            "current": self.__handle_cmds_set_current,
             # "settings": self.__handle_cmds_set_settings,
         }
 
@@ -115,14 +115,14 @@ class MetaDriverBpc(PlatformDriver):
         start_time = time.perf_counter()
         self.polling_ref = {
             "enable": start_time,
-            "volts" : start_time,
-            "amps"  : start_time,
+            "voltage" : start_time,
+            "current"  : start_time,
         }
         
         # Start polling task
         self.__task_polling_att_enable = loop.create_task(self.__polling_task_att_enable())
-        self.__task_polling_att_volts = loop.create_task(self.__polling_task_att_volts())
-        self.__task_polling_att_amps = loop.create_task(self.__polling_task_att_amps())
+        self.__task_polling_att_voltage = loop.create_task(self.__polling_task_att_voltage())
+        self.__task_polling_att_current = loop.create_task(self.__polling_task_att_current())
 
         # Init success, the driver can pass into the run mode
         self._PZA_DRV_init_success()
@@ -150,17 +150,17 @@ class MetaDriverBpc(PlatformDriver):
 
     # --
     
-    def __set_poll_cycle_volts(self, v):
-        self.polling_ref["volts"] = v
-    def __get_poll_cycle_volts(self):
-        return self.polling_ref["volts"]
+    def __set_poll_cycle_voltage(self, v):
+        self.polling_ref["voltage"] = v
+    def __get_poll_cycle_voltage(self):
+        return self.polling_ref["voltage"]
     
     # --
     
-    def __set_poll_cycle_amps(self, v):
-        self.polling_ref["amps"] = v
-    def __get_poll_cycle_amps(self):
-        return self.polling_ref["amps"]
+    def __set_poll_cycle_current(self, v):
+        self.polling_ref["current"] = v
+    def __get_poll_cycle_current(self):
+        return self.polling_ref["current"]
     
     # ---
 
@@ -177,27 +177,27 @@ class MetaDriverBpc(PlatformDriver):
 
     # ---
 
-    async def __polling_task_att_volts(self):
+    async def __polling_task_att_voltage(self):
         """Task to poll the value
         """
         while self.alive:
-            await asyncio.sleep(self.polling_ref["volts"])
+            await asyncio.sleep(self.polling_ref["voltage"])
             await self._update_attributes_from_dict({
-                "volts": {
-                    "goal": await self._PZA_DRV_BPC_read_volts_goal()
+                "voltage": {
+                    "value": await self._PZA_DRV_BPC_read_voltage_value()
                 }
             })
 
     # ---
 
-    async def __polling_task_att_amps(self):
+    async def __polling_task_att_current(self):
         """Task to poll the value
         """
         while self.alive:
-            await asyncio.sleep(self.polling_ref["amps"])
+            await asyncio.sleep(self.polling_ref["current"])
             await self._update_attributes_from_dict({
-                "amps": {
-                    "goal": await self._PZA_DRV_BPC_read_amps_goal()
+                "current": {
+                    "value": await self._PZA_DRV_BPC_read_current_value()
                 }
             })
 
@@ -207,8 +207,8 @@ class MetaDriverBpc(PlatformDriver):
         """
         """
         await self.__att_enable_full_update()
-        await self.__att_volts_full_update()
-        await self.__att_amps_full_update()
+        await self.__att_voltage_full_update()
+        await self.__att_current_full_update()
 
     # ---
 
@@ -230,49 +230,49 @@ class MetaDriverBpc(PlatformDriver):
 
     # ---
 
-    async def __handle_cmds_set_volts(self, cmd_att):
+    async def __handle_cmds_set_voltage(self, cmd_att):
         """Manage voltage commands
         """
         update_obj = {}
         
         # TODO
-        # if self._get_field("volts", "min") <= v <= self._get_field("volts", "max"):
+        # if self._get_field("voltage", "min") <= v <= self._get_field("voltage", "max"):
                 
         await self._prepare_update(update_obj, 
-                            "volts", cmd_att,
-                            "goal", [float, int]
-                            , self._PZA_DRV_BPC_write_volts_goal
-                            , self._PZA_DRV_BPC_read_volts_goal)
+                            "voltage", cmd_att,
+                            "value", [float, int]
+                            , self._PZA_DRV_BPC_write_voltage_value
+                            , self._PZA_DRV_BPC_read_voltage_value)
         
         await self._prepare_update(update_obj, 
-                            "volts", cmd_att,
+                            "voltage", cmd_att,
                             "polling_cycle", [float, int]
-                            , self.__set_poll_cycle_volts
-                            , self.__get_poll_cycle_volts)
+                            , self.__set_poll_cycle_voltage
+                            , self.__get_poll_cycle_voltage)
         
         await self._update_attributes_from_dict(update_obj)
 
     # ---
 
-    async def __handle_cmds_set_amps(self, cmd_att):
+    async def __handle_cmds_set_current(self, cmd_att):
         """Manage ampere commands
         """
         update_obj = {}
         
         # TODO
-        # if self._get_field("amps", "min") <= v <= self._get_field("amps", "max"):
+        # if self._get_field("current", "min") <= v <= self._get_field("current", "max"):
                 
         await self._prepare_update(update_obj, 
-                            "amps", cmd_att,
-                            "goal", [float, int]
-                            , self._PZA_DRV_BPC_write_amps_goal
-                            , self._PZA_DRV_BPC_read_amps_goal)
+                            "current", cmd_att,
+                            "value", [float, int]
+                            , self._PZA_DRV_BPC_write_current_value
+                            , self._PZA_DRV_BPC_read_current_value)
         
         await self._prepare_update(update_obj, 
-                            "amps", cmd_att,
+                            "current", cmd_att,
                             "polling_cycle", [float, int]
-                            , self.__set_poll_cycle_amps
-                            , self.__get_poll_cycle_amps)
+                            , self.__set_poll_cycle_current
+                            , self.__get_poll_cycle_current)
         
         await self._update_attributes_from_dict(update_obj)
 
@@ -290,32 +290,32 @@ class MetaDriverBpc(PlatformDriver):
 
     # ---
 
-    async def __att_volts_full_update(self):
+    async def __att_voltage_full_update(self):
         """
         """
-        min_max = await self._PZA_DRV_BPC_volts_goal_min_max()
+        min_max = await self._PZA_DRV_BPC_voltage_value_min_max()
         await self._update_attributes_from_dict({
-            "volts": {
+            "voltage": {
                 "min": min_max.get("min", 0),
                 "max": min_max.get("max", 0),
-                "goal": await self._PZA_DRV_BPC_read_volts_goal(),
-                "decimals": await self._PZA_DRV_BPC_read_volts_decimals(),
+                "value": await self._PZA_DRV_BPC_read_voltage_value(),
+                "decimals": await self._PZA_DRV_BPC_read_voltage_decimals(),
                 "polling_cycle": 1
             }
         })
 
     # ---
 
-    async def __att_amps_full_update(self):
+    async def __att_current_full_update(self):
         """
         """
-        min_max = await self._PZA_DRV_BPC_amps_goal_min_max()
+        min_max = await self._PZA_DRV_BPC_current_value_min_max()
         await self._update_attributes_from_dict({
-            "amps": {
+            "current": {
                 "min": min_max.get("min", 0),
                 "max": min_max.get("max", 0),
-                "goal": await self._PZA_DRV_BPC_read_amps_goal(),
-                "decimals": await self._PZA_DRV_BPC_read_amps_decimals(),
+                "value": await self._PZA_DRV_BPC_read_current_value(),
+                "decimals": await self._PZA_DRV_BPC_read_current_decimals(),
                 "polling_cycle": 1
             }
         })

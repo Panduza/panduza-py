@@ -64,7 +64,7 @@ class KeywordsDio(object):
     def test_basic_access_of_dio_interface(self, dio_alias):
         """Just test basic commands of a DIO interface
         """
-        # Test voltage goal
+        # Test voltage value
         BuiltIn().run_keyword("Set Dio Direction", dio_alias, "in")
         BuiltIn().run_keyword("Set Dio Direction", dio_alias, "out")
 

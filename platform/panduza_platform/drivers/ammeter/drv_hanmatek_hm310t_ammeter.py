@@ -44,7 +44,7 @@ class DriverHM310tAmmeter(MetaDriverAmmeter):
     async def _PZA_DRV_AMMETER_read_measure_value(self):
         addr = 0x0011
         regs = await self.modbus.read_holding_registers(addr, 1, self.modbus_unit)
-        # self.log.debug(f"read real amps addr={hex(addr)} regs={regs}")
+        # self.log.debug(f"read real current addr={hex(addr)} regs={regs}")
         float_value = float(regs[0]) / 1000.0
         return float_value
 

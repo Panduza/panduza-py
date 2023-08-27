@@ -3,8 +3,8 @@ from meta_drivers.bpc import MetaDriverBpc
 from connectors.modbus_client_serial import ConnectorModbusClientSerial
 
 STATE_VALUE_ENUM = { True : 1, False: 0  }
-VOLTS_BOUNDS     = { "min": 0, "max": 30 }
-AMPS_BOUNDS      = { "min": 0, "max": 10 }
+VOLTAGE_BOUNDS     = { "min": 0, "max": 30 }
+CURRENT_BOUNDS      = { "min": 0, "max": 10 }
 
 def int_to_state_string(v_int):
     key_list = list(STATE_VALUE_ENUM.keys())
@@ -74,57 +74,57 @@ class DrvHanmatekHm310tBpc(MetaDriverBpc):
         self.log.info(f"write state addr={hex(addr)} value={int16_value}")
         await self.modbus.write_register(addr, int16_value, self.modbus_unit)
 
-    # VOLTS #
+    # VOLTAGE #
 
-    async def _PZA_DRV_BPC_read_volts_goal(self):
+    async def _PZA_DRV_BPC_read_voltage_value(self):
         addr = 0x0030
         regs = await self.modbus.read_holding_registers(addr, 1, self.modbus_unit)
-        self.log.debug(f"read goal volts addr={hex(addr)} regs={regs}")
+        self.log.debug(f"read value voltage addr={hex(addr)} regs={regs}")
         float_value = float(regs[0]) / 100.0
         return float_value
 
     # ---
 
-    async def _PZA_DRV_BPC_write_volts_goal(self, v):
+    async def _PZA_DRV_BPC_write_voltage_value(self, v):
         addr = 0x0030
         int16_value = int(v * 100)
-        self.log.info(f"write goal volts addr={hex(addr)} valuex100={int16_value}")
+        self.log.info(f"write value voltage addr={hex(addr)} valuex100={int16_value}")
         await self.modbus.write_register(addr, int16_value, self.modbus_unit)
 
     # ---
 
-    async def _PZA_DRV_BPC_volts_goal_min_max(self):
-        return VOLTS_BOUNDS
+    async def _PZA_DRV_BPC_voltage_value_min_max(self):
+        return VOLTAGE_BOUNDS
 
     # ---
 
-    async def _PZA_DRV_BPC_read_volts_decimals(self):
+    async def _PZA_DRV_BPC_read_voltage_decimals(self):
         return 2
 
-    # AMPS #
+    # CURRENT #
 
-    async def _PZA_DRV_BPC_read_amps_goal(self):
+    async def _PZA_DRV_BPC_read_current_value(self):
         addr = 0x0031
         regs = await self.modbus.read_holding_registers(addr, 1, self.modbus_unit)
-        self.log.debug(f"read goal amps addr={hex(addr)} regs={regs}")
+        self.log.debug(f"read value current addr={hex(addr)} regs={regs}")
         float_value = float(regs[0]) / 1000.0
         return float_value
 
     # ---
 
-    async def _PZA_DRV_BPC_write_amps_goal(self, v):
+    async def _PZA_DRV_BPC_write_current_value(self, v):
         addr = 0x0031
         int16_value = int(v * 1000.0)
-        self.log.info(f"write goal amps addr={hex(addr)} valuex1000={int16_value}")
+        self.log.info(f"write value current addr={hex(addr)} valuex1000={int16_value}")
         await self.modbus.write_register(addr, int16_value, self.modbus_unit)
 
     # ---
 
-    async def _PZA_DRV_BPC_amps_goal_min_max(self):
-        return AMPS_BOUNDS
+    async def _PZA_DRV_BPC_current_value_min_max(self):
+        return CURRENT_BOUNDS
 
     # ---
 
-    async def _PZA_DRV_BPC_read_amps_decimals(self):
+    async def _PZA_DRV_BPC_read_current_decimals(self):
         return 3
 

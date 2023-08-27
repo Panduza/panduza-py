@@ -30,11 +30,11 @@ def step_set_state(bpc, state, wait_s=3):
 
 
 
-def step_set_volts(bpc, value, wait_s=3):
+def step_set_voltage(bpc, value, wait_s=3):
     """Step to set the voltage
     """
-    print(f"- set volts to {value}")
-    bpc.volts.value.set(value)
+    print(f"- set voltage to {value}")
+    bpc.voltage.value.set(value)
     if CHECK_USER_INPUT:
         in_data = input("Ok or Ko ? [O/k] ")
     else:  
@@ -42,11 +42,11 @@ def step_set_volts(bpc, value, wait_s=3):
 
 
 
-def step_set_amps(bpc, value, wait_s=3):
-    """Step to set the amps
+def step_set_current(bpc, value, wait_s=3):
+    """Step to set the current
     """
-    print(f"- set amps to {value}")
-    bpc.amps.value.set(value)
+    print(f"- set current to {value}")
+    bpc.current.value.set(value)
     if CHECK_USER_INPUT:
         in_data = input("Ok or Ko ? [O/k] ")
     else:  
@@ -63,13 +63,13 @@ def run_test_on_interface(client, topic):
     bpc = Bpc(topic=topic, client=client)
 
     # ===
-    step_set_volts(bpc, 5)
-    step_set_volts(bpc, 10)
-    step_set_volts(bpc, 3.3)
+    step_set_voltage(bpc, 5)
+    step_set_voltage(bpc, 10)
+    step_set_voltage(bpc, 3.3)
 
     # ===
-    step_set_amps(bpc, 0.5)
-    step_set_amps(bpc, 3)
+    step_set_current(bpc, 0.5)
+    step_set_current(bpc, 3)
 
     # ===
     step_set_state(bpc, "on")
