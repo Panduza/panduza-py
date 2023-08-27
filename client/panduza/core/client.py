@@ -268,8 +268,13 @@ class Client:
             # Process the payload
             info = json.loads(payload.decode("utf-8"))
             if info["info"]["type"] == "platform":
-                self.__scan_count_platform += info["info"]["interfaces"]
-                self.__scan_count_interfaces += 1
+
+                print(info)
+                if info["info"]["state"] == "init":
+                    self.__scan_restart_cmd = True
+                else:
+                    self.__scan_count_platform += info["info"]["interfaces"]
+                    self.__scan_count_interfaces += 1
             else:
                 self.__scan_count_interfaces += 1
 
@@ -303,6 +308,7 @@ class Client:
         self.__scan_count_platform = 0
         self.__scan_count_interfaces = 0
         self.__scan_type_filter = type_filter
+        self.__scan_restart_cmd = False
 
         # Debug log
         self.log.info("Start Interface Scanning...")
@@ -320,6 +326,21 @@ class Client:
             time.sleep(0.25)
             with self.__scan_mutex:
                 continue_scan = (self.__scan_count_platform == 0) or (self.__scan_count_platform != self.__scan_count_interfaces)
+
+
+            if self.__scan_restart_cmd:
+                print("restart")
+                continue_scan = True
+                self.__scan_restart_cmd = False
+                time.sleep(2)
+                start_scan_time = time.perf_counter()
+                self.__scan_count_platform = 0
+                self.__scan_count_interfaces = 0
+                self.__scan_results = {}
+                self.__scan_messages_logs = queue.Queue()
+                self.publish("pza", u"*", qos=0)
+                print("okkk")
+
 
         # Debug logs from the mqtt client thread
         while not self.__scan_messages_logs.empty():
