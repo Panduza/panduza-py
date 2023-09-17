@@ -25,6 +25,11 @@ class PlatformDevice:
 
     # ---
 
+    def register_interface(self, interface):
+        self.__interfaces.append(interface)
+
+    # ---
+
     def number_of_interfaces(self):
         return len(self.__interfaces)
 
