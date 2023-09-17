@@ -7,6 +7,7 @@ class DevicePanduzaFakeDioController(PlatformDevice):
         """
         """
         return {
+            "family": "TBD",
             "model": "FakeDioController",
             "manufacturer": "Panduza"
         }

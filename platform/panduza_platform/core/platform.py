@@ -252,6 +252,7 @@ class Platform:
         """
         instance = self.driver_factory.produce_interface(bench_name, device, interface_config)
         self.interfaces.append(instance)
+        device.register_interface(instance)
 
     # --
 
@@ -529,4 +530,9 @@ class Platform:
             self.log.debug(f"{device.get_name()} => {device.get_interface_defs()}")
             for interface_config in device.get_interface_defs():
                 self.load_interface("default", device, interface_config)
+
+            self.load_interface("default", device, {
+                "name": "device", 
+                "driver": "py.device"
+            })
 

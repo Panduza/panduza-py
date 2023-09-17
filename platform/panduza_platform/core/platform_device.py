@@ -13,12 +13,25 @@ class PlatformDevice:
         # Settings json provided by the user with the tree.json
         self.__settings = settings
 
+        # Interfaces linked to this device
+        self.__interfaces = []
+
     # ---
 
     def initialize(self):
         """Post initialization when the device is actually used
         """
         self.__interface_defs = self._PZA_DEV_interfaces_generator()
+
+    # ---
+
+    def register_interface(self, interface):
+        self.__interfaces.append(interface)
+
+    # ---
+
+    def number_of_interfaces(self):
+        return len(self.__interfaces)
 
     # ---
 
@@ -60,6 +73,11 @@ class PlatformDevice:
 
     def get_base_name(self):
         return self.get_manufacturer() + "_" + self.get_model()
+
+    # ---
+
+    def get_family(self):
+        return self.get_config_field("model")
 
     # ---
 

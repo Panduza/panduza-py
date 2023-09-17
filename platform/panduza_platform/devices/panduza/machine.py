@@ -8,6 +8,7 @@ class DevicePanduzaMachine(PlatformDevice):
         """
         """
         return {
+            "family": "TBD",
             "model": "Machine",
             "manufacturer": "Panduza"
         }

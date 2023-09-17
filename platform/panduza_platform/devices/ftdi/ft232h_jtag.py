@@ -19,6 +19,7 @@ class DeviceFtdiFt232h_jtag(PlatformDevice):
         """
         """
         return {
+            "family": "TBD",
             "model": "Ft232h_jtag",
             "manufacturer": "Ftdi"
         }
