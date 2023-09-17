@@ -52,6 +52,9 @@ class Platform:
         # Drivers
         self.drivers = []
 
+        # List of device instances managed by this platform
+        self.devices = []
+
         # Interfaces
         self.interfaces = []
 
@@ -60,6 +63,11 @@ class Platform:
 
         #
         self.force_log = False
+
+
+
+    def get_number_of_device(self):
+        return len(self.devices)
 
     # ###########################################################################
     # ###########################################################################
@@ -535,4 +543,6 @@ class Platform:
                 "name": "device", 
                 "driver": "py.device"
             })
+
+            self.devices.append(device)
 
