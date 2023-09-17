@@ -6,6 +6,7 @@ class DevicePanduzaFakeRelayController(PlatformDevice):
         """
         """
         return {
+            "family": "TBD",
             "model": "FakeRelayController",
             "manufacturer": "Panduza"
         }

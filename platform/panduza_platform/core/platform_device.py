@@ -77,7 +77,7 @@ class PlatformDevice:
     # ---
 
     def get_family(self):
-        return "family"
+        return self.get_config_field("model")
 
     # ---
 

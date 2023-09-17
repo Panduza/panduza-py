@@ -13,6 +13,7 @@ class DeviceHanmatekHm310t(PlatformDevice):
         """
         """
         return {
+            "family": "PSU",
             "model": "Hm310t",
             "manufacturer": "Hanmatek"
         }

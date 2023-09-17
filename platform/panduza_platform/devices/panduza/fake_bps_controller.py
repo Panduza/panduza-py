@@ -6,6 +6,7 @@ class DevicePanduzaFakeBps(PlatformDevice):
         """
         """
         return {
+            "family": "BPS",
             "model": "FakeBps",
             "manufacturer": "Panduza"
         }
