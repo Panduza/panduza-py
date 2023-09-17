@@ -1,6 +1,4 @@
-import time
 from core.platform_driver import PlatformDriver
-import sys
 
 class DriverDevice(PlatformDriver):
     """
@@ -27,12 +25,19 @@ class DriverDevice(PlatformDriver):
     async def _PZA_DRV_loop_init(self, loop, tree):
         """From PlatformDriver
         """
-
         print("DriverDevice: _PZA_DRV_loop_init", self.device)
+
         await self._update_attributes_from_dict({
-            "identify": {
-                "model": self.device._model,
-                "manufacturer": self.device._manufacturer,
+            "info": {
+                "number_of_interfaces": self.device.number_of_interfaces(),
+            }
+        })
+
+        await self._update_attributes_from_dict({
+            "identity": {
+                "family": self.device.get_family(),
+                "model": self.device.get_model(),
+                "manufacturer": self.device.get_manufacturer(),
             }
         })
 

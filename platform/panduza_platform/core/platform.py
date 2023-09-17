@@ -530,3 +530,8 @@ class Platform:
             for interface_config in device.get_interface_defs():
                 self.load_interface("default", device, interface_config)
 
+
+            self.load_interface("default", device, {
+                "name": "device", 
+                "driver": "py.device"
+            })

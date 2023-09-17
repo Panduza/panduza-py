@@ -37,6 +37,13 @@ class PlatformDriver(PlatformWorker):
 
     # ---
 
+    def set_device(self, device):
+        """Setter for device parent of this interface
+        """
+        self.device = device
+
+    # ---
+
     def set_device_name(self, name):
         self.device_name = name
 
