@@ -31,9 +31,12 @@ class PlatformDeviceFactory:
         if not ref in self.__device_templates:
             raise InitializationError(f"\"{ref}\" is not found in this platform")
 
+        # 
+        name = config.get("name", None)
+
         # Produce the device
         try:
-            producted_device = self.__device_templates[ref](config.get("settings", {}))
+            producted_device = self.__device_templates[ref](name, config.get("settings", {}))
             producted_device.initialize()
             return producted_device
         except Exception as e:

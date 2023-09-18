@@ -7,6 +7,7 @@ import argparse
 import traceback
 import threading
 import importlib
+import socket
 
 from sys import platform
 
@@ -324,12 +325,14 @@ class Platform:
             
             self.__load_devices()
             
-            
-            device_machine = self.device_factory.produce_device({   
+            device_machine = self.device_factory.produce_device({
+                "name": socket.gethostname(),
                 "ref": "Panduza.Machine",
             })
+            self.devices.append(device_machine)
 
-            self.load_interface("server", device_machine, {
+
+            self.load_interface("platforms", device_machine, {
                     "name": "py",
                     "driver": "py.platform"
                 })

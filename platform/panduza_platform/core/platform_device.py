@@ -7,9 +7,12 @@ class PlatformDevice:
     It can be instanciated with empty settings to provide only the _PZA_DEV_config
     """
 
-    def __init__(self, settings = {}) -> None:
+    def __init__(self, name=None, settings = {}) -> None:
         """Constructor
         """
+        # Custom name of the device
+        self.__name = name
+
         # Settings json provided by the user with the tree.json
         self.__settings = settings
 
@@ -72,12 +75,14 @@ class PlatformDevice:
     # ---
 
     def get_base_name(self):
+        """Base name is just the combinaison of manufacturer name and model name separated by '_'
+        """
         return self.get_manufacturer() + "_" + self.get_model()
 
     # ---
 
     def get_family(self):
-        return self.get_config_field("model")
+        return self.get_config_field("family")
 
     # ---
 
@@ -120,5 +125,10 @@ class PlatformDevice:
         By default this function does not support multiple instance of the same device on the smae bench.
         Because with this simple method, they will have the same name.
         """
-        return self.get_base_name() 
+        # name = self.__settings.get("name", None)
+        # print("!!!!!!!!!!!", self.__settings)
+        if self.__name:
+            return self.__name
+        else:
+            return self.get_base_name() 
 
