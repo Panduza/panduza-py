@@ -9,7 +9,20 @@ from log.driver import driver_logger
 from .platform_worker import PlatformWorker
 
 class PlatformDriver(PlatformWorker):
-    """Mother class for all the python drivers
+    """Mother class for all the interface drivers
+
+    @TODO: This class should be renamed PlatformInterfaceDriver 
+
+    ## Incoming Message Events
+
+    When messages are recieved they are not processed directly.
+    Those messages are pushed into queues and processed later during the main task of the interface driver.
+
+    ```python
+    # Manage events from pza topic
+    self._events_pza
+    ```
+
     """
 
     # Time in error state before trying a restart of the interface
@@ -195,14 +208,9 @@ class PlatformDriver(PlatformWorker):
         """
 
         try:
-            
-            # 
-            if not self._events_pza.empty():
-                event = self._events_pza.get()
-                # If the request is for all interfaces '*'
-                if event["payload"] == b'*':
-                    self.log.info("scan request received !")
-                    await self._push_attribute("info", 0, False) # heartbeat_pulse
+
+            # Process Scan Events
+            await self.__process_scan_events(loop)
 
             if not self._events_cmds.empty():
                 event = self._events_cmds.get()
@@ -295,12 +303,16 @@ class PlatformDriver(PlatformWorker):
             # Valid the flag
             self.__topics_subscribed = True
 
+    # ---
+
     def __on_pza_message(self, topic, payload):
-        """On scan message callback
+        """On scan message callback, when messages are recieved in the 'pza' topic
         """
         self._events_pza.put({
             "topic":topic, "payload":payload
         })
+
+    # ---
 
     def __on_cmds_message(self, topic, payload):
         """On cmds message callback
@@ -308,6 +320,8 @@ class PlatformDriver(PlatformWorker):
         self._events_cmds.put({
             "topic":topic, "payload":payload
         })
+
+    # ---
 
     ###########################################################################
     ###########################################################################
@@ -568,4 +582,62 @@ class PlatformDriver(PlatformWorker):
     #             "instances": meat
     #         }
     #     return driver, instances
+
+
+
+
+
+    # =============================================================================
+    # PRIVATE FUNCTIONS
+
+    # ---
+
+    async def __process_scan_events(self, loop):
+        """Process event following the scan specification
+
+        - When '*' is published inside the topic 'pza' then info attribute must be published.
+        - When 'p' is published inside the topic 'pza' then info attribute must be published if the interface has type == platform.
+        - When 'd' is published inside the topic 'pza' then info attribute must be published if the interface has type == device.
+        - When '<bench_name>/<device_name>' is published inside the topic 'pza' then info attribute must be published if the interface has type != device and in the device base topic.
+        """
+        # Only if event are available
+        if not self._events_pza.empty():
+
+            # Prepare data
+            event = self._events_pza.get()
+            request = event["payload"]
+
+            # Do not push by default
+            must_push_info = False
+
+            #
+            if request == b'*':
+                must_push_info = True
+
+            # 
+            elif request == b'p':
+                if self.__drv_atts["info"]["type"] == "platform":
+                    must_push_info = True
+
+            # 
+            elif request == b'd':
+                if self.__drv_atts["info"]["type"] == "device":
+                    must_push_info = True
+
+            # 
+            elif self.__drv_atts["info"]["type"] != "device":
+                pyl = request.decode("utf-8").split("/")                
+                if (self.bench_name == pyl[0]) and (self.device_name  == pyl[1]):
+                    must_push_info = True
+                # else:
+                #     self.log.warning(f"({self.bench_name} != {pyl[0]}) and ({self.device_name} != {pyl[1]})")
+
+            # If the flag is true, push info attribute
+            if must_push_info:
+                self.log.info(f"scan request accepted ! ({request})")
+                await self._push_attribute("info", 0, False)
+            else:
+                self.log.debug(f"scan request rejected ! ({request})")
+
+    # ---
 
