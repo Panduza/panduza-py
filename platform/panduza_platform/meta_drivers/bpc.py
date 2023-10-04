@@ -141,27 +141,30 @@ class MetaDriverBpc(PlatformDriver):
     # =============================================================================
     # PRIVATE FUNCTIONS
 
-   # ---
+    # ---
 
-    def __set_poll_cycle_enable(self, v):
+    async def __set_poll_cycle_enable(self, v):
         self.polling_ref["enable"] = v
-    def __get_poll_cycle_enable(self):
+
+    async def __get_poll_cycle_enable(self):
         return self.polling_ref["enable"]
 
-    # --
-    
-    def __set_poll_cycle_voltage(self, v):
+    # ---
+
+    async def __set_poll_cycle_voltage(self, v):
         self.polling_ref["voltage"] = v
-    def __get_poll_cycle_voltage(self):
+
+    async def __get_poll_cycle_voltage(self):
         return self.polling_ref["voltage"]
-    
-    # --
-    
-    def __set_poll_cycle_current(self, v):
+
+    # ---
+
+    async def __set_poll_cycle_current(self, v):
         self.polling_ref["current"] = v
-    def __get_poll_cycle_current(self):
+
+    async def __get_poll_cycle_current(self):
         return self.polling_ref["current"]
-    
+
     # ---
 
     async def __polling_task_att_enable(self):
