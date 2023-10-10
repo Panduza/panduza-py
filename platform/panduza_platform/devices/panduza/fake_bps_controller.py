@@ -21,22 +21,22 @@ class DevicePanduzaFakeBps(PlatformDevice):
         for chan in range(0, number_of_channel):
             interfaces.append(
                 {
-                    "name": f"channel_{chan}",
+                    "name": f":channel_{chan}:_ctrl",
                     "driver": "panduza.fake.bpc"
                 }
             )
             interfaces.append(
                 {
-                    "name": f"channel_{chan}_am",
+                    "name": f":channel_{chan}:_am",
                     "driver": "panduza.fake.ammeter",
                     "settings": {
-                        "work_with_fake_bpc": f"!//channel_{chan}"
+                        "work_with_fake_bpc": f"!//:channel_{chan}:"
                     }
                 }
             )
             interfaces.append(
                 {
-                    "name": f"channel_{chan}_vl",
+                    "name": f":channel_{chan}:_vm",
                     "driver": "panduza.fake.voltmeter",
                 }
             )

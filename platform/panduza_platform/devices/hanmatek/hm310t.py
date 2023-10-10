@@ -30,7 +30,7 @@ class DeviceHanmatekHm310t(PlatformDevice):
             pass
         else:
             interfaces.append({
-                "name": f"bpc",
+                "name": f":channel_0:_ctrl",
                 "driver": "hanmatek.hm310t.bpc",
                 "settings": {
                     "usb_vendor": USBID_VENDOR,
@@ -39,7 +39,7 @@ class DeviceHanmatekHm310t(PlatformDevice):
                 }
             })
             interfaces.append({
-                "name": f"am",
+                "name": f":channel_0:_am",
                 "driver": "hanmatek.hm310t.ammeter",
                 "settings": {
                     "usb_vendor": USBID_VENDOR,
