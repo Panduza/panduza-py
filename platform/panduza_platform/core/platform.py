@@ -324,19 +324,24 @@ class Platform:
             
             
             self.__load_devices()
-            
+
+
+            # Device for the platform (need to be improved !!!)
             device_machine = self.device_factory.produce_device({
                 "name": socket.gethostname(),
                 "ref": "Panduza.Machine",
             })
             self.devices.append(device_machine)
 
-
-            self.load_interface("platforms", device_machine, {
+            self.load_interface("server", device_machine, {
+                "name": "device", 
+                "driver": "py.device"
+            })
+            self.load_interface("server", device_machine, {
                     "name": "py",
                     "driver": "py.platform"
                 })
-
+            
 
             # modify interfaces with tree bench configs
 
