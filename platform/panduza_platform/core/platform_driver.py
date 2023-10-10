@@ -595,10 +595,10 @@ class PlatformDriver(PlatformWorker):
     async def __process_scan_events(self, loop):
         """Process event following the scan specification
 
-        - When '*' is published inside the topic 'pza' then info attribute must be published.
-        - When 'p' is published inside the topic 'pza' then info attribute must be published if the interface has type == platform.
-        - When 'd' is published inside the topic 'pza' then info attribute must be published if the interface has type == device.
-        - When '<bench_name>/<device_name>' is published inside the topic 'pza' then info attribute must be published if the interface has type != device and in the device base topic.
+        - 1) When '*' is published inside the topic 'pza' then info attribute must be published.
+        - 2) When 'p' is published inside the topic 'pza' then info attribute must be published if the interface has type == platform.
+        - 3) When 'd' is published inside the topic 'pza' then info attribute must be published if the interface has type == device.
+        - 4) When '<bench_name>/<device_name>' is published inside the topic 'pza' then this attribute must be published if the interface base topic is the device base topic (to be accurate the 'device' interface will respond too).
         """
         # Only if event are available
         if not self._events_pza.empty():
@@ -610,23 +610,23 @@ class PlatformDriver(PlatformWorker):
             # Do not push by default
             must_push_info = False
 
-            #
+            # 1)
             if request == b'*':
                 must_push_info = True
 
-            # 
+            # 2)
             elif request == b'p':
                 if self.__drv_atts["info"]["type"] == "platform":
                     must_push_info = True
 
-            # 
+            # 3)
             elif request == b'd':
                 if self.__drv_atts["info"]["type"] == "device":
                     must_push_info = True
 
-            # 
-            elif self.__drv_atts["info"]["type"] != "device":
-                pyl = request.decode("utf-8").split("/")                
+            # 4)
+            else:
+                pyl = request.decode("utf-8").split("/")
                 if (self.bench_name == pyl[0]) and (self.device_name  == pyl[1]):
                     must_push_info = True
                 # else:
