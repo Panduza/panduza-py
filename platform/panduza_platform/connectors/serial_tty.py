@@ -118,22 +118,23 @@ class ConnectorUartSerial(ConnectorUartBase):
     ###########################################################################
 
 
-    async def read_uart(self):
+    async def read_uart(self, n_bytes = None):
         """Read from UART using asynchronous mode
         """
         
         async with self._mutex:
             #await asyncio.sleep(1)
             try:
-                data = await asyncio.wait_for(self.reader.readuntil(b'\n'), timeout=1.0)
-                decoded_data = data.decode('utf-8').strip()
-                return decoded_data
+                if n_bytes is None:
+                    data = await asyncio.wait_for(self.reader.readline(), timeout=1.0)
+                else:
+                    data = await asyncio.wait_for(self.reader.readexactly(n_bytes), timeout=1.0)
+                    print(f"Read data: {data}, Type: {type(data)}")  # Debugging print
+                return data
             
             except asyncio.TimeoutError as e: 
                 raise Exception('Error during reading uart').with_traceback(e.__traceback__)
 
-            
-                
     ###########################################################################
     ###########################################################################
 

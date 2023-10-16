@@ -84,11 +84,11 @@ class MetaDriverVoltmeter(PlatformDriver):
         """
         while self.alive:
             await asyncio.sleep(self.__polling_cycle)
-            await self._update_attributes_from_dict({
-                "measure": {
-                    "value": await self._PZA_DRV_VOLTMETER_read_measure_value()
-                }
-            })
+            #await self._update_attributes_from_dict({
+            #    "measure": {
+            #        "value": await self._PZA_DRV_VOLTMETER_read_measure_value()
+            #    }
+            #})
 
     # ---
 

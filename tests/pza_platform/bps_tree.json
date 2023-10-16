@@ -1,0 +1,18 @@
+{
+    "devices": [
+        {
+            "name": "MY BPS 1",
+            "ref": "Panduza.FakeBps",
+            "settings": {
+                "number_of_channel": 4
+            }
+        },
+        {
+            "name": "MY BPS 2",
+            "ref": "Panduza.FakeBps",
+            "settings": {
+                "number_of_channel": 2
+            }
+        }
+    ]
+}

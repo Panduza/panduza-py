@@ -1,0 +1,11 @@
+{
+    "devices": [
+        {
+            "ref": "Korad.KA3005P",
+	    "name": "coucou",
+            "settings": {
+        	"serial_port": "/dev/ttyACM0"
+	    }
+	}
+    ]
+}

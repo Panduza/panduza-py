@@ -1,0 +1,18 @@
+{
+    "devices": [
+        {
+            "name": "MY BPS 3",
+            "driver": "Panduza.FakeBps",
+            "settings": {
+                "number_of_channel": 4
+	    }
+        },
+	{
+        "driver": "Panduza.FakeBps",
+	    "name": "MY BPS 4",
+            "settings": {
+                "number_of_channel": 2
+            }
+	}
+    ]
+}
