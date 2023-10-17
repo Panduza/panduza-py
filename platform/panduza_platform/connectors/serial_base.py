@@ -1,6 +1,6 @@
 import abc
 
-class ConnectorUartBase(metaclass=abc.ABCMeta):
+class SerialBase(metaclass=abc.ABCMeta):
     """Base class for modbus client connectors
 
     It defines method to interact with the modbus client

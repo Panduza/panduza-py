@@ -1,6 +1,6 @@
 from hamcrest import assert_that, has_key, instance_of
 from meta_drivers.bpc import MetaDriverBpc
-from connectors.serial_tty import ConnectorUartSerial
+from connectors.serial_tty import SerialTty
 
 STATE_VALUE_ENUM = { True : 1, False: 0  }
 VOLTAGE_BOUNDS     = { "min": 0, "max": 30 }
@@ -49,7 +49,7 @@ class DrvTenma722710Bpc(MetaDriverBpc):
         #self.modbus = await ConnectorModbusClientSerial.Get(**settings)
 
 	# Get the gate connector
-        self.uart_connector = await ConnectorUartSerial.Get(loop,**settings)
+        self.uart_connector = await SerialTty.Get(loop,**settings)
         
         # 
         #self.modbus_unit = 1

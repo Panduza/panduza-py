@@ -1,7 +1,7 @@
 from hamcrest import assert_that, has_key, instance_of
 import asyncio
 from meta_drivers.ammeter import MetaDriverAmmeter
-from connectors.serial_tty import ConnectorUartSerial
+from connectors.serial_tty import SerialTty
 
 
 class DrvKoradKa3005pAmmeter(MetaDriverAmmeter):
@@ -30,7 +30,7 @@ class DrvKoradKa3005pAmmeter(MetaDriverAmmeter):
         # Checks
         assert_that(settings, has_key("serial_baudrate"))
 
-        self.uart_connector = await ConnectorUartSerial.Get(loop,**settings)
+        self.uart_connector = await SerialTty.Get(loop,**settings)
         
         # Call meta class BPC ini
         await super()._PZA_DRV_loop_init(loop, tree)
