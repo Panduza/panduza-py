@@ -39,8 +39,8 @@ class DrvKoradKa3005pVoltmeter(MetaDriverVoltmeter):
 
     async def _PZA_DRV_VOLTMETER_read_measure_value(self):
         cmd = "VOUT1?"
-        await self.uart_connector.write_uart(cmd)
-        voltage = await self.uart_connector.read_uart(n_bytes=5)
+        await self.uart_connector.write_data(cmd)
+        voltage = await self.uart_connector.read_data(n_bytes=5)
         return float(voltage)
 
     # ---

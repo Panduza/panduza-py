@@ -117,7 +117,8 @@ class PlatformDevice:
     def _PZA_DEV_interfaces_generator(self):
         """Generate interface definitions from device settings
         """
-        return {}
+        raise Exception("Function Not Implemented !")
+        # return {}
 
     # ---
 

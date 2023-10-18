@@ -45,10 +45,7 @@ class DrvTenma722710Bpc(MetaDriverBpc):
         assert_that(settings, has_key("usb_model"))
         assert_that(settings, has_key("serial_baudrate"))
 
-        # Get the gate
-        #self.modbus = await ConnectorModbusClientSerial.Get(**settings)
-
-	# Get the gate connector
+        # Get the Serial Connector
         self.uart_connector = await SerialTty.Get(loop,**settings)
         
         # 
@@ -64,37 +61,42 @@ class DrvTenma722710Bpc(MetaDriverBpc):
     # STATE #
 
     async def _PZA_DRV_BPC_read_enable_value(self):
-    	# Send "STATUS?" to get back the output state
-    	await self.uart_connector.write_uart(f"STATUS?\n")
-    	statusBytes = await self.uart_connector.read_uart()
-    	status = ord(statusBytes)
-    	if status & 0x40:
-    	    	out = 1
-    	else:
-            	out = 0
-    	str_value = int_to_state_string(out)
-    	return str_value
+        # Send "STATUS?" to get back the output state
+
+        
+        await self.uart_connector.write_data(f"STATUS?\n")
+        statusBytes = await self.uart_connector.read_data()
+        
+        self.log.debug(f"{statusBytes.strip()}")
+        status = ord(statusBytes.strip())
+
+        if status & 0x40:
+           out = 1
+        else:
+            out = 0
+        str_value = int_to_state_string(out)
+        return str_value
     		
     # ---
 
     async def _PZA_DRV_BPC_write_enable_value(self, v):
     	# Send "OUT{v}" to enable output
         int16_value = STATE_VALUE_ENUM[v]
-        await self.uart_connector.write_uart(f"OUT{int16_value}\n")
+        await self.uart_connector.write_data(f"OUT{int16_value}\n")
 
     # VOLTAGE #
 
     async def _PZA_DRV_BPC_read_voltage_value(self):
-    	# Send "VSET1?" to get the voltage value
-    	await self.uart_connector.write_uart(f"VSET{self.channel}?\n")
-    	voltage = await self.uart_connector.read_uart()
-    	return float(voltage)
+        # Send "VSET1?" to get the voltage value
+        await self.uart_connector.write_data(f"VSET{self.channel}?\n")
+        voltage = await self.uart_connector.read_data()
+        return float(voltage)
 
     # ---
 
     async def _PZA_DRV_BPC_write_voltage_value(self, v):
-    	# Send "VSET1:{v}" to set the voltage value
-    	await self.uart_connector.write_uart(f"VSET{self.channel}:{v}\n")
+        # Send "VSET1:{v}" to set the voltage value
+        await self.uart_connector.write_data(f"VSET{self.channel}:{v}\n")
 
     # ---
 
@@ -109,16 +111,16 @@ class DrvTenma722710Bpc(MetaDriverBpc):
     # CURRENT #
 
     async def _PZA_DRV_BPC_read_current_value(self):
-    	# Send "ISET1?" to get the Current value
-    	await self.uart_connector.write_uart(f"ISET{self.channel}?\n")
-    	current = await self.uart_connector.read_uart()
-    	return float(current)
+        # Send "ISET1?" to get the Current value
+        await self.uart_connector.write_data(f"ISET{self.channel}?\n")
+        current = await self.uart_connector.read_data()
+        return float(current)
 
     # ---
 
     async def _PZA_DRV_BPC_write_current_value(self, v):
         # Send "ISET1:{v}" to set the Current value
-        await self.uart_connector.write_uart(f"ISET{self.channel}:{v}\n")
+        await self.uart_connector.write_data(f"ISET{self.channel}:{v}\n")
 
     # ---
 

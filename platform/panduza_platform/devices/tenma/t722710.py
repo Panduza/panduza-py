@@ -13,23 +13,24 @@ class DeviceTenma722710(PlatformDevice):
         """
         """
         return {
+            "family": "bps",
             "model": "722710",
             "manufacturer": "Tenma"
         }
 
-    def _PZA_DEV_interfaces(self):
+    def _PZA_DEV_interfaces_generator(self):
         """
         """
         interfaces = []
 
-        fake_mode = self._initial_settings.get("fake_mode", False)
+        fake_mode = self.get_settings().get("fake_mode", False)
 
 
         if fake_mode:
             pass
         else:
             interfaces.append({
-                "name": f"bpc",
+                "name": f":channel_{0}:_ctrl",
                 "driver": "tenma.722710.bpc",
                 "settings": {
                     "usb_vendor": USBID_VENDOR,

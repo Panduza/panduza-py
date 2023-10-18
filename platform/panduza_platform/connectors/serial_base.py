@@ -7,13 +7,13 @@ class SerialBase(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
-    async def write_uart(self, message):
+    async def read_data(self, n_bytes = None):
         """
         """
         pass
 
     @abc.abstractmethod
-    async def read_uart(self):
+    async def write_data(self, message):
         """
         """
         pass

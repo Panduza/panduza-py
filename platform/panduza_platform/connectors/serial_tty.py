@@ -125,7 +125,7 @@ class SerialTty(SerialBase):
 
     # ---
 
-    async def read_uart(self, n_bytes = None):
+    async def read_data(self, n_bytes = None):
         """Read from UART using asynchronous mode
         """
         
@@ -144,7 +144,7 @@ class SerialTty(SerialBase):
 
     # ---
 
-    async def write_uart(self, message, time_lock=None):
+    async def write_data(self, message, time_lock=None):
         """write to UART using asynchronous mode
         """
         async with self._mutex:

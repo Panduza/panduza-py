@@ -51,8 +51,8 @@ class DrvKoradKa3005pBPC(MetaDriverBpc):
     async def _PZA_DRV_BPC_read_enable_value(self):
         await asyncio.sleep(1)
         print("Sending cmd: {}".format("STATUS?"))
-        await self.uart_connector.write_uart("STATUS?")
-        status = await self.uart_connector.read_uart(n_bytes=1)
+        await self.uart_connector.write_data("STATUS?")
+        status = await self.uart_connector.read_data(n_bytes=1)
         print("LOL", status)
         return bool(status[0] & (1 << 6))
 
@@ -60,8 +60,8 @@ class DrvKoradKa3005pBPC(MetaDriverBpc):
         await asyncio.sleep(1)
         cmd = "OUT{}".format(int(v))
         print("Sending cmd: {}".format(cmd))
-        await self.uart_connector.write_uart(cmd)
-        status = await self.uart_connector.read_uart(n_bytes=1)
+        await self.uart_connector.write_data(cmd)
+        status = await self.uart_connector.read_data(n_bytes=1)
         await asyncio.sleep(1)
 
     # ---
@@ -69,15 +69,15 @@ class DrvKoradKa3005pBPC(MetaDriverBpc):
     async def _PZA_DRV_BPC_read_voltage_value(self):
         await asyncio.sleep(0.2)
         cmd = "VSET1?"
-        await self.uart_connector.write_uart(cmd)
-        voltage = await self.uart_connector.read_uart(n_bytes=5)
+        await self.uart_connector.write_data(cmd)
+        voltage = await self.uart_connector.read_data(n_bytes=5)
         return float(voltage)
 
     async def _PZA_DRV_BPC_write_voltage_value(self, v):
         await asyncio.sleep(0.2)
         v = "{:05.2f}".format(v)
         cmd = "VSET1:{}".format(v)
-        await self.uart_connector.write_uart(cmd)
+        await self.uart_connector.write_data(cmd)
 
     async def _PZA_DRV_BPC_voltage_value_min_max(self):
         return VOLTAGE_BOUNDS
@@ -90,15 +90,15 @@ class DrvKoradKa3005pBPC(MetaDriverBpc):
     async def _PZA_DRV_BPC_read_current_value(self):
         await asyncio.sleep(0.2)
         cmd = "ISET1?"
-        await self.uart_connector.write_uart(cmd)
-        current = await self.uart_connector.read_uart(n_bytes=5)
+        await self.uart_connector.write_data(cmd)
+        current = await self.uart_connector.read_data(n_bytes=5)
         return float(current)
 
     async def _PZA_DRV_BPC_write_current_value(self, v):
         await asyncio.sleep(0.2)
         v = "{:05.3f}".format(v)
         cmd = "ISET1:{}".format(v)
-        await self.uart_connector.write_uart(cmd)
+        await self.uart_connector.write_data(cmd)
 
     async def _PZA_DRV_BPC_current_value_min_max(self):
         return CURRENT_BOUNDS
