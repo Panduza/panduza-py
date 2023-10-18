@@ -50,10 +50,13 @@ class PlatformDevice:
 
     # ---
 
-    def get_config_field(self, field):
+    def get_config_field(self, field, default=None):
         config = self._PZA_DEV_config()
         if not field in config:
-            raise InitializationError(f"\"{field}\" field is not provided in the device config {config}")
+            if default == None:
+                raise InitializationError(f"\"{field}\" field is not provided in the device config {config}")
+            else:
+                return default
         return config.get(field)
 
     # ---
@@ -82,7 +85,7 @@ class PlatformDevice:
     # ---
 
     def get_family(self):
-        return self.get_config_field("family")
+        return self.get_config_field("family", "unknown")
 
     # ---
 
