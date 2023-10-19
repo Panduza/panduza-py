@@ -3,6 +3,7 @@ import asyncio
 from meta_drivers.voltmeter import MetaDriverVoltmeter
 from connectors.serial_tty import SerialTty
 
+COMMAND_TIME_LOCK=0.1
 
 class DrvKoradKa3005pVoltmeter(MetaDriverVoltmeter):
     # =============================================================================
@@ -30,7 +31,7 @@ class DrvKoradKa3005pVoltmeter(MetaDriverVoltmeter):
         # Checks
         assert_that(settings, has_key("serial_baudrate"))
 
-        self.uart_connector = await SerialTty.Get(loop,**settings)
+        self.serial_connector = await SerialTty.Get(loop,**settings)
         
         # Call meta class BPC ini
         await super()._PZA_DRV_loop_init(loop, tree)
@@ -39,8 +40,8 @@ class DrvKoradKa3005pVoltmeter(MetaDriverVoltmeter):
 
     async def _PZA_DRV_VOLTMETER_read_measure_value(self):
         cmd = "VOUT1?"
-        await self.uart_connector.write_data(cmd)
-        voltage = await self.uart_connector.read_data(n_bytes=5)
+        await self.serial_connector.write_data(cmd, time_lock_s=COMMAND_TIME_LOCK)
+        voltage = await self.serial_connector.read_data(n_bytes=5)
         return float(voltage)
 
     # ---

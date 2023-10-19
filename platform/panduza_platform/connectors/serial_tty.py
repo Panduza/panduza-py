@@ -89,7 +89,7 @@ class SerialTty(SerialBase):
         self._mutex = asyncio.Lock()
 
         # Init time lock
-        self._time_lock = None
+        self._time_lock_s = None
         
         
         key = kwargs["serial_port_name"]
@@ -144,18 +144,21 @@ class SerialTty(SerialBase):
 
     # ---
 
-    async def write_data(self, message, time_lock=None):
+    async def write_data(self, message, time_lock_s=None):
         """write to UART using asynchronous mode
         """
         async with self._mutex:
             
             try:
                 # Manage time lock by waiting for the remaining duration
-                if self._time_lock:
-                    elapsed = time.time() - self._time_lock["t0"]
-                    if elapsed < self._time_lock["duration"]:
-                        await asyncio.sleep(elapsed)
-                    self._time_lock = None
+                if self._time_lock_s:
+                    elapsed = time.time() - self._time_lock_s["t0"]
+                    if elapsed < self._time_lock_s["duration"]:
+
+                        wait_time = self._time_lock_s["duration"] - elapsed
+                        SerialTty.log.debug(f"wait lock {wait_time}")
+                        await asyncio.sleep(wait_time)
+                    self._time_lock_s = None
 
                 # Start sending the message
                 self.writer.write(message.encode())
@@ -164,9 +167,9 @@ class SerialTty(SerialBase):
                 await self.writer.drain()
 
                 # Set the time lock if requested by the user
-                if time_lock != None:
-                    self._time_lock = {
-                        "duration": time_lock,
+                if time_lock_s != None:
+                    self._time_lock_s = {
+                        "duration": time_lock_s,
                         "t0": time.time()
                     }
 

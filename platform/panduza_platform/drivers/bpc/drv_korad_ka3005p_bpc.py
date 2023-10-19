@@ -12,6 +12,10 @@ def int_to_state_string(v_int):
     position = val_list.index(v_int)
     return key_list[position]
 
+
+COMMAND_TIME_LOCK=0.1
+
+
 class DrvKoradKa3005pBPC(MetaDriverBpc):
     # =============================================================================
     # FROM MetaDriverBpc
@@ -40,7 +44,7 @@ class DrvKoradKa3005pBPC(MetaDriverBpc):
         # Checks
         assert_that(settings, has_key("serial_baudrate"))
 
-        self.uart_connector = await SerialTty.Get(loop,**settings)
+        self.serial_connector = await SerialTty.Get(loop,**settings)
         
         # Call meta class BPC ini
         await super()._PZA_DRV_loop_init(loop, tree)
@@ -51,8 +55,8 @@ class DrvKoradKa3005pBPC(MetaDriverBpc):
     async def _PZA_DRV_BPC_read_enable_value(self):
         await asyncio.sleep(1)
         print("Sending cmd: {}".format("STATUS?"))
-        await self.uart_connector.write_data("STATUS?")
-        status = await self.uart_connector.read_data(n_bytes=1)
+        await self.serial_connector.write_data("STATUS?", time_lock_s=COMMAND_TIME_LOCK)
+        status = await self.serial_connector.read_data(n_bytes=1)
         print("LOL", status)
         return bool(status[0] & (1 << 6))
 
@@ -60,8 +64,8 @@ class DrvKoradKa3005pBPC(MetaDriverBpc):
         await asyncio.sleep(1)
         cmd = "OUT{}".format(int(v))
         print("Sending cmd: {}".format(cmd))
-        await self.uart_connector.write_data(cmd)
-        status = await self.uart_connector.read_data(n_bytes=1)
+        await self.serial_connector.write_data(cmd, time_lock_s=COMMAND_TIME_LOCK)
+        status = await self.serial_connector.read_data(n_bytes=1)
         await asyncio.sleep(1)
 
     # ---
@@ -69,15 +73,15 @@ class DrvKoradKa3005pBPC(MetaDriverBpc):
     async def _PZA_DRV_BPC_read_voltage_value(self):
         await asyncio.sleep(0.2)
         cmd = "VSET1?"
-        await self.uart_connector.write_data(cmd)
-        voltage = await self.uart_connector.read_data(n_bytes=5)
+        await self.serial_connector.write_data(cmd, time_lock_s=COMMAND_TIME_LOCK)
+        voltage = await self.serial_connector.read_data(n_bytes=5)
         return float(voltage)
 
     async def _PZA_DRV_BPC_write_voltage_value(self, v):
         await asyncio.sleep(0.2)
         v = "{:05.2f}".format(v)
         cmd = "VSET1:{}".format(v)
-        await self.uart_connector.write_data(cmd)
+        await self.serial_connector.write_data(cmd, time_lock_s=COMMAND_TIME_LOCK)
 
     async def _PZA_DRV_BPC_voltage_value_min_max(self):
         return VOLTAGE_BOUNDS
@@ -90,18 +94,20 @@ class DrvKoradKa3005pBPC(MetaDriverBpc):
     async def _PZA_DRV_BPC_read_current_value(self):
         await asyncio.sleep(0.2)
         cmd = "ISET1?"
-        await self.uart_connector.write_data(cmd)
-        current = await self.uart_connector.read_data(n_bytes=5)
+        await self.serial_connector.write_data(cmd, time_lock_s=COMMAND_TIME_LOCK)
+        current = await self.serial_connector.read_data(n_bytes=5)
         return float(current)
 
     async def _PZA_DRV_BPC_write_current_value(self, v):
         await asyncio.sleep(0.2)
         v = "{:05.3f}".format(v)
         cmd = "ISET1:{}".format(v)
-        await self.uart_connector.write_data(cmd)
+        await self.serial_connector.write_data(cmd, time_lock_s=COMMAND_TIME_LOCK)
 
     async def _PZA_DRV_BPC_current_value_min_max(self):
         return CURRENT_BOUNDS
 
     async def _PZA_DRV_BPC_read_current_decimals(self):
         return 3
+
+

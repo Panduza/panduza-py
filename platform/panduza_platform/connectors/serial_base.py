@@ -13,7 +13,7 @@ class SerialBase(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    async def write_data(self, message):
+    async def write_data(self, message, time_lock_s=None):
         """
         """
         pass

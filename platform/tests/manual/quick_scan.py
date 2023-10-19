@@ -10,3 +10,4 @@ interfaces = client.scan_interfaces()
 print("===")
 for topic, info in interfaces.items():
     print(topic, " - ", info)
+
