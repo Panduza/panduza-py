@@ -74,6 +74,8 @@ class SerialTty(SerialBase):
                 except Exception as e:
                     SerialTty.__INSTANCES.pop(serial_port_name)
                     raise Exception('Error during initialization').with_traceback(e.__traceback__)
+            else:
+                SerialTty.log.info("connector already created, use existing instance")
 
             # Return the previously created
             return SerialTty.__INSTANCES[serial_port_name]
@@ -99,7 +101,7 @@ class SerialTty(SerialBase):
         if not (key in SerialTty.__INSTANCES):
             raise Exception("You need to pass through Get method to create an instance")
         else:
-            self.log = logging.getLogger(key)
+            self.log = driver_logger(key)
             self.log.info(f"attached to the UART Serial Connector")
 
             
@@ -156,7 +158,7 @@ class SerialTty(SerialBase):
                     if elapsed < self._time_lock_s["duration"]:
 
                         wait_time = self._time_lock_s["duration"] - elapsed
-                        SerialTty.log.debug(f"wait lock {wait_time}")
+                        self.log.debug(f"wait lock {wait_time}")
                         await asyncio.sleep(wait_time)
                     self._time_lock_s = None
 
