@@ -67,10 +67,11 @@ class DrvTenma722710Bpc(MetaDriverBpc):
     async def _PZA_DRV_BPC_read_enable_value(self):
         # Send "STATUS?" to get back the output state
 
-        
+        await self.serial_connector.beg_cmd()
         await self.serial_connector.write_data(f"STATUS?\n", time_lock_s=COMMAND_TIME_LOCK)
         statusBytes = await self.serial_connector.read_data()
-        
+        await self.serial_connector.end_cmd()
+
         self.log.debug(f"{statusBytes.strip()}")
         status = ord(statusBytes.strip())
 

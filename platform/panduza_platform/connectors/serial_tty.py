@@ -15,6 +15,9 @@ class SerialTty(SerialBase):
     # Hold instances mutex
     __MUTEX = asyncio.Lock()
 
+    # Hold instances mutex
+    __MUTEX = asyncio.Lock()
+
     # Contains instances
     __INSTANCES = {}
 
@@ -90,6 +93,10 @@ class SerialTty(SerialBase):
         # Init local mutex
         self._mutex = asyncio.Lock()
 
+        # Init command mutex
+        self._cmd_mutex = asyncio.Lock()
+
+
         # Init time lock
         self._time_lock_s = None
         
@@ -124,6 +131,14 @@ class SerialTty(SerialBase):
 
     # =============================================================================
     # OVERRIDE FROM SERIAL_BASE
+
+
+    async def beg_cmd(self):
+        await self._cmd_mutex.acquire()
+
+    async def end_cmd(self):
+        self._cmd_mutex.release()
+
 
     # ---
 
