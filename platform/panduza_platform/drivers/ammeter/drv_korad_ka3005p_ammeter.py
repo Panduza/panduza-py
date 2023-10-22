@@ -39,11 +39,8 @@ class DrvKoradKa3005pAmmeter(MetaDriverAmmeter):
     # ---
 
     async def _PZA_DRV_AMMETER_read_measure_value(self):
-        await self.serial_connector.beg_cmd()
-        cmd = "IOUT1?"
-        await self.serial_connector.write_data(cmd, time_lock_s=COMMAND_TIME_LOCK)
+        await self.serial_connector.write_data("IOUT1?", time_lock_s=COMMAND_TIME_LOCK)
         current = await self.serial_connector.read_data(n_bytes=5)
-        await self.serial_connector.end_cmd()
         return float(current)
 
     # ---

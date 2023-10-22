@@ -172,11 +172,11 @@ class MetaDriverBpc(PlatformDriver):
         """
         while self.alive:
             await asyncio.sleep(self.polling_ref["enable"])
-            #await self._update_attributes_from_dict({
-            #    "enable": {
-            #        "value": await self._PZA_DRV_BPC_read_enable_value()
-            #    }
-            #})
+            await self._update_attributes_from_dict({
+                "enable": {
+                    "value": await self._PZA_DRV_BPC_read_enable_value()
+                }
+            })
 
     # ---
 
@@ -185,11 +185,11 @@ class MetaDriverBpc(PlatformDriver):
         """
         while self.alive:
             await asyncio.sleep(self.polling_ref["voltage"])
-            #await self._update_attributes_from_dict({
-            #    "voltage": {
-            #        "value": await self._PZA_DRV_BPC_read_voltage_value()
-            #    }
-            #})
+            await self._update_attributes_from_dict({
+                "voltage": {
+                    "value": await self._PZA_DRV_BPC_read_voltage_value()
+                }
+            })
 
     # ---
 
@@ -198,11 +198,11 @@ class MetaDriverBpc(PlatformDriver):
         """
         while self.alive:
             await asyncio.sleep(self.polling_ref["current"])
-            #await self._update_attributes_from_dict({
-            #    "current": {
-            #        "value": await self._PZA_DRV_BPC_read_current_value()
-            #    }
-            #})
+            await self._update_attributes_from_dict({
+                "current": {
+                    "value": await self._PZA_DRV_BPC_read_current_value()
+                }
+            })
 
     # ---
 

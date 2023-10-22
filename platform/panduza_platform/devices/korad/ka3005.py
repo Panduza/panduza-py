@@ -19,7 +19,6 @@ class DeviceKoradKA3005P(PlatformDevice):
         """
 
         port = self.get_settings().get("serial_port")
-        print(port)
         baudrate = 9600
         number_of_channel = 1
 
