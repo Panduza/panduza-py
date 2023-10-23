@@ -83,7 +83,7 @@ class MetaDriverAmmeter(PlatformDriver):
         """Task to poll the value
         """
         while self.alive:
-            await asyncio.sleep(0.05)
+            await asyncio.sleep(self.__polling_cycle)
             await self._update_attributes_from_dict({
                 "measure": {
                     "value": await self._PZA_DRV_AMMETER_read_measure_value()
@@ -128,7 +128,7 @@ class MetaDriverAmmeter(PlatformDriver):
         await self._update_attributes_from_dict({
             "measure": {
                 "value": await self._PZA_DRV_AMMETER_read_measure_value(),
-                "polling_cycle": 0.05
+                "polling_cycle": await self.__get_poll_cycle()
             }
         })
 
