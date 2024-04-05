@@ -13,7 +13,7 @@ Core.LoadAliases({
 
 client = Client(broker_alias="local")
 client.connect()
-interfaces = client.scan_interfaces()
+interfaces = client.scan_all_interfaces()
 
 for iface in interfaces:
     print(f"\t- {iface} [{interfaces[iface]}]")
