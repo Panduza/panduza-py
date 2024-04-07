@@ -122,7 +122,7 @@ if __name__ == '__main__':
 
     # Scan interfaces
     print("Scanning...")
-    interfaces = client.scan_interfaces()
+    interfaces = client.scan_all_interfaces()
     for iface in interfaces:
         iface_type = interfaces[iface]["type"]
         if iface_type == "bpc":
