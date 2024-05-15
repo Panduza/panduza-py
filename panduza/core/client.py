@@ -12,11 +12,65 @@ import logging
 import threading
 import traceback
 
-import json
+import socket, json, time
 import queue
 import paho.mqtt.client as mqtt
 
 from .core import Core
+
+PORT_LOCAL_DISCOVERY = 53035
+
+# ┌────────────────────────────────────────┐
+# │ Local broker discovery                 │
+# └────────────────────────────────────────┘
+
+def panduza_local_broker_discovery():
+    """ Return the addresses of brokers discover on the local network 
+
+        Raises:
+            Exception: raise if connection alias not loaded
+
+        Returns:
+            List[str, int]: url, port
+    """
+
+    broker_addrs = []
+
+    # Get every network interfaces
+    interfaces = socket.getaddrinfo(host=socket.gethostname(), port=None, family=socket.AF_INET)
+    ips = [ip[-1][0] for ip in interfaces]
+
+    request_payload = json.dumps({"search": True})
+    request_payload_utf8 = request_payload.encode(
+        encoding="utf-8"
+    )
+
+    for ip in ips:
+        try: 
+            # Send broadcast local discovery request on the local networks
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)  
+            sock.setblocking(False)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+            sock.bind((ip, 0))
+            sock.sendto(request_payload_utf8, ("255.255.255.255", PORT_LOCAL_DISCOVERY))
+            time.sleep(1)
+       
+            answer_payload, broker_addr = sock.recvfrom(1000)
+
+            # Get the name in the payload 
+            json_answer = answer_payload.decode(
+                encoding="utf-8"
+            )
+            
+            # add the platform addr, port and name to the list of broker detected
+            broker_addrs.append((broker_addr, json.loads(json_answer)['name']))
+        except Exception as e:
+            pass
+        
+        sock.close()
+    
+    return broker_addrs
 
 # ┌────────────────────────────────────────┐
 # │ Utilities                              │
@@ -32,7 +86,7 @@ from .core import Core
 
 class Client:
 
-    def __init__(self, broker_alias=None, interface_alias=None, url=None, port=None):
+    def __init__(self, broker_alias=None, interface_alias=None, url=None, port=None, platform_name=None):
         """Client Constructor
 
         The client can be build from
@@ -40,21 +94,69 @@ class Client:
         - Alias
         OR
         - Url + Port
+        OR
+        - Platform name
+        OR 
+        - Nothing
 
         Args:
             alias (str, optional): connection alias. Defaults to None.
             url (str, optional): broker url. Defaults to None.
             port (str, optional): port url. Defaults to None.
+            platform_name (str, optional): name of the platform. Defaults to None.
         """
-        # Manage double way of loading client information
+        # Manage for way of loading client information
+
+        # Using broker alias
         if broker_alias:
             self.url, self.port = Core.BrokerInfoFromBrokerAlias(broker_alias)
         elif interface_alias:
             self.url, self.port = Core.BrokerInfoFromInterfaceAlias(
                 interface_alias)
-        else:
+            
+        # Using url and port directly
+        elif (url != None and port != None):
             self.url = str(url)
             self.port = int(port)
+
+        # Look for platforms on the local network and use the broker informations 
+        # of the first platform found with the given platform_name
+        elif (platform_name != None):
+            list_info_brokers = panduza_local_broker_discovery()
+            self.url = None 
+            self.port = None 
+
+            # Find the platform with the platform name asked 
+            for info_broker in list_info_brokers:
+                platform_name_detected = info_broker[1]
+                if (platform_name_detected == platform_name):
+                    self.url = info_broker[0][0]
+                    self.port = 1883
+                    # self.port = info_broker[0][1]
+                    break
+            
+            # If any platform find with the given platform_name raise a error 
+            if (self.url == None or self.port == None):
+                raise NameError("Any platform find on the local platform with the name: " + platform_name)
+            
+        # Look for platforms on the local network and use the broker informations of the 
+        # first platform found during discovery
+        else:   
+            list_info_brokers = panduza_local_broker_discovery()
+            if (len(list_info_brokers) == 0):
+                # Maybe create a exception class for not findind local platform
+                raise Exception("Any platform find on the local platform with the name")
+            else:
+                # If at least one platform find use the first 
+                # broker addr and port of the first platform discover
+                addr_port = list_info_brokers[0][0]
+                self.url = addr_port[0]
+
+                # Need to change the local discovery of the platform to get port 
+                # of broker and not the platform, for the moment use port 1883 
+
+                # self.port = addr_port[1]
+                self.port = 1883
 
         # Set flags
         self.is_connected = False
@@ -90,7 +192,7 @@ class Client:
     # └────────────────────────────────────────┘
 
     def connect(self):
-        self.log.debug("Connect to broker")
+        self.log.debug("Connect to broker {self.url}:" + str(self.port))
         self.client.connect(self.url, self.port)
         self.client.loop_start()
 
