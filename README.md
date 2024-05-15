@@ -8,10 +8,10 @@
 
 ## Requirements
 ```
-pip install "git+https://github.com/Panduza/panduza-py.git"
 sudo apt-get update
 sudo apt-get install -y mosquitto git
 sudo apt-get install -y python3 python3-pip
+pip install "git+https://github.com/Panduza/panduza-py.git"
 sudo pip install -r ./tests/requirements.txt
 sudo pip install -r ./platform/requirements.txt
 sudo pip install ./client/
