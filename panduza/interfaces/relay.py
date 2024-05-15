@@ -3,7 +3,7 @@ from ..core import Interface, Attribute, RwField
 
 @dataclass
 class Relay(Interface):
-    """
+    """Interface to manage relay, two states on/off
     """
 
     interface:Interface = None
@@ -35,3 +35,9 @@ class Relay(Interface):
         if self.ensure:
             self.ensure_init()
 
+    # open_state: boolean
+    def get_state_open(self, open_state):
+        return self.state.open.get(open_state)
+   
+    def set_state_open(self):
+        self.state.open.set("constant_power")
