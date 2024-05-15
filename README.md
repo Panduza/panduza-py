@@ -8,6 +8,7 @@
 
 ## Requirements
 ```
+pip install "git+https://github.com/Panduza/panduza-py.git"
 sudo apt-get update
 sudo apt-get install -y mosquitto git
 sudo apt-get install -y python3 python3-pip
