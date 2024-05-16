@@ -64,11 +64,17 @@ class Panduza_local_broker_discovery:
         return broker_addrs
 
     def get_broker_info_with_name(platform_name):
-        """ Get the broker info of the first platform found on the 
-        local network with the given name
+        """ Get the broker info of the platform discover on the local network with the given name 
+        and chosen by the user with keyboard input 
 
         Arg:
             - platform_name (str, required): name of the platform.
+
+        Raises:
+            NameError: if any platform find on the local network with the given name
+
+        Returns:
+            str, int: url, port
         """
 
         # Find the platform with the platform name asked 
@@ -116,8 +122,14 @@ class Panduza_local_broker_discovery:
         return url, port
 
     def get_first_broker_info():
-        """ Get the broker info of the first platform found on the 
-        local network with the given name
+        """ Get the broker info of the platform discover on the local network and chosen 
+        by the user with keyboard input 
+
+        Raises:
+            Exception: if any platform find on the local network 
+            
+        Returns:
+            str, int: url, port
         """
         url = None
         port = None
