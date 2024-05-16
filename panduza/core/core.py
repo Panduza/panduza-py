@@ -71,37 +71,48 @@ class Panduza_local_broker_discovery:
             - platform_name (str, required): name of the platform.
         """
 
-        platform_find = False
-
         # Find the platform with the platform name asked 
-        url = None
-        port = None
+
         list_info_brokers = Panduza_local_broker_discovery.panduza_local_broker_discovery()
+        brokers_with_given_name = []
 
         for info_broker in list_info_brokers:
             platform_name_detected = info_broker[1]
             if (platform_name_detected == platform_name):
                 tmp_url, tmp_port = info_broker[0][0], 1883
-                # Ask to the user if he wanted to use this platform 
-                use_platform = ""
-                while (use_platform != 'y' and use_platform != 'n'):
-                    use_platform = input(f"Do you want to use the platform {tmp_url}:{tmp_port}, with name {platform_name} ? [n/y]")
-
-                if (use_platform == 'y'):
-                    url = tmp_url
-                    port = tmp_port
-                    platform_find = True
-                    break
-                
-                    # self.port = info_broker[0][1]
-
-        if (platform_find and url == None or port == None):
-            raise ValueError("Any platform choosen !")
+                # add every platform with this name to this list
+                brokers_with_given_name.append((tmp_url, tmp_port))
+        
 
         # If any platform find with the given platform_name raise a error 
-        if (url == None or port == None):
+        if (not brokers_with_given_name):
             raise NameError("Any platform find on the local platform with the name: " + platform_name)
-        
+                  
+        while (True):
+            # Print every platform discovered
+            print("########################################")
+            for i in range(len(brokers_with_given_name)):
+                tmp_url, tmp_port = brokers_with_given_name[i][0], brokers_with_given_name[i][1]
+                print(f"{i + 1} - Platform name : {platform_name}, {tmp_url}:{tmp_port}")
+            print("########################################\n")
+
+            # Ask to the user which platform he wants to use
+            print(f"Which platform do you want to use ? Enter the number at the left of the platform you want to use ? [1", end="")
+            for i in range(2, len(brokers_with_given_name) + 1):
+                print(f" or {i}", end="")
+            print("]")
+            user_choice = input()
+
+            # Check if the user has input a correct platform number else ask him 
+            # to enter his choice a second time 
+            if ((user_choice.isnumeric()) and (int(user_choice) >= 1) and (int(user_choice) <= len(brokers_with_given_name))):
+                broker_choosen = brokers_with_given_name[int(user_choice) - 1]
+                url, port = broker_choosen[0], broker_choosen[1]
+                nbr_plat = int(user_choice)
+                break
+
+        print(f"Platform number {nbr_plat} has been chosen with url/port : {url}:{port} and name : {platform_name}") 
+
         return url, port
 
     def get_first_broker_info():
@@ -113,31 +124,37 @@ class Panduza_local_broker_discovery:
         
         list_info_brokers = Panduza_local_broker_discovery.panduza_local_broker_discovery()
         if (len(list_info_brokers) == 0):
-            # Maybe create a exception class for not findind local platform
+            # Maybe create a exception class for not findind any local platform
             raise Exception("Any platform find on the local platform with the name")
-        else:
-            # Ask for every platform if he wants to use them
-            for info_broker in list_info_brokers:
-                platform_name = info_broker[1]
-                tmp_url, tmp_port = info_broker[0][0], 1883
-                # Ask to the user if he wanted to use this platform 
-                use_platform = ""
-                while (use_platform != 'y' and use_platform != 'n'):
-                    use_platform = input(f"Do you want to use the platform {tmp_url}:{tmp_port}, with name {platform_name} ? [n/y]")
 
-                if (use_platform == 'y'):
-                    url = tmp_url
-                    port = tmp_port
-                    break
+        while (True):
+            # Print every platform discovered
+            print("########################################")
+            for i in range(len(list_info_brokers)):
+                # Need to change the local discovery to get the broker port and not the one 
+                # of the local discovery service
+                platform_name = list_info_brokers[i][1]
+                tmp_url, tmp_port = list_info_brokers[i][0][0], 1883
+                print(f"{i + 1} - Platform name : {platform_name}, {tmp_url}:{tmp_port}")
+            print("########################################\n")
 
-                    # Need to change the local discovery of the platform to get port 
-                    # of broker and not the platform, for the moment use port 1883 
-                
-                    # self.port = info_broker[0][1]
-        
-        if (url == None and port == None):
-            raise ValueError("Any platform choosen !")
+            # Ask to the user which platform he wants to use
+            print(f"Which platform do you want to use ? Enter the number at the left of the platform you want to use ? [1", end="")
+            for i in range(2, len(list_info_brokers) + 1):
+                print(f" or {i}", end="")
+            print("]")
+            user_choice = input()
 
+            # Check if the user has input a correct platform number else ask him 
+            # to enter his choice a second time 
+            if ((user_choice.isnumeric()) and (int(user_choice) >= 1) and (int(user_choice) <= len(list_info_brokers))):
+                broker_choosen = list_info_brokers[int(user_choice) - 1]
+                url, port = broker_choosen[0][0], broker_choosen[0][1]
+                platform_name = broker_choosen[1]
+                nbr_platform = int(user_choice)
+                break
+
+        print(f"Platform number {nbr_platform} has been chosen with url/port : {url}:{port} and name : {platform_name}") 
 
         return url, port
 
