@@ -71,16 +71,32 @@ class Panduza_local_broker_discovery:
             - platform_name (str, required): name of the platform.
         """
 
+        platform_find = False
+
         # Find the platform with the platform name asked 
         url = None
         port = None
         list_info_brokers = Panduza_local_broker_discovery.panduza_local_broker_discovery()
+
         for info_broker in list_info_brokers:
             platform_name_detected = info_broker[1]
             if (platform_name_detected == platform_name):
-                url = info_broker[0][0]
-                port = 1883
-                # self.port = info_broker[0][1]
+                tmp_url, tmp_port = info_broker[0][0], 1883
+                # Ask to the user if he wanted to use this platform 
+                use_platform = ""
+                while (use_platform != 'y' and use_platform != 'n'):
+                    use_platform = input(f"Do you want to use the platform {tmp_url}:{tmp_port}, with name {platform_name} ? [n/y]")
+
+                if (use_platform == 'y'):
+                    url = tmp_url
+                    port = tmp_port
+                    platform_find = True
+                    break
+                
+                    # self.port = info_broker[0][1]
+
+        if (platform_find and url == None or port == None):
+            raise ValueError("Any platform choosen !")
 
         # If any platform find with the given platform_name raise a error 
         if (url == None or port == None):
@@ -92,22 +108,36 @@ class Panduza_local_broker_discovery:
         """ Get the broker info of the first platform found on the 
         local network with the given name
         """
-
+        url = None
+        port = None
+        
         list_info_brokers = Panduza_local_broker_discovery.panduza_local_broker_discovery()
         if (len(list_info_brokers) == 0):
             # Maybe create a exception class for not findind local platform
             raise Exception("Any platform find on the local platform with the name")
         else:
-            # If at least one platform find use the first 
-            # broker addr and port of the first platform discover
-            addr_port = list_info_brokers[0][0]
-            url = addr_port[0]
+            # Ask for every platform if he wants to use them
+            for info_broker in list_info_brokers:
+                platform_name = info_broker[1]
+                tmp_url, tmp_port = info_broker[0][0], 1883
+                # Ask to the user if he wanted to use this platform 
+                use_platform = ""
+                while (use_platform != 'y' and use_platform != 'n'):
+                    use_platform = input(f"Do you want to use the platform {tmp_url}:{tmp_port}, with name {platform_name} ? [n/y]")
 
-            # Need to change the local discovery of the platform to get port 
-            # of broker and not the platform, for the moment use port 1883 
+                if (use_platform == 'y'):
+                    url = tmp_url
+                    port = tmp_port
+                    break
 
-            # self.port = addr_port[1]
-            port = 1883
+                    # Need to change the local discovery of the platform to get port 
+                    # of broker and not the platform, for the moment use port 1883 
+                
+                    # self.port = info_broker[0][1]
+        
+        if (url == None and port == None):
+            raise ValueError("Any platform choosen !")
+
 
         return url, port
 
