@@ -12,3 +12,4 @@ from .interfaces import Blc
 from .interfaces import Powermeter
 from .interfaces import Thermometer
 
+from .interfaces import Ping
