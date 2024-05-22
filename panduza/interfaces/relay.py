@@ -35,3 +35,9 @@ class Relay(Interface):
         if self.ensure:
             self.ensure_init()
 
+    def get_state_open(self):
+        self.state.open.get()
+
+    def set_state_open(self, value):
+        self.state.open.set(value)
+
