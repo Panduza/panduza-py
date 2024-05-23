@@ -46,26 +46,31 @@ class Panduza_local_broker_discovery:
                 sock.bind((ip, 0))
                 sock.sendto(request_payload_utf8, ("255.255.255.255", Panduza_local_broker_discovery.PORT_LOCAL_DISCOVERY))
                 time.sleep(1)
-        
-                answer_payload, broker_addr_port = sock.recvfrom(1000)
 
-                # Get the name in the payload 
-                json_answer = answer_payload.decode(
-                    encoding="utf-8"
-                )
-                
-                # add the platform addr, port and name to the list of broker detected
-                json_answer = json.loads(json_answer)
-                platform_info = json_answer["platform"]
-                broker_info = json_answer["broker"]
+                while (True):
 
-                if (platform_info != None and broker_info != None):
-                    platform_name = platform_info["name"]
-                    broker_addr = broker_addr_port[0]
-                    broker_port = broker_info["port"]
+                    answer_payload, broker_addr_port = sock.recvfrom(1024)
 
-                    if (platform_name != None and broker_addr != None and broker_port != None):
-                        broker_addrs.append(((broker_addr, broker_port), platform_name))
+                    if (len(answer_payload) == 0):
+                        break
+
+                    # Get the name in the payload 
+                    json_answer = answer_payload.decode(
+                        encoding="utf-8"
+                    )
+                    
+                    # add the platform addr, port and name to the list of broker detected
+                    json_answer = json.loads(json_answer)
+                    platform_info = json_answer["platform"]
+                    broker_info = json_answer["broker"]
+
+                    if (platform_info != None and broker_info != None):
+                        platform_name = platform_info["name"]
+                        broker_addr = broker_addr_port[0]
+                        broker_port = broker_info["port"]
+
+                        if (platform_name != None and broker_addr != None and broker_port != None):
+                            broker_addrs.append(((broker_addr, broker_port), platform_name))
 
                 
             except Exception as e:
