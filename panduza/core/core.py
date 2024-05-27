@@ -36,48 +36,66 @@ class Panduza_local_broker_discovery:
             encoding="utf-8"
         )
 
-        for ip in ips:
-            try: 
-                # Send broadcast local discovery request on the local networks
-                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)  
-                sock.setblocking(False)
-                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-                sock.bind((ip, 0))
-                sock.sendto(request_payload_utf8, ("255.255.255.255", Panduza_local_broker_discovery.PORT_LOCAL_DISCOVERY))
-                time.sleep(1)
+        searching_time = 2
 
-                while (True):
+        while (broker_addrs == []):
 
-                    answer_payload, broker_addr_port = sock.recvfrom(1024)
+            # If not find during first loop ask to the user if he wants to look for a longer time
+            if (searching_time != 2):
+                print("No platform find on the network, do you want to search longer ?")
+                continue_to_search = ""
 
-                    if (len(answer_payload) == 0):
-                        break
+                while (continue_to_search != "y" and continue_to_search != "n"):
+                    continue_to_search = input()
 
-                    # Get the name in the payload 
-                    json_answer = answer_payload.decode(
-                        encoding="utf-8"
-                    )
+                if (continue_to_search == "n"):
+                    exit()
                     
-                    # add the platform addr, port and name to the list of broker detected
-                    json_answer = json.loads(json_answer)
-                    platform_info = json_answer["platform"]
-                    broker_info = json_answer["broker"]
+            # Send on every network interface broadcast request to find platforms
+            for ip in ips:
+                try: 
+                    # Send broadcast local discovery request on the local networks
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)  
+                    sock.setblocking(False)
+                    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                    sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+                    sock.bind((ip, 0))
+                    sock.sendto(request_payload_utf8, ("255.255.255.255", Panduza_local_broker_discovery.PORT_LOCAL_DISCOVERY))
+                    time.sleep(searching_time)
 
-                    if (platform_info != None and broker_info != None):
-                        platform_name = platform_info["name"]
-                        broker_addr = broker_addr_port[0]
-                        broker_port = broker_info["port"]
+                    while (True):
 
-                        if (platform_name != None and broker_addr != None and broker_port != None):
-                            broker_addrs.append(((broker_addr, broker_port), platform_name))
+                        answer_payload, broker_addr_port = sock.recvfrom(1024)
 
+                        if (len(answer_payload) == 0):
+                            break
+
+                        # Get the name in the payload 
+                        json_answer = answer_payload.decode(
+                            encoding="utf-8"
+                        )
+                        
+                        # add the platform addr, port and name to the list of broker detected
+                        json_answer = json.loads(json_answer)
+                        platform_info = json_answer["platform"]
+                        broker_info = json_answer["broker"]
+
+                        if (platform_info != None and broker_info != None):
+                            platform_name = platform_info["name"]
+                            broker_addr = broker_addr_port[0]
+                            broker_port = broker_info["port"]
+
+                            if (platform_name != None and broker_addr != None and broker_port != None):
+                                broker_addrs.append(((broker_addr, broker_port), platform_name))
+
+                    
+                except Exception as e:
+                    pass
                 
-            except Exception as e:
-                pass
+                sock.close()
             
-            sock.close()
-        
+            searching_time += 1
+
         return broker_addrs
 
     def get_broker_info_with_name(platform_name):
