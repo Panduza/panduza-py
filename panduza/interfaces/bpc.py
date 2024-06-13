@@ -96,7 +96,7 @@ class Bpc(Interface):
     
     # Voltage get/set
     def set_voltage_value(self, value):
-        self.voltatge.value.set(value)
+        self.voltage.value.set(value)
     
     def get_voltage_value(self):
         self.voltage.value.get()
