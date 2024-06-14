@@ -86,3 +86,27 @@ class Bpc(Interface):
     def toggle(self):
         pass
 
+
+    # Enable value need to be true or false to actually do something
+    def turn_on(self):
+        self.enable.value.set(True)
+
+    def turn_off(self):
+        self.enable.value.set(False)
+
+    def is_on(self):
+        return self.enable.value.get()
+    
+    # Voltage get/set
+    def set_voltage_value(self, value):
+        self.voltage.value.set(value)
+    
+    def get_voltage_value(self):
+        self.voltage.value.get()
+
+    # Current get/set
+    def set_current_value(self, value):
+        self.current.value.set(value)
+    
+    def get_current_value(self):
+        self.current.value.get()

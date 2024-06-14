@@ -70,13 +70,24 @@ class Blc(Interface):
         pass
 
 
+    # Enable value need to be true or false to actually do something
+    def turn_on(self):
+        self.enable.value.set(True)
+
+    def turn_off(self):
+        self.enable.value.set(False)
+
+    def is_on(self):
+        return self.enable.value.get()
+
+    # Change mode at power or current
     def set_mode_constant_power(self):
         self.mode.value.set("constant_power")
 
     def set_mode_constant_current(self):
         self.mode.value.set("constant_current")
 
-
+    # Set power value
     def set_power_goal_point(self, value):
         self.power.value.set(value)
 
