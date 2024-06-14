@@ -71,10 +71,13 @@ class Blc(Interface):
 
 
     # Enable value need to be true or false to actually do something
-    def set_enable_value(self, value):
-        self.enable.value.set(value)
+    def turn_on(self):
+        self.enable.value.set(True)
 
-    def get_enable_value(self):
+    def turn_off(self):
+        self.enable.value.set(False)
+
+    def is_on(self):
         return self.enable.value.get()
 
     # Change mode at power or current

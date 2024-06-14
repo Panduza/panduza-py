@@ -37,7 +37,7 @@ class Powermeter(Interface):
             self.ensure_init()
 
 
-    def get_measure_value(self):
+    def get_power(self):
         return self.measure.value.get()
     
 
