@@ -87,10 +87,11 @@ class Blc(Interface):
     def set_mode_constant_current(self):
         self.mode.value.set("constant_current")
 
-    # Set power value
+    # Set power value with percentage (0% to 100%)
     def set_power_goal_point(self, value):
-        self.power.value.set(value)
-
+        value_with_percentage = (1/100) * value * self.power.max.get()
+        self.power.value.set(value_with_percentage)
+           
     def get_power_min_value(self):
         return self.power.min.get()
         
