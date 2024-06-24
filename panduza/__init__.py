@@ -9,6 +9,7 @@ from .interfaces import Ammeter
 from .interfaces import Platform
 
 from .interfaces import Blc
+from .interfaces import Registers
 from .interfaces import Powermeter
 from .interfaces import Thermometer
 

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from ..core import Interface, Attribute_A3, RoField, RwField
-
+from ..core import Interface, AttributeA3, RoField, RwField
+import json
 
 @dataclass
 class Registers(Interface):
@@ -25,12 +25,17 @@ class Registers(Interface):
 
         # === MEASURE ===
         self.add_attribute(
-            Attribute_A3( name_ = "commands" )
+            AttributeA3( name_ = "commands" )
         )
 
-    def write(self, index, value):
+    def write(self, index, values):
         """
         """
-        self.commands.push({index: value})
-        pass    
+        json_cmd = {
+            "cmd": "w",
+            "index": index,
+            "values": values
+        }
+        self.commands.push(json.dumps(json_cmd).encode("utf-8"))
+
 

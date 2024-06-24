@@ -83,12 +83,12 @@ class AttributeA3:
         self.interface = interface
         self._log.debug(f"{self._lhead} attach to interface '{self.interface.get_short_name()}'")
         self._lhead = f"<{self.interface.get_short_name()}.{self.name_}>"
-        self._topic_atts = topic_join(self.interface.topic, "atts", self.name_)
+        # self._topic_atts = topic_join(self.interface.topic, "atts", self.name_)
         self._topic_cmds_set = topic_join(self.interface.topic, "cmds", self.name_)
 
         # Subscribe to topic
-        self._log.debug(f"{self._lhead} subscribe to topic atts : %{self._topic_atts}%")
-        self.interface.client.subscribe(self._topic_atts, callback=self._on_att_message)
+        # self._log.debug(f"{self._lhead} subscribe to topic atts : %{self._topic_atts}%")
+        # self.interface.client.subscribe(self._topic_atts, callback=self._on_att_message)
 
     # # ---
 

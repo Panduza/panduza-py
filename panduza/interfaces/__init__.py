@@ -5,6 +5,7 @@ from .ammeter import Ammeter
 from .platform import Platform
 
 from .blc import Blc
+from .registers import Registers
 from .powermeter import Powermeter
 from .thermometer import Thermometer
 
