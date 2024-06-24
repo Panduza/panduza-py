@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from ..core import Interface, Attribute, RoField, RwField
+from ..core import Interface, Attribute_A3, RoField, RwField
 
 
 @dataclass
@@ -25,18 +25,12 @@ class Registers(Interface):
 
         # === MEASURE ===
         self.add_attribute(
-            Attribute( name_ = "measure" )
-        ).add_field(
-            RoField( name_ = "value" )
-        ).add_field(
-            RoField( name_ = "decimals" )
-        ).add_field(
-            RwField( name_ = "afrq" )
+            Attribute_A3( name_ = "commands" )
         )
 
-        if self.ensure:
-            self.ensure_init()
-
-
-    
+    def write(self, index, value):
+        """
+        """
+        self.commands.push({index: value})
+        pass    
 

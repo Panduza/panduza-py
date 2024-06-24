@@ -64,15 +64,15 @@ class AttributeA3:
 
         self._event_listeners = []
 
-    # ---
+    # # ---
 
-    def attach_event_listener(self, callback):
-        self._event_listeners.append(callback)
+    # def attach_event_listener(self, callback):
+    #     self._event_listeners.append(callback)
 
-    # ---
+    # # ---
 
-    def detach_event_listener(self, callback):
-        self._event_listeners.remove(callback)
+    # def detach_event_listener(self, callback):
+    #     self._event_listeners.remove(callback)
 
     # ---
 
@@ -84,7 +84,7 @@ class AttributeA3:
         self._log.debug(f"{self._lhead} attach to interface '{self.interface.get_short_name()}'")
         self._lhead = f"<{self.interface.get_short_name()}.{self.name_}>"
         self._topic_atts = topic_join(self.interface.topic, "atts", self.name_)
-        self._topic_cmds_set = topic_join(self.interface.topic, "cmds", "set")
+        self._topic_cmds_set = topic_join(self.interface.topic, "cmds", self.name_)
 
         # Subscribe to topic
         self._log.debug(f"{self._lhead} subscribe to topic atts : %{self._topic_atts}%")
@@ -188,23 +188,23 @@ class AttributeA3:
 
     # ---
 
-    def set(self, **kwargs):
+    def push(self, payload):
         """Send a set command
         """
-        # Get ensure flag
-        ensure=kwargs.get('ensure', True)
+        # # Get ensure flag
+        # ensure=kwargs.get('ensure', True)
 
-        # Prepare the payload
-        kwargs.pop('ensure', None)
-        pyl={}
-        for key, value in kwargs.items():
-            # TODO Check if the key match a field name
-            pyl[key] = value
-        cmd={}
-        cmd[self.name_] = pyl
+        # # Prepare the payload
+        # kwargs.pop('ensure', None)
+        # pyl={}
+        # for key, value in kwargs.items():
+        #     # TODO Check if the key match a field name
+        #     pyl[key] = value
+        # cmd={}
+        # cmd[self.name_] = pyl
 
         # Send message
-        self.interface.client.publish_json(self._topic_cmds_set, cmd)
+        self.interface.client.publish(self._topic_cmds_set, payload)
 
         # # If ensure flag is set, wait for it
         # if ensure:
@@ -226,19 +226,19 @@ class AttributeA3:
 
     # ---
 
-    def update_ack(self, expected_data):
-        """Control if the internal data match the expected one by the user
-        """
-        # debug
-        self._log.debug(f'update_ack expected={expected_data} recieved={self._field_data}')
+    # def update_ack(self, expected_data):
+    #     """Control if the internal data match the expected one by the user
+    #     """
+    #     # debug
+    #     self._log.debug(f'update_ack expected={expected_data} recieved={self._field_data}')
 
-        # Control
-        for key, value in expected_data.items():
-            if (key not in self._field_data) or (self._field_data[key] != value):
-                # self._log.debug(f'NOK')
-                return False
+    #     # Control
+    #     for key, value in expected_data.items():
+    #         if (key not in self._field_data) or (self._field_data[key] != value):
+    #             # self._log.debug(f'NOK')
+    #             return False
 
-        # Ok if no diff found
-        # self._log.debug(f'ok')
-        return True
+    #     # Ok if no diff found
+    #     # self._log.debug(f'ok')
+    #     return True
 
