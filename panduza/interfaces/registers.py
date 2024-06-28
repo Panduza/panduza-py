@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from ..core import Interface, AttributeA3, RoField, RwField
+from ..core import Interface, AttributeA2, AttributeA3, RoField, RwField
 import json
+import threading
 
 @dataclass
 class Registers(Interface):
@@ -10,6 +11,9 @@ class Registers(Interface):
     interface:Interface = None
 
     def __post_init__(self):
+
+        self._update_event = threading.Event()
+        self._update_event.clear()
 
         if self.alias:
             pass
@@ -25,8 +29,20 @@ class Registers(Interface):
 
         # === MEASURE ===
         self.add_attribute(
-            AttributeA3( name_ = "commands" )
+            AttributeA2( name_ = "commands" )
         )
+        self.add_attribute(
+            AttributeA3( name_ = "map" )
+        )
+
+        self.map.attach_event_listener(self.on_map_update)
+
+    def on_map_update(self, value):
+        """
+        """
+        print("Map updated")
+        self._update_event.set()
+
 
     def write(self, index, values):
         """
@@ -37,5 +53,20 @@ class Registers(Interface):
             "values": values
         }
         self.commands.push(json.dumps(json_cmd).encode("utf-8"))
+
+    def read(self, index, size):
+        """
+        """
+        json_cmd = {
+            "cmd": "r",
+            "index": index,
+            "size": size
+        }
+        self.commands.push(json.dumps(json_cmd).encode("utf-8"))
+        self._update_event.wait()
+
+        payload_dict = json.loads(self.map.get().decode("utf-8"))
+        print(payload_dict)
+
 
 

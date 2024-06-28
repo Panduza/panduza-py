@@ -54,25 +54,24 @@ class AttributeA3:
         self._lhead = f"<?.{self.name_} {id(self)}>"
         self._log.debug(f"{self._lhead} NEW attribute retain={self.retain}")
 
-        self._field_names = [] # authorized field names
 
-        self._field_data = {}
-        self._field_data_lock = threading.Lock()
+        self._data = None
+        # self._field_data_lock = threading.Lock()
 
         self._update_event = threading.Event()
         self._update_event.clear()
 
         self._event_listeners = []
 
-    # # ---
+    # ---
 
-    # def attach_event_listener(self, callback):
-    #     self._event_listeners.append(callback)
+    def attach_event_listener(self, callback):
+        self._event_listeners.append(callback)
 
-    # # ---
+    # ---
 
-    # def detach_event_listener(self, callback):
-    #     self._event_listeners.remove(callback)
+    def detach_event_listener(self, callback):
+        self._event_listeners.remove(callback)
 
     # ---
 
@@ -83,146 +82,92 @@ class AttributeA3:
         self.interface = interface
         self._log.debug(f"{self._lhead} attach to interface '{self.interface.get_short_name()}'")
         self._lhead = f"<{self.interface.get_short_name()}.{self.name_}>"
-        # self._topic_atts = topic_join(self.interface.topic, "atts", self.name_)
-        self._topic_cmds_set = topic_join(self.interface.topic, "cmds", self.name_)
+        self._topic_atts = topic_join(self.interface.topic, "atts", self.name_)
+        # self._topic_cmds_set = topic_join(self.interface.topic, "cmds", "set")
 
         # Subscribe to topic
-        # self._log.debug(f"{self._lhead} subscribe to topic atts : %{self._topic_atts}%")
-        # self.interface.client.subscribe(self._topic_atts, callback=self._on_att_message)
+        self._log.debug(f"{self._lhead} subscribe to topic atts : %{self._topic_atts}%")
+        self.interface.client.subscribe(self._topic_atts, callback=self._on_att_message)
 
-    # # ---
 
-    # def ensure_init(self):
-    #     """Ensure that the interface has been initialized by the broker
-    #     """
-    #     # Check by pass
-    #     if self.bypass_init_ensure:
-    #         return
-    #     # Do not need to check if the attribute is not retained
-    #     if not self.retain:
-    #         return
-    #     # Do not need to check the misc attribute (all fields are optionnal)
-    #     if self.name_ == "misc":
-    #         return
-
-    #     # Prepare counter
-    #     self._log.debug(f"{self._lhead}ENSURE INIT")
-    #     self._update_event.clear()
-    #     start_time = time.perf_counter()
-
-    #     while (
-    #         not self._field_data and
-    #         (time.perf_counter()-start_time) < Attribute.ENSURE_TIMEOUT
-    #         ):
-    #         remaining_time = Attribute.ENSURE_TIMEOUT - (time.perf_counter()-start_time)
-    #         # self._log.debug(f'remaining {remaining_time:0.6f} seconds')
-    #         self._update_event.wait(remaining_time)
-
-    #     if time.perf_counter()-start_time >= Attribute.ENSURE_TIMEOUT:
-    #         raise EnsureError(f"{self._lhead} initial data not recieved for attribute '{self.name_}'")
-
-    # # ---
+    # ---
     
-    # def _on_att_message(self, topic, payload):
-    #     """Triggered when a new message is received
+    def _on_att_message(self, topic, payload):
+        """Triggered when a new message is received
 
-    #     !!! WORK ON MQTT CLIENT THREAD !!!
-    #     """
-    #     # Debug
-    #     self._log.debug(f"{self._lhead}MSG_IN < %{topic}% {payload}")
-    #     self._log.debug(f"{self.name_}")
+        !!! WORK ON MQTT CLIENT THREAD !!!
+        """
+        # Debug
+        self._log.debug(f"{self._lhead}MSG_IN < %{topic}% {payload}")
+        self._log.debug(f"{self.name_}")
 
-    #     # Parse
-    #     payload_dict = json.loads(payload.decode("utf-8"))
+        # Parse
+        # payload_dict = json.loads(payload.decode("utf-8"))
 
-    #     # Control
-    #     if self.name_ not in payload_dict:
-    #         self._log.warning(f"{self._lhead}bad format for attribute payload")
-    #         return
+        # Control
+        # if self.name_ not in payload_dict:
+        #     self._log.warning(f"{self._lhead}bad format for attribute payload")
+        #     return
+        self._data = payload
+        # # Update
+        # field_update = payload_dict.get(self.name_, {})
+        # with self._field_data_lock:
+        #     for field, update in field_update.items():
+        #         self._field_data[field] = update
+        #         self._log.debug(f"{self._lhead}UPDATE < {field}={self._field_data[field]}")
+        #         # self._log.debug(f"{self._lhead}ALL FIELDS < {self._field_data}")
 
-    #     # Update
-    #     field_update = payload_dict.get(self.name_, {})
-    #     with self._field_data_lock:
-    #         for field, update in field_update.items():
-    #             self._field_data[field] = update
-    #             self._log.debug(f"{self._lhead}UPDATE < {field}={self._field_data[field]}")
-    #             # self._log.debug(f"{self._lhead}ALL FIELDS < {self._field_data}")
+        # Notify listener
+        for callback in self._event_listeners:
+            callback(payload)
 
-    #     # Notify listener
-    #     for callback in self._event_listeners:
-    #         callback(field_update)
-
-    #     # Thread trigger
-    #     self._update_event.set()
-
-    # # ---
-
-    # def add_field(self, field):
-    #     """Append a field to the attribute
-    #     """
-    #     field.set_attribute(self)
-    #     setattr(self, field.name_, field)
-    #     with self._field_data_lock:
-    #         self._field_names.append(field.name_)
-    #     return self
-    
-    # # ---
-
-    # def support(self, field_name):
-    #     if field_name in self._field_data:
-    #         return True
-    #     else:
-    #         return False
-
-    # # ---
-
-    # def get(self, field):
-    #     """Return the value localy stored
-    #     """
-    #     with self._field_data_lock:
-    #         if not (field in self._field_names):
-    #             self._log.warning(f"{self._lhead} has no field {field}")
-    #             return None
-    #         # self._log.debug(f"{self._lhead} get('{field}') {type(self._field_data)} {self._field_data[field]}")
-    #         return self._field_data.get(field)
+        # Thread trigger
+        self._update_event.set()
 
     # ---
 
-    def push(self, payload):
-        """Send a set command
+    def get(self):
+        """Return the value localy stored
         """
-        # # Get ensure flag
-        # ensure=kwargs.get('ensure', True)
+        return self._data
 
-        # # Prepare the payload
-        # kwargs.pop('ensure', None)
-        # pyl={}
-        # for key, value in kwargs.items():
-        #     # TODO Check if the key match a field name
-        #     pyl[key] = value
-        # cmd={}
-        # cmd[self.name_] = pyl
+    # ---
 
-        # Send message
-        self.interface.client.publish(self._topic_cmds_set, payload)
+    # def set(self, **kwargs):
+    #     """Send a set command
+    #     """
+    #     # Get ensure flag
+    #     ensure=kwargs.get('ensure', True)
 
-        # # If ensure flag is set, wait for it
-        # if ensure:
-        #     self._update_event.clear()
-        #     start_time = time.perf_counter()
-        #     self._log.debug(f'wait to ensure the request is applied')
+    #     # Prepare the payload
+    #     kwargs.pop('ensure', None)
+    #     pyl={}
+    #     for key, value in kwargs.items():
+    #         # TODO Check if the key match a field name
+    #         pyl[key] = value
+    #     cmd={}
+    #     cmd[self.name_] = pyl
 
-        #     while (
-        #         not self.update_ack(kwargs) and
-        #         (time.perf_counter()-start_time) < Attribute.ENSURE_TIMEOUT
-        #         ):
+    #     # Send message
+    #     self.interface.client.publish_json(self._topic_cmds_set, cmd)
 
-        #         remaining_time = Attribute.ENSURE_TIMEOUT - (time.perf_counter()-start_time)
-        #         self._log.debug(f'remaining {remaining_time:0.6f} seconds')
-        #         self._update_event.wait(remaining_time)
+    #     # If ensure flag is set, wait for it
+    #     if ensure:
+    #         self._update_event.clear()
+    #         start_time = time.perf_counter()
+    #         self._log.debug(f'wait to ensure the request is applied')
 
-        #     if time.perf_counter()-start_time >= Attribute.ENSURE_TIMEOUT:
-        #         raise EnsureError(f"client did not recieved a correct answer when changing attributes {self._lhead} with {kwargs}")
+    #         while (
+    #             not self.update_ack(kwargs) and
+    #             (time.perf_counter()-start_time) < Attribute.ENSURE_TIMEOUT
+    #             ):
+
+    #             remaining_time = Attribute.ENSURE_TIMEOUT - (time.perf_counter()-start_time)
+    #             self._log.debug(f'remaining {remaining_time:0.6f} seconds')
+    #             self._update_event.wait(remaining_time)
+
+    #         if time.perf_counter()-start_time >= Attribute.ENSURE_TIMEOUT:
+    #             raise EnsureError(f"client did not recieved a correct answer when changing attributes {self._lhead} with {kwargs}")
 
     # ---
 
