@@ -40,7 +40,7 @@ class Registers(Interface):
     def on_map_update(self, value):
         """
         """
-        print("Map updated")
+        # print("Map updated")
         self._update_event.set()
 
 
@@ -66,7 +66,11 @@ class Registers(Interface):
         self._update_event.wait()
 
         payload_dict = json.loads(self.map.get().decode("utf-8"))
-        print(payload_dict)
+        # print(payload_dict)
+        # print(payload_dict["values"][index:index + size])
+
+        return payload_dict["values"][index:index + size]
+        
 
 
 
