@@ -54,7 +54,7 @@ class Registers(Interface):
         }
         self.commands.push(json.dumps(json_cmd).encode("utf-8"))
 
-    def read(self, index, size):
+    def read(self, index, size, repeat=None):
         """
         """
         json_cmd = {
@@ -62,6 +62,10 @@ class Registers(Interface):
             "index": index,
             "size": size
         }
+
+        if repeat:
+            json_cmd["repeat"] = repeat
+
         self.commands.push(json.dumps(json_cmd).encode("utf-8"))
         self._update_event.wait()
 
@@ -70,7 +74,5 @@ class Registers(Interface):
         # print(payload_dict["values"][index:index + size])
 
         return payload_dict["values"][index:index + size]
-        
-
 
 
