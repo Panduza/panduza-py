@@ -135,6 +135,7 @@ class Blc(Interface):
         # double could cause problem with too much decimals
         decimals_value = self.power.decimals.get()
 
+        # Value given in mW
         value_with_percentage = round((1/100) * percentage * self.power.max.get(), int(decimals_value)) 
         self.power.value.set(value_with_percentage)
            
