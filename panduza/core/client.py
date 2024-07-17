@@ -83,7 +83,7 @@ class Client:
         self.log.info("Init Client")
 
         # Init MQTT client instance
-        self.client = mqtt.Client()
+        self.client = mqtt.Client(protocol=mqtt.MQTTv311, clean_session=True)
         self.client.on_message = self.__on_message
         self.client.on_connect = self.__on_connect
         self.client.on_disconnect = self.__on_disconnect
@@ -110,7 +110,9 @@ class Client:
 
     def connect(self):
         self.log.debug("Connect to broker {self.url}:" + str(self.port))
-        self.client.connect(self.url, self.port)
+        print("Try to connect")
+        self.client.connect(self.url, self.port, keepalive=10)
+        print("success to connect")
         self.client.loop_start()
 
     def disconnect(self):
