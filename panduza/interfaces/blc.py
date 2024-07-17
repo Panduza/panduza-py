@@ -69,6 +69,9 @@ class Blc(Interface):
     def toggle(self):
         pass
 
+    ############################################################
+    ######################### ENABLE ###########################
+    ############################################################
 
     # Enable value need to be true or false to actually do something
     def turn_on(self):
@@ -80,6 +83,24 @@ class Blc(Interface):
     def is_on(self):
         return self.enable.value.get()
 
+    ############################################################
+    #################### ANALOG MODULATION #####################
+    ############################################################
+
+    # Enable value need to be true or false to actually do something
+    def enable_analog_modulation(self):
+        self.analog_modulation.value.set(True)
+
+    def disable_analog_modulation(self):
+        self.analog_modulation.value.set(False)
+
+    def get_analog_modulation(self):
+        return self.analog_modulation.value.get()
+    
+    ############################################################
+    ########################## MODE ############################
+    ############################################################
+
     # Change mode at power or current
     def set_mode_constant_power(self):
         self.mode.value.set("constant_power")
@@ -87,8 +108,14 @@ class Blc(Interface):
     def set_mode_constant_current(self):
         self.mode.value.set("constant_current")
 
+
+    ############################################################
+    ########################## POWER ###########################
+    ############################################################
+
+
     # Set power value directly with value
-    def set_power_value(self, value):
+    def set_power(self, value):
         self.power.value.set(value)
 
     # Set power value with percentage (0% to 100%)
@@ -96,10 +123,37 @@ class Blc(Interface):
         value_with_percentage = (1/100) * percentage * self.power.max.get()
         self.power.value.set(value_with_percentage)
            
-    def get_power_min_value(self):
+    def get_power_min(self):
         return self.power.min.get()
         
-    def get_power_max_value(self):
+    def get_power_max(self):
         return self.power.max.get()
+    
+    def get_power(self):
+        return self.power.value.get()
 
+    def get_power_decimals(self):
+        return self.power.decimals.get()
+    
 
+    ############################################################
+    ######################## CURRENT ###########################
+    ############################################################
+
+    # Set power value directly with value
+    def set_current(self, value):
+        self.current.value.set(value)
+
+    # Get functions
+
+    def get_current(self):
+        return self.current.value.get()
+
+    def get_current_min(self):
+        return self.current.min.get()
+        
+    def get_current_max(self):
+        return self.current.max.get()
+
+    def get_current_decimals(self):
+        return self.current.decimals.get()
