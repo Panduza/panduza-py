@@ -108,6 +108,8 @@ class Blc(Interface):
     def set_mode_constant_current(self):
         self.mode.value.set("constant_current")
 
+    def get_mode(self):
+        self.mode.value.get()
 
     ############################################################
     ########################## POWER ###########################
