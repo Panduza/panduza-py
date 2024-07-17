@@ -36,6 +36,14 @@ class Blc(Interface):
             RwField( name_ = "value" )
         )
 
+        # === ANALOG MODULATION ===
+        self.add_attribute(
+            Attribute( name_= "analog_modulation")
+        ).add_field(
+            RwField( name_= "value")
+        )
+
+
         # === POWER ===
         self.add_attribute(
             Attribute( name_ = "power" )
@@ -122,7 +130,12 @@ class Blc(Interface):
 
     # Set power value with percentage (0% to 100%)
     def set_power_with_percentage(self, percentage):
-        value_with_percentage = (1/100) * percentage * self.power.max.get()
+
+        # I need to round the value because else the precision of the 
+        # double could cause problem with too much decimals
+        decimals_value = self.power.decimals.get()
+
+        value_with_percentage = round((1/100) * percentage * self.power.max.get(), int(decimals_value)) 
         self.power.value.set(value_with_percentage)
            
     def get_power_min(self):
