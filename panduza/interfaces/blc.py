@@ -36,12 +36,12 @@ class Blc(Interface):
             RwField( name_ = "value" )
         )
 
-        # === ANALOG MODULATION ===
-        self.add_attribute(
-            Attribute( name_= "analog_modulation")
-        ).add_field(
-            RwField( name_= "value")
-        )
+        # # === ANALOG MODULATION ===
+        # self.add_attribute(
+        #     Attribute( name_= "analog_modulation")
+        # ).add_field(
+        #     RwField( name_= "value")
+        # )
 
 
         # === POWER ===
@@ -91,19 +91,19 @@ class Blc(Interface):
     def is_on(self):
         return self.enable.value.get()
 
-    ############################################################
-    #################### ANALOG MODULATION #####################
-    ############################################################
+    # ############################################################
+    # #################### ANALOG MODULATION #####################
+    # ############################################################
 
-    # Enable value need to be true or false to actually do something
-    def enable_analog_modulation(self):
-        self.analog_modulation.value.set(True)
+    # # Enable value need to be true or false to actually do something
+    # def enable_analog_modulation(self):
+    #     self.analog_modulation.value.set(True)
 
-    def disable_analog_modulation(self):
-        self.analog_modulation.value.set(False)
+    # def disable_analog_modulation(self):
+    #     self.analog_modulation.value.set(False)
 
-    def get_analog_modulation(self):
-        return self.analog_modulation.value.get()
+    # def get_analog_modulation(self):
+    #     return self.analog_modulation.value.get()
     
     ############################################################
     ########################## MODE ############################
