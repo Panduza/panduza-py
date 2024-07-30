@@ -29,39 +29,39 @@ class Bpc(Interface):
             RwField( name_ = "value" )
         )
 
-        # === VOLTAGE ===
-        self.add_attribute(
-            Attribute( name_ = "voltage" )
-        ).add_field(
-            RoField( name_ = "real" )
-        ).add_field(
-            RwField( name_ = "value" )
-        ).add_field(
-            RoField( name_ = "min" )
-        ).add_field(
-            RoField( name_ = "max" )
-        ).add_field(
-            RoField( name_ = "decimals" )
-        ).add_field(
-            RwField( name_ = "polling_cycle" )
-        )
+        # # === VOLTAGE ===
+        # self.add_attribute(
+        #     Attribute( name_ = "voltage" )
+        # ).add_field(
+        #     RoField( name_ = "real" )
+        # ).add_field(
+        #     RwField( name_ = "value" )
+        # ).add_field(
+        #     RoField( name_ = "min" )
+        # ).add_field(
+        #     RoField( name_ = "max" )
+        # ).add_field(
+        #     RoField( name_ = "decimals" )
+        # ).add_field(
+        #     RwField( name_ = "polling_cycle" )
+        # )
 
-        # === CURRENT ===
-        self.add_attribute(
-            Attribute( name_ = "current" )
-        ).add_field(
-            RoField( name_ = "real" )
-        ).add_field(
-            RwField( name_ = "value" )
-        ).add_field(
-            RoField( name_ = "min" )
-        ).add_field(
-            RoField( name_ = "max" )
-        ).add_field(
-            RoField( name_ = "decimals" )
-        ).add_field(
-            RwField( name_ = "polling_cycle" )
-        )
+        # # === CURRENT ===
+        # self.add_attribute(
+        #     Attribute( name_ = "current" )
+        # ).add_field(
+        #     RoField( name_ = "real" )
+        # ).add_field(
+        #     RwField( name_ = "value" )
+        # ).add_field(
+        #     RoField( name_ = "min" )
+        # ).add_field(
+        #     RoField( name_ = "max" )
+        # ).add_field(
+        #     RoField( name_ = "decimals" )
+        # ).add_field(
+        #     RwField( name_ = "polling_cycle" )
+        # )
 
         # === SETTINGS ===
         self.add_attribute(
@@ -97,16 +97,16 @@ class Bpc(Interface):
     def is_on(self):
         return self.enable.value.get()
     
-    # Voltage get/set
-    def set_voltage_value(self, value):
-        self.voltage.value.set(value)
+    # # Voltage get/set
+    # def set_voltage_value(self, value):
+    #     self.voltage.value.set(value)
     
-    def get_voltage_value(self):
-        self.voltage.value.get()
+    # def get_voltage_value(self):
+    #     self.voltage.value.get()
 
-    # Current get/set
-    def set_current_value(self, value):
-        self.current.value.set(value)
+    # # Current get/set
+    # def set_current_value(self, value):
+    #     self.current.value.set(value)
     
-    def get_current_value(self):
-        self.current.value.get()
+    # def get_current_value(self):
+    #     self.current.value.get()
