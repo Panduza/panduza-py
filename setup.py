@@ -14,19 +14,13 @@ setup(
         install_requires=[
             'setuptools',
             'paho-mqtt==2.1.0',
-            'python-magic',
-            'colorama',
-            'Pygal',
-            'PyHamcrest',
-            'robotframework',
-            'robotframework-pythonlibcore'
         ],
 
-        entry_points={
-            'console_scripts': [
-                'pzadmin=panduza.admin.pzadmin:pzadmin_main',
-            ],
-        },
+        # entry_points={
+        #     'console_scripts': [
+        #         'pzadmin=panduza.admin.pzadmin:pzadmin_main',
+        #     ],
+        # },
 
         classifiers= [
             "Development Status :: 3 - Alpha",
