@@ -5,9 +5,29 @@ class BooleanAttribute(Attribute):
     Attribute for sending boolean values (True or False).
     Ensures that only valid booleans are sent.
     """
+   
+    # ---
 
     def __init__(self, reactor, topic, mode, settings=None):
         super().__init__(reactor, topic, mode, settings)
+    
+    # ---
+
+    def on_att_message(self, data):
+        """
+        Callback for handling incoming messages.
+        - Updates the value and triggers the update event.
+        """
+        self.logger.debug(f"rx {data}")
+        if data == b"true":
+            self.value = True
+        elif data == b"false":
+            self.value = False
+        else:
+            print("Invalid boolean value received:", data)
+        super().on_message_top(data)
+    
+    # ---
 
     def set(self, value):
         """
@@ -24,4 +44,6 @@ class BooleanAttribute(Attribute):
 
         # Use the parent class's set method to send the raw value
         super().set(boolean_value)
-        # print(f"Boolean value set to: {boolean_value}")
+        self.logger.debug(f"Set value to {boolean_value}")
+        super().wait_for_value(value)
+    
