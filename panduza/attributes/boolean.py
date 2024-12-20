@@ -24,4 +24,4 @@ class BooleanAttribute(Attribute):
 
         # Use the parent class's set method to send the raw value
         super().set(boolean_value)
-        print(f"Boolean value set to: {boolean_value}")
+        # print(f"Boolean value set to: {boolean_value}")

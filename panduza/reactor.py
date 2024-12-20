@@ -1,9 +1,9 @@
 import threading;
 import json
-import time
-import socket
+# import time
+# import socket
 import logging
-from .attribute import Attribute
+# from .attribute import Attribute
 import paho.mqtt.client as mqtt
 from .structure import Structure
 
@@ -92,15 +92,15 @@ class Reactor:
 
 
     def attribute_from_name(self, name, instance=None):
-        print(f"Searching for attribute '{name}' in instance '{instance}'...")
+        self.logger.debug(f"Searching for attribute '{name}' in instance '{instance}'...")
 
         att_data = self.pza_structure.find_attribute(name, instance)
-        print("att_data:", att_data)
+        # self.logger.debug("att_data:", att_data)
         topic = att_data[0]
         type = att_data[1]["type"]
         mode = att_data[1]["mode"]
         settings = att_data[1]["settings"]
-        print("type:", type)
+        # print("type:", type)
         type_obj = self.attribute_type_str_to_obj(type_str=type)
         att = type_obj(reactor=self, topic=topic, mode=mode, settings=settings)
         self.attributes[f"{topic}/att"] = att
@@ -139,8 +139,8 @@ class Reactor:
     # ---
 
     def on_message(self, client, userdata, msg):
-
-        print(f"Received message: topic={msg.topic}, payload={str(msg.payload)}")
+        # 
+        # self.logger.debug(f"Received message: topic={msg.topic}, payload={str(msg.payload)}")
 
         # print(msg.topic)
 
@@ -158,12 +158,12 @@ class Reactor:
         #     print("scannn !! {}", msg.topic)
         #     self.known_platforms.append(msg.topic)
         
-        print(self.attributes)
+        # print(self.attributes)
         att = self.attributes.get(msg.topic, None)
         if att:
-            att.onMessage(msg.payload)
-        else:
-            print("nada")
+            att.on_att_message(msg.payload)
+        # else:
+        #     print("nada")
         # if self.is_platform_topic(msg.topic):
         #     self.known_platforms.append(msg.topic)
         # else:

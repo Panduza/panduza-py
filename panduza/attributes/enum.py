@@ -8,7 +8,7 @@ class EnumAttribute(Attribute):
 
         # Initialize choices if provided in settings
         self.choices = settings.get("choices") if settings else None
-        print("========", settings)
+        # print("========", settings)
 
     
     def choices(self):
@@ -21,7 +21,7 @@ class EnumAttribute(Attribute):
         - Accepts any type of value: int, float, string, etc.
         - If choices exist, validate the value against the options.
         """
-        print("======== Type of value:", type(value))
+        # print("======== Type of value:", type(value))
 
         # Convert non-string values to string
         if not isinstance(value, str):
@@ -41,4 +41,4 @@ class EnumAttribute(Attribute):
 
         # Use the parent class's set method to send the value
         super().set(mqtt_value)
-        print(f"Enum value set to {mqtt_value}")
+        # print(f"Enum value set to {mqtt_value}")

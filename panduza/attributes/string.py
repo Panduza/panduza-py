@@ -19,4 +19,4 @@ class StringAttribute(Attribute):
         
         # Use the parent class to send the value
         super().set(string_value)
-        print(f"String value set to {string_value}")
+        # print(f"String value set to {string_value}")
