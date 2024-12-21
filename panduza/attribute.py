@@ -21,7 +21,10 @@ class Attribute:
         self.topic_cmd = f"{topic}/cmd"
         
         self.client.subscribe(self.topic_att)
-        
+
+        # Retry count for waiting for the value
+        self.wait_retry = 0
+
         # Create a thread event for updating the value
         self._update_event = threading.Event()
     
@@ -40,11 +43,17 @@ class Attribute:
     # ---
 
     def wait_for_value(self, value):
+        self.wait_retry = 0
         while self.value != value:
-            self.logger.debug(f"waiting for value {value} current value {self.value}")
+            self.logger.debug(f"waiting for value {value}, but current value is {self.value}")
             self._update_event.wait(5)
             self._update_event.clear()
-    
+
+            # Check if the value is still not updated
+            self.wait_retry += 1
+            if self.wait_retry > 3:
+                raise TimeoutError(f"Timeout waiting for value {value}")
+
     # ---
 
     def get(self):

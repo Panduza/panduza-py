@@ -14,6 +14,19 @@ class EnumAttribute(Attribute):
     def choices(self):
         """Return the different choices for the attribute."""
         return self.choices
+    
+    # ---
+
+    def on_att_message(self, data):
+        """
+        Callback for handling incoming messages.
+        - Updates the value and triggers the update event.
+        """
+        self.value = data.decode()
+        self.logger.debug(f"rx {data} => {self.value}")
+        super().on_message_top(data)
+        
+    # ---
 
     def set(self, value):
         """
@@ -21,8 +34,6 @@ class EnumAttribute(Attribute):
         - Accepts any type of value: int, float, string, etc.
         - If choices exist, validate the value against the options.
         """
-        # print("======== Type of value:", type(value))
-
         # Convert non-string values to string
         if not isinstance(value, str):
             converted_value = str(value)
@@ -41,4 +52,6 @@ class EnumAttribute(Attribute):
 
         # Use the parent class's set method to send the value
         super().set(mqtt_value)
-        # print(f"Enum value set to {mqtt_value}")
+        self.logger.debug(f"Set value to {mqtt_value}")
+        super().wait_for_value(mqtt_value)
+    
