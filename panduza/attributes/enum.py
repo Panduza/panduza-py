@@ -22,7 +22,7 @@ class EnumAttribute(Attribute):
         Callback for handling incoming messages.
         - Updates the value and triggers the update event.
         """
-        self.value = data.decode()
+        self.value = json.loads(data.decode())
         self.logger.debug(f"rx {data} => {self.value}")
         super().on_message_top(data)
         
@@ -53,5 +53,5 @@ class EnumAttribute(Attribute):
         # Use the parent class's set method to send the value
         super().set(mqtt_value)
         self.logger.debug(f"Set value to {mqtt_value}")
-        super().wait_for_value(mqtt_value)
+        super().wait_for_value(value)
     
