@@ -74,6 +74,16 @@ class Reactor:
 
     # ---
 
+    def stop(self):
+        """Stop the reactor
+        """
+        self.client.loop_stop()
+        self.client.disconnect()
+        self.known_platforms = []
+        self.pza_structure = Structure()
+
+    # ---
+
     def attribute_type_str_to_obj(self, type_str):
         if type_str == "si":
             return SiAttribute
