@@ -38,8 +38,9 @@ class Attribute:
 
     def wait_for_first_value(self):
         if self.value == None:
-            self._update_event.wait(1)
-    
+            self._update_event.wait(2)
+            self._update_event.clear()
+
     # ---
 
     def wait_for_value(self, value):
@@ -57,6 +58,7 @@ class Attribute:
     # ---
 
     def get(self):
+        self.wait_for_first_value()
         return self.value
     
     # ---

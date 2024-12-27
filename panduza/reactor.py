@@ -1,14 +1,10 @@
 import threading;
 import json
-# import time
-# import socket
 import logging
-# from .attribute import Attribute
 import paho.mqtt.client as mqtt
 from .structure import Structure
-
-
 from .attributes import SiAttribute, StringAttribute, NumberAttribute, EnumAttribute, JsonAttribute, BooleanAttribute
+
 
 class Reactor:
 
@@ -81,7 +77,9 @@ class Reactor:
         self.client.disconnect()
         self.known_platforms = []
         self.pza_structure = Structure()
-
+        self._connected_event.clear()
+        self._structure_event.clear()
+    
     # ---
 
     def attribute_type_str_to_obj(self, type_str):
@@ -101,16 +99,18 @@ class Reactor:
             raise ValueError(f"Unknown attribute type: {type_str}")
 
 
-    def attribute_from_name(self, name, instance=None):
-        self.logger.debug(f"Searching for attribute '{name}' in instance '{instance}'...")
+    def attribute_from_name(self, xtopic):
+        self.logger.debug(f"Searching for attribute '{xtopic}'")
 
-        att_data = self.pza_structure.find_attribute(name, instance)
-        # self.logger.debug("att_data:", att_data)
+        # Find attribute data
+        att_data = self.pza_structure.find_attribute_from_xtopic(xtopic)
+        if not att_data:
+            raise ValueError(f"Attribute '{xtopic}' not found")
+        
         topic = att_data[0]
         type = att_data[1]["type"]
         mode = att_data[1]["mode"]
         settings = att_data[1]["settings"]
-        # print("type:", type)
         type_obj = self.attribute_type_str_to_obj(type_str=type)
         att = type_obj(reactor=self, topic=topic, mode=mode, settings=settings)
         self.attributes[f"{topic}/att"] = att
