@@ -10,6 +10,10 @@ class StringAttribute(Attribute):
 
 
     def set(self, value):
+        # Mode check
+        if self.mode == "RO":
+            raise Exception("Cannot 'set' a Read-Only attribute")
+        
         # Validate the value is a string
         if not isinstance(value, str):
             raise ValueError(f"Value must be a string, got: {type(value)}")

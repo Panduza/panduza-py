@@ -114,6 +114,8 @@ class Reactor:
         type_obj = self.attribute_type_str_to_obj(type_str=type)
         att = type_obj(reactor=self, topic=topic, mode=mode, settings=settings)
         self.attributes[f"{topic}/att"] = att
+        
+        print(mode)
 
         return att
         

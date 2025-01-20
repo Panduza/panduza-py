@@ -16,6 +16,10 @@ class JsonAttribute(Attribute):
         - Accepts dictionaries, lists, or any data that can be serialized to JSON.
         - Converts the value to a JSON string before sending it.
         """
+        # Mode check
+        if self.mode == "RO":
+            raise Exception("Cannot 'set' a Read-Only attribute")
+        
         try:
             # Serialize the value to JSON
             json_value = json.dumps(value)
