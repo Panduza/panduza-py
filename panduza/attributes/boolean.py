@@ -35,6 +35,10 @@ class BooleanAttribute(Attribute):
         - Ensures the value is either True or False.
         - Sends the boolean value directly (or as a string if required).
         """
+        # Mode check
+        if self.mode == "RO":
+            raise Exception("Cannot 'set' a Read-Only attribute")
+        
         # Validate that the input is a boolean
         if not isinstance(value, bool):
             raise ValueError(f"Invalid value for BooleanAttribute. Expected a boolean, got: {type(value)}")
@@ -45,5 +49,8 @@ class BooleanAttribute(Attribute):
         # Use the parent class's set method to send the raw value
         super().set(boolean_value)
         self.logger.debug(f"Set value to {boolean_value}")
-        super().wait_for_value(value)
+        
+        # Make sur change is ok
+        if self.mode == "RW":
+            super().wait_for_value(value)
     

@@ -61,10 +61,14 @@ class SiAttribute(Attribute):
         Set a value to the attribute after validation.
         - Ensures the value is a number and within the allowed range.
         """
+        # Mode check
+        if self.mode == "RO":
+            raise Exception("Cannot 'set' a Read-Only attribute")
+
         # Validate the value
         if not isinstance(value, (int, float)):
             raise ValueError(f"Value must be a number, got: {type(value)}")
-        
+
         # If decimals are specified, round the value
         if self._decimals is not None:
             value = round(value, self._decimals)
@@ -74,5 +78,8 @@ class SiAttribute(Attribute):
 
         super().set(value)
         self.logger.debug(f"Set value to {value}")
-        super().wait_for_value(value)
-    
+
+        # Make sur change is ok
+        if self.mode == "RW":
+            super().wait_for_value(value)
+

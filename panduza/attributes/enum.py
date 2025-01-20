@@ -34,6 +34,10 @@ class EnumAttribute(Attribute):
         - Accepts any type of value: int, float, string, etc.
         - If choices exist, validate the value against the options.
         """
+        # Mode check
+        if self.mode == "RO":
+            raise Exception("Cannot 'set' a Read-Only attribute")
+        
         # Convert non-string values to string
         if not isinstance(value, str):
             converted_value = str(value)
@@ -53,5 +57,8 @@ class EnumAttribute(Attribute):
         # Use the parent class's set method to send the value
         super().set(mqtt_value)
         self.logger.debug(f"Set value to {mqtt_value}")
-        super().wait_for_value(value)
+
+        # Make sur change is ok
+        if self.mode == "RW":
+            super().wait_for_value(value)
     

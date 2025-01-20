@@ -18,6 +18,10 @@ class NumberAttribute(Attribute):
         Set a value to the attribute after validation.
         - Ensures the value is a number.
         """
+        # Mode check
+        if self.mode == "RO":
+            raise Exception("Cannot 'set' a Read-Only attribute")
+    
         # Validate the value
         if not isinstance(value, int):
             raise ValueError(f"Value must be a number, got: {type(value)}")
