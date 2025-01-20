@@ -4,3 +4,4 @@ from .number import NumberAttribute
 from .enum import EnumAttribute
 from .json import JsonAttribute
 from .boolean import BooleanAttribute
+from .memory_command import MemoryCommandAttribute

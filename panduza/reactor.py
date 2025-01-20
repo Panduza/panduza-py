@@ -3,7 +3,7 @@ import json
 import logging
 import paho.mqtt.client as mqtt
 from .structure import Structure
-from .attributes import SiAttribute, StringAttribute, NumberAttribute, EnumAttribute, JsonAttribute, BooleanAttribute
+from .attributes import SiAttribute, StringAttribute, NumberAttribute, EnumAttribute, JsonAttribute, BooleanAttribute, MemoryCommandAttribute
 
 
 class Reactor:
@@ -95,6 +95,8 @@ class Reactor:
             return JsonAttribute
         elif type_str == "boolean":
             return BooleanAttribute
+        elif type_str == "memory_command":
+            return MemoryCommandAttribute
         else:
             raise ValueError(f"Unknown attribute type: {type_str}")
 
@@ -114,9 +116,6 @@ class Reactor:
         type_obj = self.attribute_type_str_to_obj(type_str=type)
         att = type_obj(reactor=self, topic=topic, mode=mode, settings=settings)
         self.attributes[f"{topic}/att"] = att
-        
-        print(mode)
-
         return att
         
     def attribute_from_topic(self, topic):
@@ -125,20 +124,6 @@ class Reactor:
         # self.attributes[f"{topic}/att"] = att
         # return att
 
-    # def topic_root(self):
-    #     if self.topic_root:
-    #         return self.topic_root
-    #     self.topic_root = "pza"
-    #     if self.namespace:
-    #         self.topic_root = f"{self.namespace}/pza"
-    #     return self.topic_root
-
-    # def is_platform_topic(self, topic):
-    #     if not topic.startswith(self.topic_root()):
-    #         return False
-    #     suffix = topic[len(self.topic_root()) + 1:]  # topic root + 1 '/'
-    #     print("suffix", suffix)
-    #     return not "/" in suffix
 
     # ---
 
