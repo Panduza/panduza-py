@@ -2,6 +2,8 @@ import threading;
 import json
 import logging
 import paho.mqtt.client as mqtt
+
+from panduza.attributes.vectorf32 import VectorF32Attribute
 from .structure import Structure
 from .attributes import SiAttribute, StringAttribute, NumberAttribute, EnumAttribute, JsonAttribute, BooleanAttribute, MemoryCommandAttribute
 
@@ -97,6 +99,8 @@ class Reactor:
             return BooleanAttribute
         elif type_str == "memory_command":
             return MemoryCommandAttribute
+        elif type_str == "vector_f32-v0":
+            return VectorF32Attribute
         else:
             raise ValueError(f"Unknown attribute type: {type_str}")
 
@@ -117,13 +121,14 @@ class Reactor:
         att = type_obj(reactor=self, topic=topic, mode=mode, settings=settings)
         self.attributes[f"{topic}/att"] = att
         return att
+
+    # ---
         
     def attribute_from_topic(self, topic):
         pass
         # att = Attribute(reactor=self, topic=topic, codec=codec)
         # self.attributes[f"{topic}/att"] = att
         # return att
-
 
     # ---
 
