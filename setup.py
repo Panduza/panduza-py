@@ -14,7 +14,8 @@ setup(
         install_requires=[
             'setuptools',
             'paho-mqtt==2.1.0',
-            'flatbuffers==25.2.10'
+            'flatbuffers==25.2.10',
+            'numpy==2.2.4'
         ],
 
 

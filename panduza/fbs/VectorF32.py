@@ -56,7 +56,7 @@ class VectorF32(object):
         o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(6))
         if o != 0:
             x = o + self._tab.Pos
-            from Timestamp import Timestamp
+            from .Timestamp import Timestamp
             obj = Timestamp()
             obj.Init(self._tab.Bytes, x)
             return obj

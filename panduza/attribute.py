@@ -1,6 +1,6 @@
 import logging
 import threading
-
+import numpy
 
 class Attribute:
         
@@ -37,9 +37,18 @@ class Attribute:
     # ---
 
     def wait_for_first_value(self):
-        if self.value == None:
-            self._update_event.wait(2)
-            self._update_event.clear()
+        if isinstance(self.value, numpy.ndarray):
+            pass
+        else:
+            if self.value == None:
+                self._update_event.wait(2)
+                self._update_event.clear()
+
+    # ---
+
+    def wait_next_value(self, timeout):
+        self._update_event.wait(timeout)
+        self._update_event.clear()
 
     # ---
 

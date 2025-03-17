@@ -1,5 +1,7 @@
 from ..attribute import Attribute
 
+from ..fbs import VectorF32
+
 class VectorF32Attribute(Attribute):
     """
     """
@@ -16,10 +18,17 @@ class VectorF32Attribute(Attribute):
         Callback for handling incoming messages.
         - Updates the value and triggers the update event.
         """
-        print(data)
+        # print(data)
+
+        object = VectorF32.VectorF32.GetRootAsVectorF32(data, 0)
+        # print(object)
+        # print(object.Timestamp().Secs)
+        # print(object.ValuesAsNumpy())
+        
+
         # self.logger.debug(f"rx {data}")
         # if data == b"true":
-        #     self.value = True
+        self.value = object.ValuesAsNumpy()
         # elif data == b"false":
         #     self.value = False
         # else:
