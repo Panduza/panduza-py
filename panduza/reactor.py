@@ -104,8 +104,9 @@ class Reactor:
         else:
             raise ValueError(f"Unknown attribute type: {type_str}")
 
+    # ---
 
-    def attribute_from_name(self, xtopic):
+    def obj(self, xtopic):
         self.logger.debug(f"Searching for attribute '{xtopic}'")
 
         # Find attribute data
@@ -121,14 +122,6 @@ class Reactor:
         att = type_obj(reactor=self, topic=topic, mode=mode, settings=settings)
         self.attributes[f"{topic}/att"] = att
         return att
-
-    # ---
-        
-    def attribute_from_topic(self, topic):
-        pass
-        # att = Attribute(reactor=self, topic=topic, codec=codec)
-        # self.attributes[f"{topic}/att"] = att
-        # return att
 
     # ---
 
