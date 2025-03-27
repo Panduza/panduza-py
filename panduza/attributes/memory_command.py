@@ -50,7 +50,7 @@ class MemoryCommandAttribute(Attribute):
 
             # Use the parent class's set method to send the value
             super().set(json_value)
-            print(f"JSON value set to: {json_value}")
+            print(f"Send command: {json_value}")
 
         except (TypeError, ValueError) as e:
             # Raise an error if the value cannot be serialized to JSON
