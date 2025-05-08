@@ -1,4 +1,4 @@
-tests/features/*
+tests/features/basics/*
 
 # Robot Report
 log.html
