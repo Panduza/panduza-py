@@ -5,3 +5,6 @@ from .enum import EnumAttribute
 from .json import JsonAttribute
 from .boolean import BooleanAttribute
 from .memory_command import MemoryCommandAttribute
+from .vectorf32 import VectorF32Attribute
+from .status import StatusAttribute
+from .notification import NotificationAttribute

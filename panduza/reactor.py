@@ -5,7 +5,7 @@ import paho.mqtt.client as mqtt
 
 from panduza.attributes.vectorf32 import VectorF32Attribute
 from .structure import Structure
-from .attributes import SiAttribute, StringAttribute, NumberAttribute, EnumAttribute, JsonAttribute, BooleanAttribute, MemoryCommandAttribute
+from .attributes import SiAttribute, StringAttribute, NumberAttribute, EnumAttribute, JsonAttribute, BooleanAttribute, MemoryCommandAttribute, StatusAttribute
 
 
 class Reactor:
@@ -185,4 +185,14 @@ class Reactor:
 
         # print(self.structure)
 
+
+
+    def new_status_attribute(self):
+        """
+        Create a new status attribute
+        """
+        topic = "pza/_/status"
+        att = StatusAttribute(reactor=self, topic=topic, mode="ro")
+        self.attributes[topic] = att
+        return att
 

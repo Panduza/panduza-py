@@ -32,3 +32,20 @@ sudo local/platform-dryrun.sh
 sudo python3 tests/py_tests/test1.py
 sudo python3 tests/py_tests/test2.py
 ```
+
+
+
+
+```bash
+# 
+./flatc.exe --python -o panduza/fbs/ panduza/fbs/notification_v0.fbs
+# 
+./flatc.exe --python -o panduza/fbs/ panduza/fbs/status_v0.fbs
+```
+
+
+
+```bash
+
+behave -v --no-capture --color --no-logcapture
+```
