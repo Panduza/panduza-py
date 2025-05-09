@@ -9,6 +9,8 @@ from .attribute import Attribute
 # from .interfaces import Ammeter
 # from .interfaces import Platform
 
+from .attributes import BooleanAttribute
+
 # from .interfaces import Blc
 # from .interfaces import Powermeter
 # from .interfaces import Thermometer

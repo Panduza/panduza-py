@@ -106,7 +106,7 @@ class Reactor:
 
     # ---
 
-    def obj(self, xtopic):
+    def find(self, xtopic):
         self.logger.debug(f"Searching for attribute '{xtopic}'")
 
         # Find attribute data
