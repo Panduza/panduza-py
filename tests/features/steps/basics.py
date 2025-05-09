@@ -18,7 +18,11 @@ def step_given(context):
 
 @given('a reactor trying to connect to an invalid platform')
 def step_impl(context):
-    raise NotImplementedError
+    try:
+        reactor = Reactor(addr="invalid")
+        reactor.start()
+    except Exception as e:
+        context.connection_error = True
 
 # ---
 
@@ -46,3 +50,4 @@ def step_then(context):
     time.sleep(2)
     notifications = context.platform_notifications.pop_all()
     assert(notifications.has_alert())
+
