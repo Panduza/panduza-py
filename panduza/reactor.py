@@ -3,6 +3,7 @@ import json
 import logging
 import paho.mqtt.client as mqtt
 
+from panduza.attributes.notification import NotificationAttribute
 from panduza.attributes.vectorf32 import VectorF32Attribute
 from .structure import Structure
 from .attributes import SiAttribute, StringAttribute, NumberAttribute, EnumAttribute, JsonAttribute, BooleanAttribute, MemoryCommandAttribute, StatusAttribute
@@ -193,6 +194,15 @@ class Reactor:
         """
         topic = "pza/_/status"
         att = StatusAttribute(reactor=self, topic=topic, mode="ro")
-        self.attributes[topic] = att
+        self.attributes[f"{topic}/att"] = att
+        return att
+
+    def new_notification_attribute(self):
+        """
+        Create a new notification attribute
+        """
+        topic = "pza/_/notifications"
+        att = NotificationAttribute(reactor=self, topic=topic, mode="ro")
+        self.attributes[f"{topic}/att"] = att
         return att
 

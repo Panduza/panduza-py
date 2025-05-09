@@ -1,3 +1,4 @@
+from panduza.instance_state import InstanceState
 from ..attribute import Attribute
 from ..fbs import Status
 import time
@@ -20,9 +21,10 @@ class StatusAttribute(Attribute):
         Callback for handling incoming messages.
         - Updates the value and triggers the update event.
         """
-        object = Status.Status.GetRootAsVectorF32(data, 0)
-
-        super().on_message_top(object)
+        obj = Status.Status.GetRootAsStatus(data, 0)
+        # print(f"!!!!! $$$$$$ DATA")
+        self.value = obj
+        super().on_message_top(obj)
     
     # ---
 
@@ -32,10 +34,11 @@ class StatusAttribute(Attribute):
         - Returns True if all instances are running, False otherwise.
         """
         
-        print(f"!!!all_instances_are_running!!!!")
+        # print(f"!!!all_instances_are_running {self.value} !!!!")
 
         # Check if value is initialized
         if not hasattr(self, 'value') or self.value is None:
+            print("Value is not initialized.")
             return False
         
         # Get the number of instances
@@ -43,18 +46,24 @@ class StatusAttribute(Attribute):
         
         # If there are no instances, consider it as not running
         if instances_count == 0:
+            print("No instances found.")
             return False
         
-        
-
         # Check each instance status
         for i in range(instances_count):
             instance = self.value.Instances(i)
-            # Check if this instance has a status other than "running"
-            if instance is None or instance.State() != "running":
+            
+            state = instance.State()
+            
+            # print(f"Instance {i} state: {state}")
+            
+            # Check if this instance has a status other than InstanceState.Running
+            if state != InstanceState.Running.to_u16():
+                # print(f"FALSE")
                 return False
         
         # If we've checked all instances and none failed the test, all are running
+        # print("TRUE")
         return True
     
     
@@ -69,9 +78,52 @@ class StatusAttribute(Attribute):
         while not self.all_instances_are_running():
             if time.time() - start_time > timeout_duration:
                 raise TimeoutError("Timeout reached while waiting for all instances to be running.")
-            time.sleep(0.1)  # Sleep briefly to avoid busy-waiting
+            time.sleep(0.5)  # Sleep briefly to avoid busy-waiting
     
+
+
+    def at_least_one_instance_is_not_running(self):
+
+        # Check if value is initialized
+        if not hasattr(self, 'value') or self.value is None:
+            print("Value is not initialized.")
+            return False
         
+        # Get the number of instances
+        instances_count = self.value.InstancesLength()
+        
+        # If there are no instances, consider it as not running
+        if instances_count == 0:
+            print("No instances found.")
+            return False
+        
+        # Check each instance status
+        for i in range(instances_count):
+            instance = self.value.Instances(i)
+            
+            state = instance.State()
+            
+            # Check if this instance has a status other than InstanceState.Running
+            if state != InstanceState.Running.to_u16():
+                # print(f"FALSE")
+                return True
+        
+        # If we've checked all instances and none failed the test, all are running
+        # print("TRUE")
+        return False
+
+    def wait_for_at_least_one_instance_to_be_not_running(
+        self,
+        timeout_duration: float = 5.0):
+        """
+        Wait for at least one instance to be not running.
+        - Blocks until at least one instance is not running or the timeout is reached.
+        """
+        start_time = time.time()
+        while not self.at_least_one_instance_is_not_running():
+            if time.time() - start_time > timeout_duration:
+                raise TimeoutError("Timeout reached while waiting for at least one instance to be not running.")
+            time.sleep(0.5)
 
     # def set(self, value):
     #     """

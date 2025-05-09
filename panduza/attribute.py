@@ -10,6 +10,11 @@ class Attribute:
         # Create a logger
         self.logger = logging.getLogger(topic)
 
+        # Queue for storing incoming messages
+        self.queue = []
+        # Last message processed by pop
+        self.last = None
+
         self.value = None
         self.client = reactor.client
 
@@ -76,4 +81,16 @@ class Attribute:
         self._update_event.clear()
         self.client.publish(self.topic_cmd, value, qos=0)
 
+    # ---
+
+    def pop(self):
+        """
+        Pop the last message from the queue.
+        - Returns the last message or None if the queue is empty.
+        """
+        if self.queue:
+            self.last = self.queue.pop(0)
+            return self.last
+        else:
+            return None
 
