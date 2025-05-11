@@ -2,8 +2,11 @@ import threading;
 import json
 import logging
 import paho.mqtt.client as mqtt
+
+from panduza.attributes.notification import NotificationAttribute
+from panduza.attributes.vectorf32 import VectorF32Attribute
 from .structure import Structure
-from .attributes import SiAttribute, StringAttribute, NumberAttribute, EnumAttribute, JsonAttribute, BooleanAttribute, MemoryCommandAttribute
+from .attributes import SiAttribute, StringAttribute, NumberAttribute, EnumAttribute, JsonAttribute, BooleanAttribute, MemoryCommandAttribute, StatusAttribute
 
 
 class Reactor:
@@ -97,11 +100,14 @@ class Reactor:
             return BooleanAttribute
         elif type_str == "memory_command":
             return MemoryCommandAttribute
+        elif type_str == "vector_f32-v0":
+            return VectorF32Attribute
         else:
             raise ValueError(f"Unknown attribute type: {type_str}")
 
+    # ---
 
-    def attribute_from_name(self, xtopic):
+    def find(self, xtopic):
         self.logger.debug(f"Searching for attribute '{xtopic}'")
 
         # Find attribute data
@@ -117,13 +123,6 @@ class Reactor:
         att = type_obj(reactor=self, topic=topic, mode=mode, settings=settings)
         self.attributes[f"{topic}/att"] = att
         return att
-        
-    def attribute_from_topic(self, topic):
-        pass
-        # att = Attribute(reactor=self, topic=topic, codec=codec)
-        # self.attributes[f"{topic}/att"] = att
-        # return att
-
 
     # ---
 
@@ -187,4 +186,23 @@ class Reactor:
 
         # print(self.structure)
 
+
+
+    def new_status_attribute(self):
+        """
+        Create a new status attribute
+        """
+        topic = "pza/_/status"
+        att = StatusAttribute(reactor=self, topic=topic, mode="ro")
+        self.attributes[f"{topic}/att"] = att
+        return att
+
+    def new_notification_attribute(self):
+        """
+        Create a new notification attribute
+        """
+        topic = "pza/_/notifications"
+        att = NotificationAttribute(reactor=self, topic=topic, mode="ro")
+        self.attributes[f"{topic}/att"] = att
+        return att
 

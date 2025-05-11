@@ -9,8 +9,8 @@ from .attribute import Attribute
 # from .interfaces import Ammeter
 # from .interfaces import Platform
 
-# from .interfaces import Blc
-# from .interfaces import Powermeter
-# from .interfaces import Thermometer
+from .attributes import BooleanAttribute
+from .attributes import EnumAttribute
+from .attributes import SiAttribute
+from .attributes import StringAttribute
 
-# from .interfaces import Ping

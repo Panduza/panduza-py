@@ -1,6 +1,6 @@
 import logging
 import threading
-
+import numpy
 
 class Attribute:
         
@@ -9,6 +9,11 @@ class Attribute:
     def __init__(self, reactor, topic, mode, settings):
         # Create a logger
         self.logger = logging.getLogger(topic)
+
+        # Queue for storing incoming messages
+        self.queue = []
+        # Last message processed by pop
+        self.last = None
 
         self.value = None
         self.client = reactor.client
@@ -37,9 +42,18 @@ class Attribute:
     # ---
 
     def wait_for_first_value(self):
-        if self.value == None:
-            self._update_event.wait(2)
-            self._update_event.clear()
+        if isinstance(self.value, numpy.ndarray):
+            pass
+        else:
+            if self.value == None:
+                self._update_event.wait(2)
+                self._update_event.clear()
+
+    # ---
+
+    def wait_next_value(self, timeout):
+        self._update_event.wait(timeout)
+        self._update_event.clear()
 
     # ---
 
@@ -67,4 +81,16 @@ class Attribute:
         self._update_event.clear()
         self.client.publish(self.topic_cmd, value, qos=0)
 
+    # ---
+
+    def pop(self):
+        """
+        Pop the last message from the queue.
+        - Returns the last message or None if the queue is empty.
+        """
+        if self.queue:
+            self.last = self.queue.pop(0)
+            return self.last
+        else:
+            return None
 

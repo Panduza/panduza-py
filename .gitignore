@@ -1,3 +1,5 @@
+tests/features/basics/*
+
 # Robot Report
 log.html
 output.xml

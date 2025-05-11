@@ -8,6 +8,19 @@ class StringAttribute(Attribute):
     def __init__(self, reactor, topic, mode, settings):
         super().__init__(reactor, topic, mode, settings)
 
+    
+    # ---
+
+    def on_att_message(self, data):
+        """
+        Callback for handling incoming messages.
+        - Updates the value and triggers the update event.
+        """
+        self.value = json.loads(data.decode())
+        # self.logger.debug(f"rx {data} => {self.value}")
+        super().on_message_top(data)
+      
+      
 
     def set(self, value):
         # Mode check

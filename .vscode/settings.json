@@ -1,3 +1,5 @@
 {
-    "editor.formatOnSave": true,
+    "python.analysis.extraPaths": [
+        "./panduza/fbs"
+    ]
 }
